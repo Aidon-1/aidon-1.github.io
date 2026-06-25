@@ -216,9 +216,16 @@ h1,h2,h3,h4,h5,h6{
   }
   .nav.scrolled{
     background:var(--glass-bg-scrolled);
-    border-bottom-color:var(--c-line);
-    box-shadow:0 1px 0 rgba(0,0,0,.15);
+    border-bottom-color:transparent;
+    box-shadow:0 8px 32px -16px rgba(0,0,0,.55);
   }
+  .nav::after{
+    content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;
+    background:linear-gradient(90deg, transparent 0%, var(--c-accent) 50%, transparent 100%);
+    opacity:0;transition:opacity .45s var(--ease);
+    pointer-events:none;
+  }
+  .nav.scrolled::after{opacity:.55}
   .nav-inner{
     max-width:var(--maxw);margin:0 auto;padding:0 var(--gutter);
     height:72px;display:flex;align-items:center;justify-content:space-between;gap:30px;
@@ -2272,7 +2279,7 @@ h1,h2,h3,h4,h5,h6{
     const h = document.documentElement;
     const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
     progress.style.width = scrolled + '%';
-    if(window.scrollY > 30) nav.classList.add('scrolled');
+    if(window.scrollY > 100) nav.classList.add('scrolled');
     else nav.classList.remove('scrolled');
     updateActiveNav();
   }
@@ -2418,6 +2425,43 @@ h1,h2,h3,h4,h5,h6{
         if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
       });
     });
+  })();
+
+  // ========== Count-up 数字动画 (banner-meta 进入视口时 0→目标) ==========
+  (function(){
+    const nums = document.querySelectorAll('.count-num');
+    if(!nums.length) return;
+    let done = new WeakSet();
+    function animateNum(el){
+      if(done.has(el)) return;
+      done.add(el);
+      const target = parseFloat(el.dataset.count) || 0;
+      const isInt = Number.isInteger(target);
+      const duration = 1400; // ms
+      const start = performance.now();
+      function tick(now){
+        const t = Math.min((now - start) / duration, 1);
+        // ease-out-quart
+        const eased = 1 - Math.pow(1 - t, 4);
+        const val = target * eased;
+        el.textContent = isInt ? Math.round(val).toString() : val.toFixed(1);
+        if(t < 1) requestAnimationFrame(tick);
+        else el.textContent = isInt ? target.toString() : target.toFixed(1);
+      }
+      // prefers-reduced-motion 直接显示目标值
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        el.textContent = isInt ? target.toString() : target.toFixed(1);
+        return;
+      }
+      requestAnimationFrame(tick);
+    }
+    // IntersectionObserver 进入视口触发
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if(e.isIntersecting) animateNum(e.target);
+      });
+    }, {threshold: 0.4});
+    nums.forEach(n => io.observe(n));
   })();
 
   // ========== Geom-card 磁吸浮动 (鼠标跟随 + 浮动合成) ==========
