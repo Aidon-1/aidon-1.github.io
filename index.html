@@ -1278,6 +1278,52 @@ h1,h2,h3,h4,h5,h6{
   @media (max-width:860px){
     .tl-item .tl-pulse{left:-36px;width:11px;height:11px}
   }
+
+  /* ========== Banner char hover: highlight + dim others ========== */
+  .banner-text h1:hover .char{
+    color:var(--c-muted);
+    transition:color .4s var(--ease);
+  }
+  .banner-text h1 .char:hover{
+    color:var(--c-accent) !important;
+    animation:charBounce .5s var(--ease);
+  }
+
+  /* ========== Theme switch circular mask transition ========== */
+  .theme-mask{
+    position:fixed;border-radius:50%;pointer-events:none;z-index:99998;
+    background:var(--c-bg);
+    transform:translate(-50%,-50%);
+    transition:width .85s var(--ease),height .85s var(--ease);
+  }
+
+  /* ========== Footer entrance ========== */
+  .footer{
+    transform:translateY(60px);opacity:0;
+    transition:transform 1.1s var(--ease) .1s, opacity 1s var(--ease) .1s,
+               background-color .45s var(--ease),border-color .45s var(--ease);
+  }
+  .footer.in-view{transform:translateY(0);opacity:1}
+  .footer::before{
+    transform:translateX(-50%) scaleX(0);transform-origin:center;
+    transition:transform 1s var(--ease) .6s;
+  }
+  .footer.in-view::before{transform:translateX(-50%) scaleX(1)}
+
+  /* ========== Footer slogan chars ========== */
+  .footer-slogan .char{
+    display:inline-block;opacity:0;transform:translateY(.5em) rotateX(-30deg);
+    transform-origin:50% 100%;
+    transition:opacity .8s var(--ease),transform .8s var(--ease),color .3s var(--ease);
+  }
+  .footer.in-view .footer-slogan .char{
+    opacity:1;transform:translateY(0) rotateX(0);
+  }
+  .footer.in-view .footer-slogan .char:hover{
+    color:var(--c-accent);
+    animation:charBounce .5s var(--ease);
+  }
+  .footer-slogan .char-space{display:inline-block;width:.3em}
 </style>
 </head>
 <body>
@@ -1875,7 +1921,7 @@ h1,h2,h3,h4,h5,h6{
     }, {passive:true});
   }
 
-  // ========== Theme Toggle (dark / light) ==========
+  // ========== Theme Toggle (dark / light) with circular mask ==========
   const themeBtn = document.getElementById('themeToggle');
   const THEME_KEY = 'aidon-theme';
   function getPreferredTheme(){
@@ -1892,11 +1938,44 @@ h1,h2,h3,h4,h5,h6{
     }
     try{ localStorage.setItem(THEME_KEY, theme); }catch(e){}
   }
+  function applyThemeWithMask(theme, originX, originY){
+    // 圆形 mask 扩散过渡
+    const mask = document.createElement('div');
+    mask.className = 'theme-mask';
+    mask.style.left = originX + 'px';
+    mask.style.top = originY + 'px';
+    mask.style.width = '0px';
+    mask.style.height = '0px';
+    document.body.appendChild(mask);
+    // 取对角线最大半径
+    const maxR = Math.hypot(
+      Math.max(originX, window.innerWidth - originX),
+      Math.max(originY, window.innerHeight - originY)
+    ) + 60;
+    // 下一帧启动动画
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        mask.style.width = (maxR * 2) + 'px';
+        mask.style.height = (maxR * 2) + 'px';
+        // 中点切换 theme
+        setTimeout(() => applyTheme(theme, true), 320);
+        // 动画结束后移除
+        setTimeout(() => mask.remove(), 950);
+      });
+    });
+  }
   applyTheme(getPreferredTheme(), false);
   if(themeBtn){
-    themeBtn.addEventListener('click', () => {
+    themeBtn.addEventListener('click', (e) => {
       const cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-      applyTheme(cur === 'light' ? 'dark' : 'light', true);
+      const next = cur === 'light' ? 'dark' : 'light';
+      const rect = themeBtn.getBoundingClientRect();
+      // 减少动画偏好
+      if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+        applyTheme(next, true);
+        return;
+      }
+      applyThemeWithMask(next, rect.left + rect.width/2, rect.top + rect.height/2);
     });
   }
   // 系统主题变化时跟随（仅在用户未手动设置过）
@@ -2101,8 +2180,45 @@ h1,h2,h3,h4,h5,h6{
       });
     }, {threshold:0.3});
     document.querySelectorAll('.tl-item').forEach(el => tlItemObserver.observe(el));
+
+    // Footer entrance
+    const footerObserver = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if(en.isIntersecting){
+          en.target.classList.add('in-view');
+          footerObserver.unobserve(en.target);
+        }
+      });
+    }, {threshold:0.15});
+    document.querySelectorAll('footer.footer').forEach(el => footerObserver.observe(el));
   } else {
-    document.querySelectorAll('.section, .tl-item').forEach(s => s.classList.add('in-view'));
+    document.querySelectorAll('.section, .tl-item, footer.footer').forEach(s => s.classList.add('in-view'));
+  }
+
+  // ========== Footer slogan char split ==========
+  const slogan = document.querySelector('.footer-slogan');
+  if(slogan && !slogan.dataset.split){
+    slogan.dataset.split = '1';
+    const text = slogan.textContent;
+    slogan.textContent = '';
+    let charIdx = 0;
+    for(const ch of text){
+      if(/\s/.test(ch)){
+        const space = document.createElement('span');
+        space.className = 'char char-space';
+        space.innerHTML = '&nbsp;';
+        space.style.transitionDelay = (charIdx * 0.04) + 's';
+        slogan.appendChild(space);
+        charIdx++;
+      } else {
+        const span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = ch;
+        span.style.transitionDelay = (charIdx * 0.05) + 's';
+        slogan.appendChild(span);
+        charIdx++;
+      }
+    }
   }
 
   // ========== Banner cursor-following gradient ==========
