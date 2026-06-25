@@ -888,19 +888,39 @@ h1,h2,h3,h4,h5,h6{
     .nav-inner{padding:0 var(--gutter);height:64px}
     .nav-menu{
       position:fixed;top:64px;left:0;right:0;
-      background:rgba(247,248,250,.98);backdrop-filter:blur(24px);
+      background:rgba(11,13,20,.97);
+      backdrop-filter:saturate(180%) blur(24px);
+      -webkit-backdrop-filter:saturate(180%) blur(24px);
       flex-direction:column;align-items:stretch;
       padding:20px var(--gutter);gap:2px;
       transform:translateY(-110%);transition:transform .4s var(--ease);
-      border-bottom:1px solid var(--c-line-2);
+      border-bottom:1px solid var(--c-line);
       max-height:calc(100vh - 64px);overflow-y:auto;
+      box-shadow:0 20px 40px rgba(0,0,0,.6);
     }
     .nav-menu.open{transform:translateY(0)}
-    .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm)}
+    .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm);font-size:14px}
     .nav-toggle{display:flex}
     .banner-inner{grid-template-columns:1fr;gap:60px}
     .banner-bgword{font-size:140px;right:-5%}
-    .banner-visual{height:340px;order:-1}
+    .banner-visual{height:300px;order:-1;overflow:hidden}
+    /* Simplify geom visual on mobile — hide stacked cards, show simplified mark */
+    .geom-frame{display:none}
+    .banner-visual::before{
+      content:"";position:absolute;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      width:160px;height:160px;border-radius:50%;
+      background:radial-gradient(circle at 30% 30%,#2A2F40,var(--c-surface) 70%);
+      box-shadow:0 0 60px rgba(91,149,240,.25),inset 0 0 0 1px var(--c-line-strong);
+    }
+    .banner-visual::after{
+      content:"";position:absolute;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      width:160px;height:160px;border-radius:50%;
+      border:1px dashed rgba(91,149,240,.3);
+      animation:spin 30s linear infinite;
+    }
+    @keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
     .banner-meta{gap:30px}
     .banner-meta-item strong{font-size:22px}
     .quick-grid{grid-template-columns:repeat(2,1fr)}
