@@ -407,6 +407,40 @@ h1,h2,h3,h4,h5,h6{
     50%{transform:scale(1.12);opacity:1}
   }
   @keyframes orbSpin{to{transform:rotate(360deg)}}
+  /* Light theme orb 调整：更深更饱和的蓝紫 */
+  [data-theme="light"] .banner-orb-core{
+    background:
+      radial-gradient(circle at 32% 30%, rgba(37,99,235,0.55), rgba(37,99,235,0.18) 30%, transparent 65%),
+      radial-gradient(circle at 70% 70%, rgba(124,58,237,0.40), transparent 55%),
+      radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18), transparent 40%);
+  }
+  [data-theme="light"] .banner-orb-ring{ border-color:rgba(37,99,235,0.22); }
+  [data-theme="light"] .banner-orb-ring.r2{ border-color:rgba(124,58,237,0.16); }
+  [data-theme="light"] .banner-orb-ring.r3{ border-color:rgba(37,99,235,0.14); }
+
+  /* ========== Side scroll indicator (右侧小圆点轨迹) ========== */
+  .side-scroll{
+    position:fixed;right:20px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:14px;z-index:90;
+    pointer-events:auto;
+  }
+  .side-scroll-dot{
+    width:7px;height:7px;border-radius:50%;background:var(--c-line-strong);
+    transition:all .35s var(--ease);cursor:pointer;
+    position:relative;display:block;
+  }
+  .side-scroll-dot::before{
+    content:"";position:absolute;inset:-5px;border-radius:50%;
+    border:1px solid transparent;transition:.35s var(--ease);
+  }
+  .side-scroll-dot:hover{background:var(--c-accent);transform:scale(1.25)}
+  .side-scroll-dot.active{
+    background:var(--c-accent);
+    transform:scale(1.4);
+    box-shadow:0 0 10px var(--c-accent-glow);
+  }
+  .side-scroll-dot.active::before{border-color:var(--c-accent)}
+  @media(max-width:860px){.side-scroll{display:none}}
 
   /* ========== Card sweep (hover 极光扫过) ========== */
   .card-sweep{
@@ -472,8 +506,19 @@ h1,h2,h3,h4,h5,h6{
     font-variation-settings:"opsz" 144,"SOFT" 50;
   }
   .banner-text h1 .accent{
-    font-style:italic;color:var(--c-accent);font-weight:300;
+    font-style:italic;font-weight:300;
     font-variation-settings:"opsz" 144,"SOFT" 100;
+    background:linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-2) 50%, var(--c-accent-3) 100%);
+    background-size:200% 200%;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    color:transparent;
+    animation:accentFlow 6s ease-in-out infinite;
+  }
+  @keyframes accentFlow{
+    0%,100%{background-position:0% 50%}
+    50%{background-position:100% 50%}
   }
   .banner-text h1 .small{
     display:block;font-size:.5em;color:var(--c-muted);font-style:italic;
@@ -523,11 +568,30 @@ h1,h2,h3,h4,h5,h6{
     background:var(--c-surface-2);border:1px solid var(--c-line);
     box-shadow:0 20px 50px -20px rgba(0,0,0,.6),0 0 0 1px rgba(91,149,240,.06);
     padding:18px;
+    transition:transform .35s cubic-bezier(.16,1,.3,1);
+    will-change:transform;
   }
   .geom-card::before{
     content:"";position:absolute;inset:0;border-radius:var(--radius);
     background:linear-gradient(135deg,var(--highlight),transparent 50%);
     pointer-events:none;
+  }
+  /* 流水线数据流光 */
+  .geom-card::after{
+    content:"";position:absolute;inset:0;border-radius:var(--radius);
+    background:linear-gradient(90deg, transparent 0%, rgba(91,149,240,0) 30%, rgba(122,162,247,0.45) 50%, rgba(91,149,240,0) 70%, transparent 100%);
+    background-size:300% 100%;
+    background-repeat:no-repeat;
+    pointer-events:none;
+    mix-blend-mode:screen;
+    animation:dataFlow 3.5s linear infinite;
+    z-index:2;
+  }
+  .geom-card-2::after{animation-duration:4.2s;animation-delay:-1.2s}
+  .geom-card-3::after{animation-duration:3s;animation-delay:-2.5s}
+  @keyframes dataFlow{
+    0%{background-position:200% 0}
+    100%{background-position:-100% 0}
   }
   .geom-card-1{
     top:0;right:0;width:240px;height:120px;
@@ -1561,6 +1625,17 @@ h1,h2,h3,h4,h5,h6{
 </head>
 <body>
 
+<nav class="side-scroll" id="sideScroll" aria-label="Sections">
+  <a href="#home" class="side-scroll-dot active" data-target="home"></a>
+  <a href="#about" class="side-scroll-dot" data-target="about"></a>
+  <a href="#service" class="side-scroll-dot" data-target="service"></a>
+  <a href="#career" class="side-scroll-dot" data-target="career"></a>
+  <a href="#qualification" class="side-scroll-dot" data-target="qualification"></a>
+  <a href="#blog" class="side-scroll-dot" data-target="blog"></a>
+  <a href="#resources" class="side-scroll-dot" data-target="resources"></a>
+  <a href="#contact" class="side-scroll-dot" data-target="contact"></a>
+</nav>
+
 <div class="preloader" id="preloader">
   <div class="preloader-inner">
     <div class="preloader-mark">
@@ -2304,6 +2379,92 @@ h1,h2,h3,h4,h5,h6{
       }
     });
   }catch(e){}
+
+  // ========== Side scroll indicator (圆点轨迹同步 section) ==========
+  (function(){
+    const sideScroll = document.getElementById('sideScroll');
+    if(!sideScroll) return;
+    const dots = sideScroll.querySelectorAll('.side-scroll-dot');
+    const sections = Array.from(dots).map(d => document.getElementById(d.dataset.target)).filter(Boolean);
+    if(!sections.length) return;
+    let activeIdx = 0;
+    function setActive(i){
+      if(i === activeIdx) return;
+      dots[activeIdx]?.classList.remove('active');
+      dots[i]?.classList.add('active');
+      activeIdx = i;
+    }
+    // IntersectionObserver 同步
+    const observer = new IntersectionObserver((entries) => {
+      // 选最靠近视口顶部 30% 的 section
+      let bestIdx = activeIdx;
+      let bestScore = -Infinity;
+      entries.forEach(e => {
+        if(!e.isIntersecting) return;
+        const idx = sections.indexOf(e.target);
+        const r = e.boundingClientRect;
+        // 视口顶部越接近 30% 越好
+        const score = -Math.abs((r.top) - window.innerHeight * 0.3);
+        if(score > bestScore){ bestScore = score; bestIdx = idx; }
+      });
+      if(bestIdx !== activeIdx) setActive(bestIdx);
+    }, {rootMargin: '-30% 0px -50% 0px', threshold: [0, 0.25, 0.5, 0.75]});
+    sections.forEach(s => observer.observe(s));
+    // 点击 dot 平滑滚动
+    dots.forEach((d, i) => {
+      d.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = sections[i];
+        if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+  })();
+
+  // ========== Geom-card 磁吸浮动 (鼠标跟随 + 浮动合成) ==========
+  (function(){
+    const geomCards = document.querySelectorAll('.geom-card');
+    const geomFrame = document.querySelector('.geom-frame');
+    if(!geomCards.length) return;
+    // 关闭 CSS animation,改用 JS 控制 transform
+    geomCards.forEach(c => {
+      c.style.animation = 'none';
+      c.style.transition = 'transform .35s cubic-bezier(.16,1,.3,1)';
+    });
+    let mx = 0, my = 0;
+    const startTime = performance.now();
+    function tick(now){
+      const t = (now - startTime) / 1000;
+      geomCards.forEach((c, i) => {
+        const dur = [6, 7, 8][i] || 6;
+        const phase = (t / dur) + i * 0.3;
+        const floatY = Math.sin(phase * Math.PI * 2) * -8;
+        const ox = mx * (10 + i * 3);
+        const oy = my * (7 + i * 2);
+        c.style.transform = `translate(${ox}px, ${floatY + oy}px)`;
+      });
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+    if(geomFrame && !window.matchMedia('(pointer:coarse)').matches){
+      geomFrame.addEventListener('mousemove', (e) => {
+        const r = geomFrame.getBoundingClientRect();
+        const tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
+        const ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
+        mx += (tx - mx) * 0.1;
+        my += (ty - my) * 0.1;
+      }, {passive:true});
+      geomFrame.addEventListener('mouseleave', () => {
+        function reset(){
+          mx += (0 - mx) * 0.08;
+          my += (0 - my) * 0.08;
+          if(Math.abs(mx) > 0.005 || Math.abs(my) > 0.005){
+            requestAnimationFrame(reset);
+          } else { mx = 0; my = 0; }
+        }
+        reset();
+      });
+    }
+  })();
 
   // ========== Custom Cursor (desktop only) ==========
   const dot = document.getElementById('cursorDot');
