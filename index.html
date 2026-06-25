@@ -1279,6 +1279,105 @@ h1,h2,h3,h4,h5,h6{
     .tl-item .tl-pulse{left:-36px;width:11px;height:11px}
   }
 
+  /* ========== Progress bar shimmer ========== */
+  .progress{
+    position:fixed;top:0;left:0;z-index:200;
+    height:2px;width:0;
+    background:linear-gradient(90deg,var(--c-accent),var(--c-accent-2),var(--c-accent));
+    background-size:200% 100%;
+    animation:progressShift 3s linear infinite;
+    box-shadow:0 0 8px var(--c-accent-glow);
+  }
+  .progress::after{
+    content:"";position:absolute;top:0;left:0;height:100%;width:40px;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);
+    animation:progressShimmer 2.2s linear infinite;
+    box-shadow:0 0 12px var(--c-accent-glow);
+  }
+  @keyframes progressShift{
+    0%{background-position:0% 50%}
+    100%{background-position:200% 50%}
+  }
+  @keyframes progressShimmer{
+    0%{left:0;opacity:0}
+    20%{opacity:1}
+    80%{opacity:1}
+    100%{left:calc(100% - 40px);opacity:0}
+  }
+
+  /* ========== Quick card number ========== */
+  .quick-num{
+    position:absolute;top:18px;right:22px;
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;
+    color:var(--c-muted);font-weight:500;
+    font-feature-settings:"tnum";
+    transition:transform .45s var(--ease),color .3s var(--ease);
+  }
+  .quick-card:hover .quick-num{
+    color:var(--c-accent);
+    transform:translateX(-3px) rotate(-8deg);
+  }
+  .quick-card svg{position:relative;z-index:1}
+
+  /* ========== Theme toggle active feedback ========== */
+  .theme-toggle:active{
+    transform:scale(.88) !important;
+    transition:transform .12s var(--ease);
+  }
+
+  /* ========== Preloader (page load entrance) ========== */
+  .preloader{
+    position:fixed;inset:0;z-index:99999;
+    background:var(--c-bg);
+    display:flex;align-items:center;justify-content:center;
+    clip-path:circle(150% at 50% 50%);
+    transition:clip-path 1.1s var(--ease) .1s;
+  }
+  .preloader.hidden{
+    clip-path:circle(0% at 50% 50%);
+    pointer-events:none;
+  }
+  .preloader-inner{
+    text-align:center;color:var(--c-title);
+    font-family:var(--font-mono);
+    display:flex;flex-direction:column;align-items:center;gap:24px;
+  }
+  .preloader-mark{
+    width:48px;height:48px;border-radius:10px;
+    background:var(--c-ink);
+    display:flex;align-items:center;justify-content:center;
+    position:relative;overflow:hidden;
+    animation:preloaderSpin 1.6s var(--ease) infinite;
+  }
+  .preloader-mark::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(135deg,transparent 40%,var(--c-accent-glow) 100%);
+  }
+  .preloader-mark svg{
+    width:24px;height:24px;color:var(--c-bg);
+    position:relative;z-index:1;
+    animation:preloaderSpinReverse 1.6s linear infinite;
+  }
+  @keyframes preloaderSpin{to{transform:rotate(360deg)}}
+  @keyframes preloaderSpinReverse{to{transform:rotate(-360deg)}}
+  .preloader-text{
+    font-size:11px;letter-spacing:.32em;font-weight:500;
+    color:var(--c-text-soft);
+  }
+  .preloader-bar{
+    width:180px;height:1px;background:var(--c-line-2);
+    border-radius:1px;overflow:hidden;position:relative;
+  }
+  .preloader-bar-fill{
+    position:absolute;left:0;top:0;height:100%;width:0;
+    background:linear-gradient(90deg,var(--c-accent),var(--c-accent-2));
+    transition:width .15s linear;
+  }
+  .preloader-pct{
+    font-size:10px;letter-spacing:.22em;color:var(--c-muted);
+    font-feature-settings:"tnum";
+  }
+
   /* ========== Banner char hover: highlight + dim others ========== */
   .banner-text h1:hover .char{
     color:var(--c-muted);
@@ -1327,6 +1426,21 @@ h1,h2,h3,h4,h5,h6{
 </style>
 </head>
 <body>
+
+<div class="preloader" id="preloader">
+  <div class="preloader-inner">
+    <div class="preloader-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+        <path d="M2 17l10 5 10-5"/>
+        <path d="M2 12l10 5 10-5"/>
+      </svg>
+    </div>
+    <div class="preloader-text">彭乙东 · AI TRAINER</div>
+    <div class="preloader-bar"><div class="preloader-bar-fill" id="preloaderFill"></div></div>
+    <div class="preloader-pct" id="preloaderPct">0%</div>
+  </div>
+</div>
 
 <div class="progress" id="progress"></div>
 <div class="cursor-dot" id="cursorDot"></div>
@@ -1445,26 +1559,31 @@ h1,h2,h3,h4,h5,h6{
   <div class="quick-section">
     <div class="quick-grid reveal">
       <div class="quick-card" data-goto="#career">
+        <span class="quick-num">01</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span>个人履历</span>
         <i class="arrow">→ CAREER</i>
       </div>
       <div class="quick-card" data-goto="#qualification">
+        <span class="quick-num">02</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>专业技能</span>
         <i class="arrow">→ SKILLS</i>
       </div>
       <div class="quick-card" data-goto="#service">
+        <span class="quick-num">03</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span>实战案例</span>
         <i class="arrow">→ CASES</i>
       </div>
       <div class="quick-card" data-goto="#resources">
+        <span class="quick-num">04</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
         <span>资源干货</span>
         <i class="arrow">→ RESOURCES</i>
       </div>
       <div class="quick-card" data-goto="#contact">
+        <span class="quick-num">05</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         <span>商务合作</span>
         <i class="arrow">→ CONTACT</i>
@@ -1849,6 +1968,48 @@ h1,h2,h3,h4,h5,h6{
     <span>—  FIN.  —</span>
   </div>
 </footer>
+
+<script>
+  // ========== Preloader (load simulation + circular reveal) ==========
+  (function(){
+    const preloader = document.getElementById('preloader');
+    const fill = document.getElementById('preloaderFill');
+    const pct = document.getElementById('preloaderPct');
+    if(!preloader || !fill) return;
+
+    // 支持减少动画偏好
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reducedMotion){
+      preloader.classList.add('hidden');
+      setTimeout(() => preloader.remove(), 1300);
+      return;
+    }
+
+    // 模拟资源加载进度（确定性，时长 ~1.4s）
+    let progress = 0;
+    const targetDuration = 1400;
+    const startTime = performance.now();
+    function tick(now){
+      const t = (now - startTime) / targetDuration;
+      // ease-out cubic
+      const eased = 1 - Math.pow(1 - Math.min(1, t), 3);
+      progress = Math.floor(eased * 100);
+      fill.style.width = progress + '%';
+      pct.textContent = progress + '%';
+      if(t < 1){
+        requestAnimationFrame(tick);
+      } else {
+        // 进度 100% 后稍微停留再 reveal
+        setTimeout(() => {
+          preloader.classList.add('hidden');
+          // 完全隐藏后移除 DOM（节省性能）
+          setTimeout(() => preloader.remove(), 1300);
+        }, 200);
+      }
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
 
 <script>
   // ========== Mobile nav ==========
