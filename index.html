@@ -408,6 +408,8 @@ h1,h2,h3,h4,h5,h6{
     /* off-screen section 跳过渲染（paint/layout），近到视口才渲染 */
     content-visibility:auto;
     contain-intrinsic-size:1px 800px;
+    /* hash 跳到 section 时给 fixed nav 留出空间（nav 64px + 16px 留白） */
+    scroll-margin-top:80px;
   }
   /* banner (#home) 永远渲染，避免首屏抖动 */
   .section.banner{content-visibility:visible;contain-intrinsic-size:none}
@@ -598,6 +600,39 @@ h1,h2,h3,h4,h5,h6{
   @media(prefers-reduced-motion:reduce){
     .back-top{transition:opacity .2s;transform:none}
     .back-top:hover{transform:none}
+  }
+  /* 触屏设备屏蔽 hover 状态（real mobile 真实受益；DevTools emulation 默认报 hover:hover 这层不生效，但不影响桌面） */
+  @media(hover:none){
+    .service-card:hover{background:var(--c-surface)}
+    .service-card:hover::before{width:0}
+    .qual-card:hover{transform:none;box-shadow:none;border-color:var(--c-line)}
+    .qual-card:hover::after{opacity:0}
+    .card:hover{transform:none;box-shadow:none;border-color:var(--c-line)}
+    .card:hover::before{transform:translateX(-100%)}
+    .quick-card:hover{background:transparent}
+    .quick-card:hover::before{width:0}
+    .has-sweep:hover .card-sweep::before{transform:translateX(-100%)}
+    .about-tag:hover{border-color:var(--c-line);color:var(--c-text);background:transparent}
+    .about-visual:hover .about-photo{transform:none}
+    .side-scroll-dot:hover{background:transparent;transform:none}
+    .theme-toggle:hover{background:transparent}
+    .scroll-hint:hover .mouse{border-color:var(--c-line-strong)}
+    .btn-primary:hover,.btn-primary:hover svg{transform:none;box-shadow:none}
+    .btn-accent:hover,.btn-accent:hover svg{transform:none;box-shadow:none}
+    .btn-ghost:hover{background:transparent;color:var(--c-text)}
+    .btn-link:hover svg{transform:none}
+    .quick-card:hover .arrow{color:var(--c-text)}
+    .quick-card:hover svg{transform:none}
+    .quick-card:hover .quick-num{color:var(--c-muted)}
+    .card-meta a:hover svg{transform:none}
+    .banner-text h1:hover .char,.banner-text h1 .char:hover{color:inherit;text-shadow:none}
+    .service-card:hover .service-icon{background:var(--c-accent-soft)}
+    .service-card:hover .service-icon svg{color:var(--c-accent)}
+    .qual-card:hover .qual-icon{transform:none}
+    .nav-menu a:hover{color:var(--c-text)}
+    .nav-menu a:hover::after{transform:scaleX(0)}
+    .art-modal-close:hover{transform:none;background:transparent;color:var(--c-text);border-color:var(--c-line)}
+    .art-modal-body .prompt-card .copy-btn:hover{background:transparent;color:var(--c-text);border-color:var(--c-line)}
   }
 
   /* ========== Card sweep (hover 极光扫过) ========== */
