@@ -2,7 +2,12 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="彭乙东" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="format-detection" content="telephone=no" />
 <title>彭乙东 · AI 训练师个人品牌站 | 跨界复合型 AI Trainer</title>
 <meta name="description" content="彭乙东 · 跨界复合型 AI 训练师。投资学 × 电商运营 × 自媒体 × AI 训练，以多元阅历赋能智能数据训练、模型微调与行业解决方案。" />
 <meta name="keywords" content="彭乙东,AI 训练师,AI Trainer,数据标注,模型微调,RLHF,智能数据,Aidon,跨学科 AI" />
@@ -281,6 +286,10 @@
     .circuit-dot{animation:none!important}
   }
   ::selection{background:var(--c-accent);color:#fff}
+  /* iOS Safari 点击高亮（默认灰色）关闭 + 关闭自动文字大小调整 + 关闭长按弹菜单 */
+  *{-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  /* iOS Safari 旋转或切换后强制不放大字号 */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 
 h1,h2,h3,h4,h5,h6{
     font-family:var(--font-display);
@@ -580,8 +589,11 @@ h1,h2,h3,h4,h5,h6{
     .back-top svg{width:16px;height:16px}
   }
   @media(max-width:480px){
-    /* 移动端给 nav 留位置：左下角避开手势区 */
-    .back-top{right:14px;bottom:14px;width:38px;height:38px}
+    /* 移动端给 nav 留位置：左下角避开手势区 + iPhone X+ home indicator */
+    .back-top{
+      right:14px;width:38px;height:38px;
+      bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    }
   }
   @media(prefers-reduced-motion:reduce){
     .back-top{transition:opacity .2s;transform:none}
@@ -1239,6 +1251,7 @@ h1,h2,h3,h4,h5,h6{
   .footer{
     border-top:1px solid var(--c-line);
     padding:80px var(--gutter) 50px;
+    padding-bottom:calc(50px + env(safe-area-inset-bottom, 0px));
     text-align:center;background:var(--c-surface);position:relative;
   }
   .footer::before{
@@ -1371,6 +1384,12 @@ h1,h2,h3,h4,h5,h6{
     .banner-meta{flex-direction:column;gap:18px}
     .banner-meta-item strong{font-size:26px}
     .banner-visual{height:260px}
+    /* nav-menu 在 520px 以下也要适配 safe area */
+    .nav-menu{
+      top:64px;max-height:calc(100dvh - 64px);
+      padding-left:max(var(--gutter),env(safe-area-inset-left));
+      padding-right:max(var(--gutter),env(safe-area-inset-right));
+    }
   }
 
   /* ========== Theme Toggle Button ========== */
@@ -1783,11 +1802,13 @@ h1,h2,h3,h4,h5,h6{
   }
   .art-modal-bar .crumb .crumb-dot{width:4px;height:4px;border-radius:50%;background:var(--c-accent)}
   .art-modal-close{
-    width:36px;height:36px;border-radius:50%;
+    width:44px;height:44px;border-radius:50%;
     background:var(--c-line-2);border:1px solid var(--c-line);
     color:var(--c-text-soft);cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     transition:transform .3s var(--ease),background .3s var(--ease),color .3s var(--ease);
+    /* 留出视觉间距但保持 44 触点 */
+    margin-left:auto;flex-shrink:0;
   }
   .art-modal-close:hover{transform:rotate(90deg);background:var(--c-accent);color:#fff;border-color:var(--c-accent)}
   .art-modal-close svg{width:14px;height:14px}
@@ -1929,9 +1950,17 @@ h1,h2,h3,h4,h5,h6{
   body.no-scroll, body.modal-open{overflow:hidden}
   @media(max-width:768px){
     .art-modal{padding:0}
-    .art-modal-card{border-radius:0;min-height:100vh;max-width:100%}
-    .art-modal-bar{padding:14px 18px}
-    .art-modal-body{padding:16px 22px 64px;font-size:14px}
+    /* iOS Safari 100vh bug：URL bar 隐藏/显示时 100vh 跳变。
+       100dvh = dynamic viewport height，浏览器栏折叠后自动调整。 */
+    .art-modal-card{border-radius:0;min-height:100vh;min-height:100dvh;max-width:100%}
+    .art-modal-bar{padding:14px 18px;padding-top:max(14px,env(safe-area-inset-top))}
+    .art-modal-body{
+      padding:16px 22px;font-size:14px;
+      /* 给 iPhone X+ 底部 home indicator 留空间 */
+      padding-bottom:calc(64px + env(safe-area-inset-bottom, 0px));
+    }
+    /* 关闭按钮在 mobile 上也要避开 safe area */
+    .art-modal-close{width:40px;height:40px}
   }
 
   /* ========== Theme switch circular mask transition ========== */
