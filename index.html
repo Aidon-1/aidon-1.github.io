@@ -55,7 +55,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@200;300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@200;300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@200;300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap"></noscript>
 <style>
   /* ========== Reset & Tokens ========== */
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -113,6 +114,7 @@
     --font-display:'Fraunces','Noto Serif SC','Songti SC','STSong',Georgia,serif;
     --font-display-2:'Cormorant Garamond','Noto Serif SC','Songti SC',serif;
     --font-mono:'JetBrains Mono','SF Mono',Menlo,Consolas,'Noto Sans SC',monospace;
+    font-feature-settings:"tnum";
   }
   /* —— Light Theme Overrides —— */
   [data-theme="light"]{
@@ -174,7 +176,6 @@
     -webkit-font-smoothing:antialiased;
     -moz-osx-font-smoothing:grayscale;
     text-rendering:optimizeLegibility;
-    font-feature-settings:"kern","liga","calt","ss01";
     overflow-x:hidden;
     position:relative;
     /* 多层高级背景:noise 颗粒 + dot grid + 极光 */
@@ -285,7 +286,6 @@ h1,h2,h3,h4,h5,h6{
     font-family:var(--font-display);
     color:var(--c-title);font-weight:400;line-height:1.2;
     letter-spacing:-.018em;
-    font-feature-settings:"kern","liga","calt";
     font-optical-sizing:auto;
   }
   a{color:inherit;text-decoration:none;transition:color .3s var(--ease)}
@@ -329,7 +329,7 @@ h1,h2,h3,h4,h5,h6{
     display:flex;align-items:center;gap:12px;
     font-family:var(--font-mono);font-weight:500;font-size:14px;
     color:var(--c-title);letter-spacing:.08em;
-    font-feature-settings:"tnum";
+
   }
 .brand-mark{
     width:30px;height:30px;border-radius:6px;
@@ -344,7 +344,7 @@ h1,h2,h3,h4,h5,h6{
   .brand-mark svg{width:14px;height:14px;color:var(--c-bg);position:relative;z-index:1}
   .brand-text{display:flex;flex-direction:column;line-height:1.15;gap:3px}
   .brand-text strong{font-weight:600;letter-spacing:.14em;font-size:12px;color:var(--c-title)}
-  .brand-text small{font-size:9.5px;color:var(--c-muted);letter-spacing:.22em;font-weight:400;font-feature-settings:"tnum"}
+  .brand-text small{font-size:9.5px;color:var(--c-muted);letter-spacing:.22em;font-weight:400}
 
   .nav-menu{display:flex;align-items:center;gap:2px;list-style:none}
   .nav-menu a{
@@ -368,7 +368,7 @@ h1,h2,h3,h4,h5,h6{
     background:var(--c-line-2);border:1px solid var(--c-line);
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:var(--c-text-soft);font-weight:500;
-    font-feature-settings:"tnum";
+
   }
   .status-dot{
     width:6px;height:6px;border-radius:50%;
@@ -396,13 +396,18 @@ h1,h2,h3,h4,h5,h6{
   .section{
     padding:140px var(--gutter);
     max-width:var(--maxw);margin:0 auto;position:relative;
+    /* off-screen section 跳过渲染（paint/layout），近到视口才渲染 */
+    content-visibility:auto;
+    contain-intrinsic-size:1px 800px;
   }
+  /* banner (#home) 永远渲染，避免首屏抖动 */
+  .section.banner{content-visibility:visible;contain-intrinsic-size:none}
   .section-head{margin-bottom:70px;position:relative}
   .section-num{
     font-family:var(--font-mono);
     font-size:11px;letter-spacing:.28em;color:var(--c-accent);font-weight:500;
     margin-bottom:18px;display:flex;align-items:center;gap:14px;
-    font-feature-settings:"tnum","ss01";
+
   }
   .section-num::before{
     content:"";width:28px;height:1px;background:var(--c-accent);
@@ -601,25 +606,21 @@ h1,h2,h3,h4,h5,h6{
   .footer-circuit{
     position:absolute;inset:0;pointer-events:none;opacity:.85;
     background-image:
-      /* 节点 */
+      /* 节点（6 个，去掉 2 个次要） */
       radial-gradient(circle at 20px 20px, rgba(122,162,247,0.85) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 80px 80px, rgba(122,162,247,0.65) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 200px 50px, rgba(122,162,247,0.55) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 320px 120px, rgba(122,162,247,0.75) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 500px 30px, rgba(122,162,247,0.65) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 700px 90px, rgba(122,162,247,0.55) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 900px 50px, rgba(122,162,247,0.65) 1.8px, transparent 2.5px),
-      radial-gradient(circle at 1100px 110px, rgba(122,162,247,0.50) 1.8px, transparent 2.5px),
-      /* 横向电路线 */
+      radial-gradient(circle at 200px 50px, rgba(122,162,247,0.65) 1.8px, transparent 2.5px),
+      radial-gradient(circle at 500px 30px, rgba(122,162,247,0.75) 1.8px, transparent 2.5px),
+      radial-gradient(circle at 700px 90px, rgba(122,162,247,0.60) 1.8px, transparent 2.5px),
+      radial-gradient(circle at 900px 50px, rgba(122,162,247,0.70) 1.8px, transparent 2.5px),
+      radial-gradient(circle at 1100px 110px, rgba(122,162,247,0.55) 1.8px, transparent 2.5px),
+      /* 横向电路线（6 条） */
       linear-gradient(90deg, transparent 19px, rgba(122,162,247,0.35) 20px, transparent 21px),
-      linear-gradient(90deg, transparent 79px, rgba(122,162,247,0.35) 80px, transparent 81px),
       linear-gradient(90deg, transparent 199px, rgba(122,162,247,0.30) 200px, transparent 201px),
-      linear-gradient(90deg, transparent 319px, rgba(122,162,247,0.35) 320px, transparent 321px),
       linear-gradient(90deg, transparent 499px, rgba(122,162,247,0.35) 500px, transparent 501px),
       linear-gradient(90deg, transparent 699px, rgba(122,162,247,0.30) 700px, transparent 701px),
       linear-gradient(90deg, transparent 899px, rgba(122,162,247,0.35) 900px, transparent 901px),
       linear-gradient(90deg, transparent 1099px, rgba(122,162,247,0.30) 1100px, transparent 1101px);
-    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%, 1200px 100%;
     mask-image:linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
     -webkit-mask-image:linear-gradient(to bottom, transparent 0%, #000 30%, #000 70%, transparent 100%);
   }
@@ -631,7 +632,7 @@ h1,h2,h3,h4,h5,h6{
     display:flex;align-items:center;gap:14px;
     font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;
     color:var(--c-accent);font-weight:500;margin-bottom:32px;
-    font-feature-settings:"tnum";
+
   }
   .banner-eyebrow .num{
     font-family:var(--font-display);font-style:italic;font-size:22px;
@@ -679,7 +680,7 @@ h1,h2,h3,h4,h5,h6{
   .banner-meta-item{
     font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;
     color:var(--c-muted);
-    font-feature-settings:"tnum";
+
   }
   .banner-meta-item strong{
     display:block;font-family:var(--font-display);
@@ -756,7 +757,7 @@ h1,h2,h3,h4,h5,h6{
   .geom-card .tag{
     font-family:var(--font-mono);font-size:9.5px;letter-spacing:.22em;
     color:var(--c-muted);margin-bottom:10px;
-    font-feature-settings:"tnum";
+
   }
   .geom-card .bar{
     height:4px;border-radius:2px;background:var(--c-line-2);
@@ -839,7 +840,7 @@ h1,h2,h3,h4,h5,h6{
   .quick-card .arrow{
     display:block;margin-top:10px;font-family:var(--font-mono);font-size:10px;
     color:var(--c-muted);letter-spacing:.22em;
-    font-feature-settings:"tnum";
+
     transition:color .3s var(--ease);
   }
   .quick-card:hover .arrow{color:var(--c-accent)}
@@ -887,7 +888,7 @@ h1,h2,h3,h4,h5,h6{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:rgba(255,255,255,.85);display:flex;justify-content:space-between;
     text-shadow:0 1px 6px rgba(0,0,0,.6);
-    font-feature-settings:"tnum";
+
   }
   .about-name-tag{
     position:absolute;top:24px;right:24px;z-index:4;
@@ -936,7 +937,7 @@ h1,h2,h3,h4,h5,h6{
   .service-num{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:var(--c-muted);margin-bottom:24px;
-    font-feature-settings:"tnum";
+
   }
   .service-icon{
     width:46px;height:46px;border-radius:10px;
@@ -973,7 +974,7 @@ h1,h2,h3,h4,h5,h6{
   .achieve-head h3 em{font-style:italic;color:var(--c-accent);font-weight:300;font-variation-settings:"opsz" 96,"SOFT" 80}
   .achieve-head .label{
     font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--c-muted);
-    font-feature-settings:"tnum";
+
   }
   .achieve-list{
     display:grid;grid-template-columns:repeat(2,1fr);gap:16px 48px;
@@ -1015,7 +1016,7 @@ h1,h2,h3,h4,h5,h6{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.25em;
     color:#7BA8F0;margin-bottom:14px;font-weight:500;
     display:flex;align-items:center;gap:10px;
-    font-feature-settings:"tnum";
+
   }
   .plan-label .pip{
     width:5px;height:5px;border-radius:50%;background:#7BA8F0;
@@ -1049,7 +1050,7 @@ h1,h2,h3,h4,h5,h6{
     display:inline-flex;align-items:center;gap:10px;
     font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;
     color:var(--c-accent);font-weight:500;margin-bottom:10px;
-    font-feature-settings:"tnum";
+
   }
   .tl-period .bar{flex:1;height:1px;background:var(--c-line);max-width:60px}
   .tl-title{
@@ -1075,7 +1076,7 @@ h1,h2,h3,h4,h5,h6{
   .qual-num{
     font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;
     color:var(--c-muted);margin-bottom:24px;display:flex;justify-content:space-between;
-    font-feature-settings:"tnum";
+
   }
   .qual-icon{
     width:50px;height:50px;border-radius:12px;
@@ -1089,7 +1090,7 @@ h1,h2,h3,h4,h5,h6{
   .qual-sub{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:var(--c-muted);margin-bottom:18px;
-    font-feature-settings:"tnum";
+
   }
   .qual-card p{font-size:14px;color:var(--c-text);line-height:1.95;font-weight:300;letter-spacing:.005em}
   .qual-card p strong{color:var(--c-title);font-weight:500}
@@ -1143,7 +1144,7 @@ h1,h2,h3,h4,h5,h6{
     display:flex;align-items:center;justify-content:space-between;
     padding-top:18px;border-top:1px solid var(--c-line-2);
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;color:var(--c-muted);
-    font-feature-settings:"tnum";
+
   }
   .card-meta a{
     color:var(--c-accent);font-weight:500;
@@ -1169,7 +1170,7 @@ h1,h2,h3,h4,h5,h6{
   .contact-card .h-sub{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:var(--c-muted);margin-bottom:30px;
-    font-feature-settings:"tnum";
+
   }
   .biz-list{display:flex;flex-direction:column;gap:16px;margin-bottom:36px}
   .biz-item{
@@ -1181,7 +1182,7 @@ h1,h2,h3,h4,h5,h6{
   .biz-item .idx{
     font-family:var(--font-mono);font-size:10.5px;color:var(--c-muted);letter-spacing:.18em;
     margin-top:3px;flex-shrink:0;
-    font-feature-settings:"tnum";
+
   }
   .biz-note{
     padding:22px 24px;background:var(--c-accent-soft);border-radius:var(--radius-sm);
@@ -1211,13 +1212,13 @@ h1,h2,h3,h4,h5,h6{
   .contact-info .h-sub{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     color:rgba(255,255,255,.55);margin-bottom:30px;position:relative;
-    font-feature-settings:"tnum";
+
   }
   .info-item{margin-bottom:24px;position:relative}
   .info-label{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
     text-transform:uppercase;color:#7BA8F0;margin-bottom:10px;display:flex;align-items:center;gap:10px;
-    font-feature-settings:"tnum";
+
   }
   .info-label::before{
     content:"";width:14px;height:1px;background:#7BA8F0;
@@ -1245,13 +1246,13 @@ h1,h2,h3,h4,h5,h6{
   .footer-sub{
     font-size:12.5px;color:var(--c-muted);letter-spacing:.22em;
     font-family:var(--font-mono);
-    font-feature-settings:"tnum";
+
   }
   .footer-meta{
     margin-top:50px;padding-top:30px;border-top:1px solid var(--c-line-2);
     font-family:var(--font-mono);font-size:11px;letter-spacing:.22em;color:var(--c-muted);
     display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;
-    font-feature-settings:"tnum";
+
   }
 
   /* ========== Reveal Animation ========== */
@@ -1486,7 +1487,7 @@ h1,h2,h3,h4,h5,h6{
     display:flex;flex-direction:column;align-items:center;gap:14px;
     font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;
     color:var(--c-muted);font-weight:500;z-index:3;
-    font-feature-settings:"tnum";
+
     opacity:0;animation:fadeIn 1.2s 1.6s var(--ease) forwards;
   }
   .scroll-hint .mouse{
@@ -1655,7 +1656,7 @@ h1,h2,h3,h4,h5,h6{
     position:absolute;top:18px;right:22px;
     font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;
     color:var(--c-muted);font-weight:500;
-    font-feature-settings:"tnum";
+
     transition:transform .45s var(--ease),color .3s var(--ease);
   }
   .quick-card:hover .quick-num{
@@ -1720,7 +1721,7 @@ h1,h2,h3,h4,h5,h6{
   }
   .preloader-pct{
     font-size:10px;letter-spacing:.22em;color:var(--c-muted);
-    font-feature-settings:"tnum";
+
   }
 
   /* ========== Banner char hover: highlight + dim others ========== */
@@ -2381,26 +2382,36 @@ h1,h2,h3,h4,h5,h6{
       return;
     }
 
-    // 模拟资源加载进度（确定性，时长 ~1.4s）
-    let progress = 0;
-    const targetDuration = 1400;
+    // 进度策略：最少 0.6s 显示 + window.load 触发完成，真实加载快就早结束
+    const minDuration = 600;
     const startTime = performance.now();
+    let loaded = false;
+    let minElapsed = false;
+    function finish(){
+      if(loaded && minElapsed){
+        preloader.classList.add('hidden');
+        setTimeout(() => preloader.remove(), 400);
+      }
+    }
+    window.addEventListener('load', () => {
+      loaded = true;
+      finish();
+    }, {once: true});
     function tick(now){
-      const t = (now - startTime) / targetDuration;
-      // ease-out cubic
-      const eased = 1 - Math.pow(1 - Math.min(1, t), 3);
-      progress = Math.floor(eased * 100);
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / minDuration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      // 未 load 之前最多 90%，load 后立即 100%
+      const progress = Math.floor(eased * (loaded ? 100 : 90));
       fill.style.width = progress + '%';
       pct.textContent = progress + '%';
       if(t < 1){
         requestAnimationFrame(tick);
-      } else {
-        // 进度 100% 后稍微停留再 reveal
-        setTimeout(() => {
-          preloader.classList.add('hidden');
-          // 完全隐藏后移除 DOM（节省性能）
-          setTimeout(() => preloader.remove(), 1300);
-        }, 200);
+      } else if(!minElapsed){
+        minElapsed = true;
+        fill.style.width = '100%';
+        pct.textContent = '100%';
+        finish();
       }
     }
     requestAnimationFrame(tick);
