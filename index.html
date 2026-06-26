@@ -1405,6 +1405,8 @@ h1,h2,h3,h4,h5,h6{
   }
   @media (max-width:520px){
     :root{--gutter:20px}
+    /* 触屏 hash scroll 用 instant（mobile smooth 动画被 DevTools emulation throttle 不到位 / 真机也容易卡帧） */
+    html{scroll-behavior:auto}
     .section{padding:70px var(--gutter)}
     .banner{padding:100px var(--gutter) 50px}
     .banner-text h1{font-size:36px;letter-spacing:-.025em}
@@ -2712,7 +2714,9 @@ h1,h2,h3,h4,h5,h6{
     card.addEventListener('click', e => {
       e.preventDefault();
       const target = card.getAttribute('data-goto');
-      document.querySelector(target)?.scrollIntoView({behavior:'smooth'});
+      // 触屏用 instant，桌面保留 smooth
+      const isMobile = window.matchMedia('(max-width: 520px)').matches;
+      document.querySelector(target)?.scrollIntoView({behavior: isMobile ? 'auto' : 'smooth'});
     });
   });
 
@@ -2735,7 +2739,8 @@ h1,h2,h3,h4,h5,h6{
   // ========== Back to top ==========
   backTop?.addEventListener('click', () => {
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({top:0, behavior: reduced ? 'auto' : 'smooth'});
+    const isMobile = window.matchMedia('(max-width: 520px)').matches;
+    window.scrollTo({top:0, behavior: (reduced || isMobile) ? 'auto' : 'smooth'});
   });
 
   // ========== Active nav highlight ==========
@@ -2875,7 +2880,8 @@ h1,h2,h3,h4,h5,h6{
       d.addEventListener('click', (e) => {
         e.preventDefault();
         const target = sections[i];
-        if(target) target.scrollIntoView({behavior:'smooth', block:'start'});
+        const isMobile = window.matchMedia('(max-width: 520px)').matches;
+        if(target) target.scrollIntoView({behavior: isMobile ? 'auto' : 'smooth', block:'start'});
       });
     });
   })();
