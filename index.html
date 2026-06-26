@@ -1751,17 +1751,19 @@ h1,h2,h3,h4,h5,h6{
     position:fixed;inset:0;z-index:99990;
     display:none;align-items:flex-start;justify-content:center;
     padding:48px 24px 24px;overflow-y:auto;
-    background:rgba(8,10,18,.78);
-    backdrop-filter:blur(14px) saturate(140%);
-    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    /* 不用 backdrop-filter（macOS + Edge 上会让光标渲染异常/消失），
+       改用纯色深背景 + card 加强 shadow 维持视觉层次 */
+    background:rgba(8,10,18,.92);
+    cursor:auto;
     opacity:0;transition:opacity .35s var(--ease);
   }
   .art-modal.is-open{display:flex;opacity:1}
-  .art-modal[data-theme="light"]{background:rgba(244,245,250,.82)}
+  .art-modal[data-theme="light"]{background:rgba(244,245,250,.94)}
   .art-modal-card{
     position:relative;width:100%;max-width:860px;
     background:var(--c-card);border:1px solid var(--c-line);
-    border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45);
+    border-radius:16px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.04),0 30px 90px rgba(0,0,0,.6),0 10px 30px rgba(0,0,0,.35);
     overflow:hidden;
     transform:translateY(24px) scale(.98);
     transition:transform .45s var(--ease);
