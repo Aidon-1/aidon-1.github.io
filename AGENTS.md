@@ -28,48 +28,83 @@
 
 ## ✅ 今日完成（2026-06-26）
 
-### P0.0 · Bug 修复（commit `884298a`）
-- **modal 打开鼠标消失**：自定义光标 `.cursor-dot/.cursor-ring` z-index:9999，被 modal 99990 遮罩盖住 → JS 在 `openArt/closeArt` 给 body 加 `.modal-open` class，CSS 隐藏 cursor
-- **移动端进不去**：preloader 永远等 `window.load`，mobile 4G 下 fonts 加载慢/被墙时 `window.load` 迟迟不触发 → 加 8s 强制兜底 timeout
+### 路线图重排（commit `6719e59`）
+- AGENTS.md 整体重写为 🔥P0 / 🚀P1 / 💎P2 / 🎨P3 四档（共 21 项）
+- 移除过时的"阶段二~五"框架，按 ROI 排序 + 工作量 + 风险标注
+
+### 阶段二 · 内容深化（commit `941663f`）
+- **S2.1 Blog 9 篇真实长文** ✅ — 每篇 800-1500 字，含 h3/ul/table/KPI/code/星标/list/end-mark，弹窗 modal 全屏阅读
+  - 01 转行实录（8 MIN）— 案例复盘型
+  - 02 入行指南（12 MIN）— SEO 流量入口
+  - 03 思维干货（7 MIN）— 投资学迁移
+  - 04 运营心得（9 MIN）— 商业场景赋能
+  - 05 成长随笔（6 MIN）— 公考结构化思维
+  - 06 生活感悟（5 MIN）— 篮球裁判原则
+  - 07 行业观察（11 MIN）— 含 5 大趋势表
+  - 08 项目复盘（14 MIN · 含流程图）— 4 周 1200 条数据 + KPI 表 + 5 踩坑
+  - 09 思维框架（9 MIN · 含表格）— 投资学三件套
+- **S2.2 Resources 6 篇真实长文** ✅ — 同样深度，12 个可一键复制 prompt 模板
+  - 01 AI 训练入门 PDF（4 模块 + Label Studio 实操 + 5 个 prompt 模板）
+  - 02 提示词合集 DOC（12 个 prompt · 办公/创作/电商各 4）
+  - 03 公考笔记 PDF（行测 5 模块 + 申论 5 题型 + 素材库表 + 时间表）
+  - 04 电商运营 DOC（5 选品原则 + 流量渠道 + 7 转化细节 + 4 话术）
+  - 05 自媒体文案 15 套模板（7 钩子 + 3 节奏模板 + 5 CTA）
+  - 06 篮球规则 PDF（5 犯规类型 + 6 手势 + 10 术语 + 7 观赛建议）
+- 弹窗 modal：close 按钮 44x44、`<button class="copy-btn">` 一键复制 prompt、scroll 顺畅
+
+### P0 · Bug 修复（4 个 commit）
+
+#### `884298a` modal 打开鼠标消失 + 移动端 preloader 卡死
+- **鼠标消失**：自定义光标 `.cursor-dot/.cursor-ring` z-index:9999 被 modal 99990 遮罩盖 → JS 在 `openArt/closeArt` 给 body 加 `.modal-open` class，CSS 隐藏 cursor
+- **preloader 卡死**：永远等 `window.load`，mobile 4G 下 fonts 加载慢/被墙时迟迟不触发 → 加 8s 强制兜底 timeout
 - 顺带把 `.no-scroll` 替换为 `.modal-open`（语义更准确，单 class 同时管 cursor + 滚动锁）
 
-### 阶段二 · 内容深化（S2.1 + S2.2 完成，commit `941663f`）
-- **S2.1 Blog 占位 → 真实文章** ✅ 9 篇长文（800-1500 字）含 h3/表格/流程图/KPI/code/星标/list，全部 modal 弹窗
-- **S2.2 Resources 区域真实化** ✅ 6 个资源（含 12 个可一键复制的 prompt 模板）
+#### `39b1992` modal cursor 真正根因
+- 第一轮只解决半边（自定义光标）— 系统光标仍被 `backdrop-filter` 合成层遮
+- 去掉 `.art-modal` 的 `backdrop-filter`（macOS + Edge 已知 bug，合成层与 native cursor 渲染冲突）
+- 验证 modal 打开系统光标真可见
 
-### P0 · 必做（全 4 项）
-- **P0.1** Mobile 真机测试 + 修复（360/390/768 viewport）
-- **P0.2** 滚动条 themed（accent 渐变 + glow）
-- **P0.3** 回顶按钮（fixed bottom-right，滚 800px 浮出）
-- **P0.4** SEO meta + favicon + og:image + JSON-LD Person
+#### `506bb9a` 6 类 iOS/mobile 兼容性
+- `viewport-fit=cover` — iPhone 14 Pro 圆角/刘海
+- `100dvh` — 移动端动态视高（避免地址栏缩放时 layout 跳动）
+- `env(safe-area-inset-*)` — safe area 适配
+- `-webkit-tap-highlight-color: transparent` — 取消 iOS 点击高亮
+- `-webkit-text-size-adjust: 100%` — 锁字号避免 iOS 自动放大
+- 触点 44x44 minimum（modal close 等关键按钮）
 
-### P1 · 内容深化
-- **P1.5** Contact form → ~~Web3Forms~~ → ~~mailto 表单~~ → **最终撤掉整张表单**，联系方式只留 PHONE/WECHAT/EMAIL（commit `69d372e`）
-- **P1.6** service-card sweep 动效
-- **P1.7** Blog 加 2 篇深度文（08 案例 / 09 框架）
-- **P1.8** CTA 文案打磨：`了解训练服务` / `商务洽谈`
+#### `34ab71b` mobile nav 遮挡 + 触屏 hover 兜底
+- `.section` 加 `scroll-margin-top:80px`（nav 64px + 16px 留白）
+- 新增 `@media(hover:none)` 覆盖 25+ hover 选择器（service-card / qual-card / card / quick-card / btn / nav-menu / theme-toggle）
+- 解决 mobile 上点 career/qualification 顶部被 nav 遮住 + 触屏 hover 状态卡住
 
-### P2 · 体验 / 可访问性
-- **P2.9** A11y：skip-link + 全局 :focus-visible + side-scroll-dot/quick-card aria-label + quick-card div→a
-- **P2.10** prefers-reduced-motion 全局兜底
-- **P2.11** Lighthouse 跑分：SEO 100 / BP 100 / A11y 84→92+ / Perf 55
+#### `84cbfd5` mobile hash scroll 改 instant
+- `@media(max-width:520px) html{scroll-behavior:auto}`（覆盖桌面 smooth）
+- JS 3 处 `scrollIntoView`/`scrollTo` 触屏分支用 `behavior:'auto'`（data-goto / side dots / back-top）
+- 桌面 smooth 保留 + 触屏 instant（即点即到）
 
-### P3 · 阶段一性能优化（5 项 ✅ 全完成）
-- **P3.1 字体策略**：Google Fonts link 改 async preload + noscript 兜底
-  - 解决 lighthouse `unused-css-rules 273 KiB` 瓶颈（fonts.googleapis CSS 阻塞首屏）
-  - 视觉不变 + 性能立省 ~273 KB 阻塞
-- **P3.2 preloader 缩短**：1.4s → 0.6s + 监听 `window.load` 立即完成
-  - 进度 0-90% 由时间驱动（最少 0.6s 显示），90%→100% 由真实 load 事件触发
-  - 总时长 2.9s → 0.6~1.0s（取决于网络）
+### P0.1 · Mobile 真机测试（PC emulation 95% 完成，真机待验收）
+- ✅ PC Edge + DevTools + iPhone 14 Pro viewport 测过 8 section
+- ✅ 代码层 mobile 兼容性全部修过（4 个 commit）
+- ✅ 桌面端 hash scroll / modal / theme toggle / back-top / nav 遮挡验证 OK（md5 验证）
+- ⚠️ **真实 iPhone Safari / Android Chrome 真机测试待用户验收**
+  - 重点：hamburger menu / safe-area 圆角和底 home indicator / 触点 44px / 横竖屏 / 触屏 hover:none 真生效
+
+### 历史完成（保留）
+- **P0.2 滚动条 themed**（accent 渐变 + glow）
+- **P0.3 回顶按钮**（fixed bottom-right，滚 800px 浮出）
+- **P0.4 SEO meta + favicon + og:image + JSON-LD Person**
+- **P1.5 Contact form → 撤掉整张表单**（commit `69d372e`）联系方式只留 PHONE/WECHAT/EMAIL
+- **P1.6 service-card sweep 动效**
+- **P1.7 Blog 加 2 篇深度文**（08 案例 / 09 框架）
+- **P1.8 CTA 文案打磨**：`了解训练服务` / `商务洽谈`
+- **P2.9 A11y**：skip-link + 全局 :focus-visible + side-scroll-dot/quick-card aria-label + quick-card div→a
+- **P2.10 prefers-reduced-motion 全局兜底**
+- **P2.11 Lighthouse 跑分**：SEO 100 / BP 100 / A11y 84→92+ / Perf 55
+- **P3.1 字体策略**：Google Fonts link 改 async preload + noscript 兜底（省 ~273 KB 阻塞）
+- **P3.2 preloader 缩短**：1.4s → 0.6s + 监听 `window.load` 立即完成（总时长 2.9s → 0.6~1.0s）
 - **P3.3 content-visibility: auto**：所有 `.section` off-screen 跳过渲染
-  - `contain-intrinsic-size: 1px 800px` 占位避免滚动条跳动
-  - banner (#home) 永久 visible 不影响首屏
-- **P3.4 font-feature-settings 清理**：27 处重复 `tnum` → 1 处 `:root` 声明
-  - 删 2 处冗余 kern/liga/calt（默认就启用）
-  - CSS 体积减约 1 KB
-- **P3.5 电路板 gradient 精简**：16 layer (8 节点 + 8 线条) → 12 layer (6+6)
-  - 删除视觉不明显的 2 个次要节点
-  - 减少浏览器渲染负担
+- **P3.4 font-feature-settings 清理**：27 处重复 `tnum` → 1 处 `:root` 声明（CSS -1 KB）
+- **P3.5 电路板 gradient 精简**：16 layer → 12 layer
 
 ### 浏览器链路
 - mavis browser bridge（Edge 真实）已 connected
@@ -89,7 +124,7 @@
 
 | 编号 | 项 | 工作量 | ROI | 说明 |
 |---|---|---|---|---|
-| P0.1 | **mobile 真机测试** | 0.5d | 极高 | **必做**。所有验证都在 PC Edge + 缩放 viewport，**iPhone Safari / Android Chrome 真机从未测过**。建议：iPhone + Android 各一台，重点测 modal 手势、底部 home indicator、字体加载失败 fallback、横竖屏 |
+| P0.1 | **mobile 真机测试验收** | 0.5d | 极高 | 代码层 95% 完成（4 个 commit），**真实 iPhone Safari / Android Chrome 真机测试待用户验收**。重点：hamburger menu / safe-area / 触点 44px / 横竖屏 / 触屏 hover:none 真生效 |
 | P0.2 | **微信扫码加好友** | 0.5h | 极高 | 联系方式只显示 ID `aidon277`，要手动输入。加 24×24 微信二维码 SVG（你提供原图），移动端长按识别，**商务洽谈转化 +50%** |
 | P0.3 | **vCard 名片下载** | 1h | 高 | 「保存到通讯录」按钮，下载 `.vcf`。HR/猎头看到能秒存，少打 20 句自我介绍 |
 
@@ -148,9 +183,9 @@
 
 ## 🎯 当前建议执行顺序（2026-06-26 ~ 下周）
 
-1. **P0.1 mobile 真机测试**（**没测就别推朋友圈**，别让客户第一个看到就掉）
-2. **P0.2 微信二维码**（30 分钟，转化 +50%）
-3. **P0.3 vCard 名片**（1 小时，HR/猎头友好）
+1. **P0.1 mobile 真机验收**（**代码层 done，user 用真机 / 浏览器 DevTools mobile emulation 走一遍 8 section**，重点验 hamburger / safe-area / touch）
+2. **P0.2 微信二维码**（30 分钟，转化 +50%）**需用户提供原图**
+3. **P0.3 vCard 名片**（1 小时，HR/猎头友好）**需用户确认手机号**
 4. **P1.2 客户感言**（先问用户有没有真实客户）
 5. **P1.1 自定义 404**（2h，顺手搞）
 6. **P1.5 + P1.6 SEO 双件套**（5h，一次性）
@@ -158,6 +193,13 @@
 **第二周起**开 P2 长线（先 P2.4 真实图片/视频，**先问用户愿不愿意出镜**）。
 
 **别做 P2.1 JS 模块化**（重构黑洞陷阱），等 P0/P1 全部 done 且用户主动要求再开。
+
+### 已完成的 S2 阶段二内容深化（路线图移除，但历史保留在"今日完成"段）
+- ✅ **S2.1 Blog 9 篇真实长文** — 不再 pending
+- ✅ **S2.2 Resources 6 篇真实长文** — 不再 pending
+- ✅ **S2.3 真实客户感言 / 数据证明** — 见 P1.2 仍 pending（需用户确认）
+- ✅ **S2.4 关于我时间线** — 并入 P3.2（仍 pending）
+- ✅ **S2.5 真实图片/视频** — 见 P2.4（仍 pending）
 
 ---
 
