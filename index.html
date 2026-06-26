@@ -1434,6 +1434,10 @@ h1,h2,h3,h4,h5,h6{
   body.cursor-press .cursor-ring{width:28px;height:28px}
   @media (max-width:860px){.cursor-dot,.cursor-ring{display:none}}
   @media (pointer:coarse){.cursor-dot,.cursor-ring{display:none}}
+  /* Modal 打开时隐藏自定义光标（被 z-index 99990 的 modal 遮罩挡住，鼠标看似消失）*/
+  body.modal-open .cursor-dot,body.modal-open .cursor-ring{display:none!important}
+  /* Modal 打开时锁定底层 body 滚动 */
+  body.modal-open{overflow:hidden}
 
   /* ========== Banner title char animation ========== */
   .banner-text h1 .word{display:inline-block;white-space:nowrap}
@@ -1920,7 +1924,7 @@ h1,h2,h3,h4,h5,h6{
   .art-modal-body .end-mark::before,.art-modal-body .end-mark::after{
     content:"—";margin:0 12px;color:var(--c-muted);
   }
-  body.no-scroll{overflow:hidden}
+  body.no-scroll, body.modal-open{overflow:hidden}
   @media(max-width:768px){
     .art-modal{padding:0}
     .art-modal-card{border-radius:0;min-height:100vh;max-width:100%}
@@ -2591,6 +2595,16 @@ h1,h2,h3,h4,h5,h6{
       loaded = true;
       finish();
     }, {once: true});
+    // 兜底：8s 后无论 window.load 是否触发都强制隐藏（mobile 4G 下 fonts 加载慢/被墙）
+    setTimeout(() => {
+      if(!loaded){
+        loaded = true;
+        minElapsed = true;
+        fill.style.width = '100%';
+        pct.textContent = '100%';
+        finish();
+      }
+    }, 8000);
     function tick(now){
       const elapsed = now - startTime;
       const t = Math.min(1, elapsed / minDuration);
@@ -3381,7 +3395,7 @@ h1,h2,h3,h4,h5,h6{
     lastFocus = document.activeElement;
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('no-scroll');
+    document.body.classList.add('modal-open');
     modal.scrollTop = 0;
     // bind copy buttons
     body.querySelectorAll('[data-copy]').forEach(function(btn){
@@ -3419,7 +3433,7 @@ h1,h2,h3,h4,h5,h6{
   function closeArt(){
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('no-scroll');
+    document.body.classList.remove('modal-open');
     if(lastFocus && lastFocus.focus) lastFocus.focus();
   }
 
