@@ -1178,6 +1178,85 @@ h1,h2,h3,h4,h5,h6{
   .info-value.muted{color:rgba(255,255,255,.55);font-style:italic}
   .contact-cta{margin-top:36px;padding-top:30px;border-top:1px solid rgba(255,255,255,.1);position:relative}
 
+  /* ========== Contact form ========== */
+  .contact-form{margin-top:36px;padding-top:30px;border-top:1px solid rgba(255,255,255,.1);position:relative}
+  .form-title{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;
+    color:rgba(255,255,255,.55);margin-bottom:18px;
+    font-feature-settings:"tnum";
+  }
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+  .contact-form input,
+  .contact-form select,
+  .contact-form textarea{
+    width:100%;background:rgba(255,255,255,.04);
+    border:1px solid rgba(255,255,255,.12);
+    color:rgba(255,255,255,.95);
+    padding:12px 14px;border-radius:var(--radius-sm);
+    font-family:var(--font-sans);font-size:14px;font-weight:300;
+    letter-spacing:.005em;
+    transition:all .25s var(--ease);
+    -webkit-appearance:none;appearance:none;
+  }
+  .contact-form input::placeholder,
+  .contact-form textarea::placeholder{color:rgba(255,255,255,.35);font-weight:300}
+  .contact-form input:focus,
+  .contact-form select:focus,
+  .contact-form textarea:focus{
+    outline:none;
+    border-color:var(--c-accent);
+    background:rgba(91,149,240,.08);
+    box-shadow:0 0 0 3px rgba(91,149,240,.18);
+  }
+  .contact-form textarea{
+    min-height:110px;resize:vertical;line-height:1.7;margin-bottom:10px;
+    font-family:var(--font-sans);
+  }
+  .contact-form select{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='none' stroke='%23B8BEC9' stroke-width='1.5' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 14px center;
+    padding-right:36px;cursor:pointer;margin-bottom:10px;
+  }
+  .contact-form select option{background:#1C2030;color:#fff}
+  .contact-form .btn{
+    width:100%;justify-content:center;
+    background:rgba(255,255,255,.94);color:#0B0D14;border:1px solid transparent;
+    padding:13px 20px;font-size:14px;
+  }
+  .contact-form .btn:hover{background:#fff;transform:translateY(-1px);box-shadow:0 12px 28px rgba(255,255,255,.18)}
+  .contact-form .btn:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  .contact-form .btn .spinner{
+    display:inline-block;width:14px;height:14px;
+    border:2px solid rgba(11,13,20,.25);border-top-color:#0B0D14;
+    border-radius:50%;animation:spin .8s linear infinite;
+    margin-right:6px;vertical-align:middle;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .form-status{
+    margin-top:14px;padding:12px 14px;border-radius:var(--radius-sm);
+    font-size:13px;line-height:1.6;font-weight:300;display:none;
+  }
+  .form-status.success{
+    display:block;background:rgba(52,211,153,.12);color:#34D399;
+    border:1px solid rgba(52,211,153,.3);
+  }
+  .form-status.error{
+    display:block;background:rgba(248,113,113,.10);color:#FCA5A5;
+    border:1px solid rgba(248,113,113,.3);
+  }
+  .form-hint{
+    margin-top:10px;font-size:11.5px;color:rgba(255,255,255,.45);
+    font-family:var(--font-mono);letter-spacing:.05em;line-height:1.6;
+  }
+  .form-hint a{color:rgba(122,168,240,.85);text-decoration:underline;text-underline-offset:2px}
+  .form-hint a:hover{color:#fff}
+  @media(max-width:480px){
+    .form-row{grid-template-columns:1fr}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .contact-form input,.contact-form select,.contact-form textarea{transition:border-color .15s}
+  }
+
   /* ========== Footer ========== */
   .footer{
     border-top:1px solid var(--c-line);
@@ -2284,11 +2363,35 @@ h1,h2,h3,h4,h5,h6{
         <div class="info-label">EMAIL</div>
         <div class="info-value">邮箱：390508183@qq.com</div>
       </div>
-      <div class="contact-cta">
-        <a href="#home" class="btn btn-accent">返回首页
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-        </a>
-      </div>
+
+      <form class="contact-form" id="contactForm" autocomplete="on" novalidate>
+        <div class="form-title">— 或在此留言</div>
+        <div class="form-row">
+          <input type="text" name="name" placeholder="你的称呼" required maxlength="40" autocomplete="name">
+          <input type="email" name="email" placeholder="邮箱" required maxlength="80" autocomplete="email">
+        </div>
+        <select name="topic" required>
+          <option value="" disabled selected hidden>想聊的话题…</option>
+          <option value="全职 / 兼职求职">全职 / 兼职求职</option>
+          <option value="数据标注 / 模型微调外包">数据标注 / 模型微调外包</option>
+          <option value="电商 AI / 智能客服定制">电商 AI / 智能客服定制</option>
+          <option value="自媒体 AI 量产体系">自媒体 AI 量产体系</option>
+          <option value="其他合作">其他合作</option>
+        </select>
+        <textarea name="message" placeholder="简单说说你想聊什么" required maxlength="1000"></textarea>
+        <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_ACCESS_KEY">
+        <input type="hidden" name="from_name" value="aidon-1.github.io">
+        <input type="hidden" name="subject" value="[个人站] 新的合作留言">
+        <input type="checkbox" name="botcheck" style="display:none" tabindex="-1" autocomplete="off">
+        <button type="submit" class="btn btn-primary" id="formSubmit">发送留言
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+        <div class="form-status" id="formStatus" role="status" aria-live="polite"></div>
+        <div class="form-hint">
+          表单由 <a href="https://web3forms.com" target="_blank" rel="noopener">Web3Forms</a> 免后端转发，留言会直接发到 390508183@qq.com。
+          <br>没配置时回退：请直接发邮件到 <a href="mailto:390508183@qq.com">390508183@qq.com</a>。
+        </div>
+      </form>
     </div>
   </div>
 </section>
@@ -2391,6 +2494,72 @@ h1,h2,h3,h4,h5,h6{
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({top:0, behavior: reduced ? 'auto' : 'smooth'});
   });
+
+  // ========== Contact form (Web3Forms) ==========
+  (function(){
+    const form = document.getElementById('contactForm');
+    const status = document.getElementById('formStatus');
+    const submit = document.getElementById('formSubmit');
+    if(!form) return;
+
+    function setStatus(kind, msg){
+      status.className = 'form-status ' + kind;
+      status.textContent = msg;
+    }
+    function clearStatus(){
+      status.className = 'form-status';
+      status.textContent = '';
+    }
+    function setLoading(loading){
+      if(loading){
+        submit.disabled = true;
+        submit.innerHTML = '<span class="spinner"></span>发送中…';
+      } else {
+        submit.disabled = false;
+        submit.innerHTML = '发送留言 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearStatus();
+      const data = Object.fromEntries(new FormData(form).entries());
+      // 前端必填二次校验（mobile safari 偶尔不触发原生验证）
+      if(!data.name || !data.email || !data.topic || !data.message){
+        setStatus('error', '请补全称呼、邮箱、话题和留言内容。');
+        return;
+      }
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(data.email)){
+        setStatus('error', '邮箱格式不太对，检查一下？');
+        return;
+      }
+      if(data.access_key === 'YOUR_WEB3FORMS_ACCESS_KEY'){
+        setStatus('error', '表单还没配置 Web3Forms access_key（请让 Mavis 帮你接入），或者直接发邮件到 390508183@qq.com。');
+        return;
+      }
+
+      setLoading(true);
+      try{
+        const res = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json', 'Accept': 'application/json'},
+          body: JSON.stringify(data)
+        });
+        const json = await res.json().catch(() => ({}));
+        if(res.ok && json.success){
+          setStatus('success', '✓ 已收到！彭乙东会尽快回复你（通常 1-2 个工作日）。');
+          form.reset();
+        } else {
+          const msg = json?.message || ('提交失败（HTTP ' + res.status + '），请直接发邮件到 390508183@qq.com。');
+          setStatus('error', msg);
+        }
+      } catch(err){
+        setStatus('error', '网络异常，留言没发出去。请直接发邮件到 390508183@qq.com。');
+      } finally {
+        setLoading(false);
+      }
+    });
+  })();
 
   // ========== Active nav highlight ==========
   const sections = document.querySelectorAll('section[id]');
