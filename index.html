@@ -3,8 +3,56 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>彭乙东 · AI 训练师个人品牌站</title>
-<meta name="description" content="彭乙东 · 跨界复合型 AI 训练师——以多元阅历赋能智能数据训练。" />
+<title>彭乙东 · AI 训练师个人品牌站 | 跨界复合型 AI Trainer</title>
+<meta name="description" content="彭乙东 · 跨界复合型 AI 训练师。投资学 × 电商运营 × 自媒体 × AI 训练，以多元阅历赋能智能数据训练、模型微调与行业解决方案。" />
+<meta name="keywords" content="彭乙东,AI 训练师,AI Trainer,数据标注,模型微调,RLHF,智能数据,Aidon,跨学科 AI" />
+<meta name="author" content="彭乙东 (Aidon)" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#0B0D14" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#F4F5F8" media="(prefers-color-scheme: light)" />
+<link rel="canonical" href="https://aidon-1.github.io/" />
+
+<!-- Open Graph / 社交平台分享卡片 -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="彭乙东 · AI 训练师" />
+<meta property="og:title" content="彭乙东 · 跨界复合型 AI 训练师" />
+<meta property="og:description" content="投资学 × 电商 × 自媒体 × AI 训练——以多元阅历赋能智能数据训练、模型微调与行业解决方案。" />
+<meta property="og:url" content="https://aidon-1.github.io/" />
+<meta property="og:image" content="https://aidon-1.github.io/og-image.svg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="彭乙东 · AI 训练师个人品牌站" />
+<meta property="og:locale" content="zh_CN" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="彭乙东 · 跨界复合型 AI 训练师" />
+<meta name="twitter:description" content="投资学 × 电商 × 自媒体 × AI 训练——以多元阅历赋能智能数据训练。" />
+<meta name="twitter:image" content="https://aidon-1.github.io/og-image.svg" />
+<meta name="twitter:image:alt" content="彭乙东 · AI 训练师个人品牌站" />
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="alternate icon" type="image/svg+xml" href="favicon.svg" />
+<link rel="apple-touch-icon" href="favicon.svg" />
+
+<!-- JSON-LD 结构化数据 -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "彭乙东",
+  "alternateName": "Aidon",
+  "url": "https://aidon-1.github.io/",
+  "jobTitle": "AI 训练师",
+  "description": "跨界复合型 AI 训练师，本科投资学专业，兼具电商运营与自媒体博主经验，专注于智能数据训练与模型微调。",
+  "knowsLanguage": ["zh-CN", "en"],
+  "sameAs": [
+    "https://github.com/Aidon-1"
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&family=Noto+Sans+SC:wght@200;300;400;500;700&family=Noto+Serif+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -449,6 +497,45 @@ h1,h2,h3,h4,h5,h6{
   .side-scroll-dot.active::before{border-color:var(--c-accent)}
   @media(max-width:860px){.side-scroll{display:none}}
 
+  /* ========== Back to top button ========== */
+  .back-top{
+    position:fixed;right:24px;bottom:24px;z-index:95;
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    background:var(--glass-bg);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    border:1px solid var(--c-line);
+    box-shadow:0 6px 20px rgba(0,0,0,.18);
+    color:var(--c-text-soft);
+    cursor:pointer;
+    opacity:0;pointer-events:none;
+    transform:translateY(8px) scale(.92);
+    transition:all .35s var(--ease);
+  }
+  .back-top svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .back-top.visible{opacity:1;pointer-events:auto;transform:translateY(0) scale(1)}
+  .back-top:hover{
+    color:#fff;
+    background:linear-gradient(135deg,var(--c-accent),var(--c-accent-2));
+    border-color:transparent;
+    box-shadow:0 8px 24px var(--c-accent-glow);
+    transform:translateY(-2px) scale(1.05);
+  }
+  [data-theme="light"] .back-top{box-shadow:0 6px 20px rgba(15,17,23,.10)}
+  [data-theme="light"] .back-top:hover{color:#fff}
+  @media(max-width:860px){
+    .back-top{right:16px;bottom:16px;width:40px;height:40px}
+    .back-top svg{width:16px;height:16px}
+  }
+  @media(max-width:480px){
+    /* 移动端给 nav 留位置：左下角避开手势区 */
+    .back-top{right:14px;bottom:14px;width:38px;height:38px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .back-top{transition:opacity .2s;transform:none}
+    .back-top:hover{transform:none}
+  }
+
   /* ========== Card sweep (hover 极光扫过) ========== */
   .card-sweep{
     position:absolute;inset:0;border-radius:inherit;pointer-events:none;
@@ -515,6 +602,7 @@ h1,h2,h3,h4,h5,h6{
   .banner-text h1 .accent{
     font-style:italic;font-weight:300;
     font-variation-settings:"opsz" 144,"SOFT" 100;
+    white-space:nowrap;
     background:linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-2) 50%, var(--c-accent-3) 100%);
     background-size:200% 200%;
     -webkit-background-clip:text;
@@ -1191,6 +1279,10 @@ h1,h2,h3,h4,h5,h6{
     .quick-card:nth-child(-n+2){border-bottom:1px solid var(--c-line-2)}
     .about-grid{grid-template-columns:1fr;gap:50px}
     .about-visual{max-width:340px}
+    .about-mark{top:14px;left:14px;width:48px;height:48px}
+    .about-mark svg{width:22px;height:22px}
+    .about-name-tag{top:14px;right:14px;padding:6px 12px;font-size:14px}
+    .about-caption{bottom:14px;left:14px;right:14px;font-size:9.5px;letter-spacing:.18em}
     .service-grid{grid-template-columns:1fr;gap:1px}
     .card-grid,.qual-grid{grid-template-columns:1fr}
     .achieve-list,.service-plan{grid-template-columns:1fr;gap:24px}
@@ -1210,7 +1302,7 @@ h1,h2,h3,h4,h5,h6{
     :root{--gutter:20px}
     .section{padding:70px var(--gutter)}
     .banner{padding:100px var(--gutter) 50px}
-    .banner-text h1{font-size:42px}
+    .banner-text h1{font-size:36px;letter-spacing:-.025em}
     .banner-text .sub{font-size:15.5px}
     .section-title{font-size:30px}
     .section-num{margin-bottom:14px}
@@ -1661,6 +1753,12 @@ h1,h2,h3,h4,h5,h6{
 <div class="progress" id="progress"></div>
 <div class="cursor-dot" id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
+<button class="back-top" id="backTop" type="button" aria-label="回到顶部" title="回到顶部">
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 19V5"/>
+    <path d="M5 12l7-7 7 7"/>
+  </svg>
+</button>
 
 <!-- ========== Navbar ========== -->
 <nav class="nav" id="nav">
@@ -2275,15 +2373,24 @@ h1,h2,h3,h4,h5,h6{
   // ========== Scroll progress bar ==========
   const progress = document.getElementById('progress');
   const nav = document.getElementById('nav');
+  const backTop = document.getElementById('backTop');
   function onScroll(){
     const h = document.documentElement;
     const scrolled = (h.scrollTop / (h.scrollHeight - h.clientHeight)) * 100;
     progress.style.width = scrolled + '%';
     if(window.scrollY > 100) nav.classList.add('scrolled');
     else nav.classList.remove('scrolled');
+    if(window.scrollY > 800) backTop.classList.add('visible');
+    else backTop.classList.remove('visible');
     updateActiveNav();
   }
   window.addEventListener('scroll', onScroll, {passive:true});
+
+  // ========== Back to top ==========
+  backTop?.addEventListener('click', () => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({top:0, behavior: reduced ? 'auto' : 'smooth'});
+  });
 
   // ========== Active nav highlight ==========
   const sections = document.querySelectorAll('section[id]');
