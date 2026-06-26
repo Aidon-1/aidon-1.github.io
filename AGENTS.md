@@ -82,6 +82,14 @@
 - JS 3 处 `scrollIntoView`/`scrollTo` 触屏分支用 `behavior:'auto'`（data-goto / side dots / back-top）
 - 桌面 smooth 保留 + 触屏 instant（即点即到）
 
+#### preloader 调优系列（5 个 commit：`57a28b4 / 3894201 / d2f79db / 823f500 / c74b5d7 / 18a5ea4 / 0a2f785`）
+- **根本修改**（`3894201`）：`window.load` 改 `DOMContentLoaded` —— 后者要等所有 img/iframe/fetch 资源，avatar.png 4.4MB 偶尔拉失败（ERR_FAILED 21s/47s）→ preloader 走 8s 兜底才消失。改用 `DOMContentLoaded`（DOM 解析完就触发）+ 兜底 2s
+- **转场升级**（`18a5ea4`）：clip-path circle 收缩（0.28s "啪一下爆缩"）→ transform scaleY 幕布式（0.85s 从顶部向下卷，cubic-bezier(.76,0,.24,1)）+ 内部 logo 上飞 60px + 微缩 + 渐隐
+- **DOM remove 坑**（`0a2f785`）：CSS transition 改了，**JS 的 `setTimeout(preloader.remove, 150)` 没同步改**，导致 scaleY 0.85s 动画被截断到 0.15s，用户看到的还是"啪一下"。改成 ≥ 转场时长（900ms）。**经验：以后改任何 CSS transition 时长，同步检查 JS 端是否有相关 timer 依赖**
+- **avatar 优化**（`3894201` 顺手）：`loading="lazy" decoding="async"` 让 avatar 脱离首屏关键路径，不再影响 `window.load`
+- **时长微调**：`minDuration` 经 200→700→1200→900ms（用户反复调），最终稳定在 900ms
+- 当前时序：0~0.9s 进度条 0→100% → 0.95s 内部 logo 上飞渐隐 + 幕布开始卷 → ~1.75s 完全消失
+
 ### P0.1 · Mobile 真机测试（PC emulation 95% 完成，真机待验收）
 - ✅ PC Edge + DevTools + iPhone 14 Pro viewport 测过 8 section
 - ✅ 代码层 mobile 兼容性全部修过（4 个 commit）
