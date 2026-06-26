@@ -2656,7 +2656,7 @@ h1,h2,h3,h4,h5,h6{
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reducedMotion){
       preloader.classList.add('hidden');
-      setTimeout(() => preloader.remove(), 400);
+      setTimeout(() => preloader.remove(), 900);
       return;
     }
 
@@ -2668,7 +2668,8 @@ h1,h2,h3,h4,h5,h6{
     function finish(){
       if(loaded && minElapsed){
         preloader.classList.add('hidden');
-        setTimeout(() => preloader.remove(), 150);
+        // DOM remove 必须 ≥ .preloader scaleY 转场时长（.85s），否则动画被截断
+        setTimeout(() => preloader.remove(), 900);
       }
     }
     // 用 DOMContentLoaded 而不是 window.load —— 后者要等所有 img/iframe/fetch 资源，
