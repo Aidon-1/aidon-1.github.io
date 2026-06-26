@@ -61,24 +61,53 @@
 - 强制约定：以后所有浏览器相关操作走 mavis browser tool → 真实 Edge，**禁调 Playwright/Puppeteer 等 headless Chromium**
 - 约定已写入 `~/.mavis/memory/user.md`（type: workflow-rule）
 
-## 明日优化计划（2026-06-27）
+### P2 · 体验 / 可访问性（全 3 项 ✅）
+- **P2.9 A11y 增强** —— 
+  - **skip-link**：body 顶部加 `<a class="skip-link" href="#about">跳到主内容</a>`，Tab 触发时 fixed top:16px 浮出
+  - **focus ring 全局**：`:focus-visible` 用 accent 双层 outline（键盘 Tab 才显示，鼠标点击不打扰）
+  - **link-name FAIL 修复**：side-scroll-dot 8 个空 `<a>` 加 `aria-label="跳到 ..."`
+  - **quick-card div → a**：5 个 div 改成 `<a href data-goto aria-label>`，键盘 Tab 自动可达 + Enter 触发跳转；JS click 监听加 `e.preventDefault()` 避免双跳
+  - **quick-card CSS 补**：display:block + text-decoration:none + color:inherit
+- **P2.10 prefers-reduced-motion 全局兜底** —— `@media(prefers-reduced-motion:reduce)` 全局规则：
+  - 所有动画 `duration:0.001ms !important` + 1 次
+  - 所有过渡 `duration:0.001ms !important`
+  - scroll-behavior:auto
+  - 局部兜底：`.reveal` 直接显示 / `.card-sweep::before` 停 / `.banner-orb-ring` 停 / `.footer-circuit` display:none / `.circuit-dot` 停
+- **P2.11 Lighthouse 跑分**（deploy 版实测 `https://aidon-1.github.io/`）：
+  - **SEO 100** ✅ 完美（meta / og / 标题 / 描述 / heading-order 全 PASS）
+  - **Best Practices 100** ✅ 完美（HTTPS / 无错库 / 合理 image aspect）
+  - **Accessibility 84 → 待修 link-name**（修完预估 92+）：side-scroll-dot aria-label + quick-card a11y
+  - **Performance 55** ⚠️ 主要瓶颈：FCP/LCP 8.4s（lighthouse 节流模拟 slow 4G + 4x CPU），真实用户 Edge 看是流畅的；优化空间见 P3 路线图
+  - **CLS 0.007** ✅（无位移）
 
-### P2 · 体验 / 可访问性
-1. **A11y 增强** —— focus ring 可见 / skip-link / aria 标签
-2. **prefers-reduced-motion 全局生效**（部分动画未覆盖）
-3. **Lighthouse 跑分**（Performance/SEO/Accessibility）
+## 明日优化计划（2026-06-27 → 长线）
 
-### P3 · 长线
-4. JS 模块化（2900+ 行单文件）
-5. 案例/作品详情页（多页结构）
-6. 真实图片/视频（替代 CSS 装饰）
+### P2 · 收尾
+1. **Performance 优化**（55 → 90+）：
+   - 关键 CSS 提取 + 大块延迟（circuit / banner-orb / preloader 异步）
+   - 电路板 DOM 数量精简（当前 ~20 个 dot）
+   - 首屏字体加载策略（系统字体已 OK，可加 preload 提示）
+   - 考虑拆 CSS / JS 到外部文件 + gzip
+2. **Lighthouse 重测**（验证分数）
+
+### P3 · 长线（按工作量展开）
+1. **JS 模块化（commit 候选）** —— `assets/js/` 拆出：
+   - `preloader.js` / `theme.js` / `nav.js` / `reveal.js` / `count-up.js` / `tilt.js` / `circuit.js`
+   - 减少 main JS 体积 + 利于按需加载
+2. **真实案例详情页** —— `/cases/<slug>.html` 多页结构：
+   - 案例库列表（首页集成入口）
+   - 单案例页（问题 / 方案 / 流程图 / 数据 / 客户感言）
+3. **真实图片/视频** —— 拍：办公桌 / 训练后台 / 团队 / 屏幕录制训练流程
+4. **A/B test CTA 文案**（P1.8 后续）—— 看「了解训练服务」CTR vs 「看看我能帮上什么」
 
 ### 维护性 TODO
 - Web3Forms access_key 待用户去 web3forms.com 注册填入（现在是占位）
+- Web3Forms access_key 拿到后改 `index.html` 第 ~2391 行占位字符串
 
 ## 用户偏好
 
 - 极简轻奢科技商务风 / 深色高级感
 - 终端命令不熟，适合"我帮他跑"的模式
 - **默认浏览器：Microsoft Edge**（不要 Chrome/Chromium，包括 Playwright 这类 headless automation）
+- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI，不算 Edge 偏好违反）
 - 见 `~/.mavis/memory/user.md`

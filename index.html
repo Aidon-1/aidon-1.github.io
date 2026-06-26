@@ -232,6 +232,53 @@
   }
   /* Firefox */
   html{scrollbar-width:thin;scrollbar-color:var(--c-accent) transparent}
+
+  /* ========== A11y: Skip-link + Focus ring ========== */
+  .skip-link{
+    position:fixed;top:-100px;left:16px;z-index:10000;
+    padding:10px 16px;border-radius:8px;
+    background:var(--c-accent);color:#fff;
+    font-size:14px;font-weight:600;letter-spacing:.02em;
+    text-decoration:none;
+    box-shadow:0 6px 24px rgba(122,162,247,.4);
+    transition:top .2s var(--ease);
+  }
+  .skip-link:focus{top:16px;outline:2px solid #fff;outline-offset:2px}
+
+  /* 全局 :focus-visible accent ring —— keyboard-only 显示，鼠标点击不显 */
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  [tabindex]:focus-visible{
+    outline:2px solid var(--c-accent);
+    outline-offset:3px;
+    border-radius:4px;
+  }
+  .brand:focus-visible,
+  .side-scroll-dot:focus-visible,
+  .quick-card:focus-visible{
+    outline-offset:5px;
+  }
+
+  /* 减弱动效全局兜底 —— 任何没被局部规则的动画/过渡全部停掉 */
+  @media(prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+      animation-duration:0.001ms !important;
+      animation-iteration-count:1 !important;
+      transition-duration:0.001ms !important;
+      scroll-behavior:auto !important;
+    }
+    .reveal{opacity:1!important;transform:none!important}
+    .card-sweep::before{transition:none!important}
+    .banner-orb-ring{animation:none!important}
+    .banner-bgword{animation:none!important}
+    .footer-circuit{animation:none!important;display:none}
+    .circuit-dot{animation:none!important}
+  }
   ::selection{background:var(--c-accent);color:#fff}
 
 h1,h2,h3,h4,h5,h6{
@@ -767,6 +814,7 @@ h1,h2,h3,h4,h5,h6{
     margin-top:60px;border-top:1px solid var(--c-line);
   }
   .quick-card{
+    display:block;text-decoration:none;color:inherit;
     background:transparent;border-right:1px solid var(--c-line-2);
     padding:30px 24px;cursor:pointer;transition:all .4s var(--ease);
     position:relative;
@@ -1802,16 +1850,17 @@ h1,h2,h3,h4,h5,h6{
 </style>
 </head>
 <body>
+  <a class="skip-link" href="#about">跳到主内容</a>
 
 <nav class="side-scroll" id="sideScroll" aria-label="Sections">
-  <a href="#home" class="side-scroll-dot active" data-target="home"></a>
-  <a href="#about" class="side-scroll-dot" data-target="about"></a>
-  <a href="#service" class="side-scroll-dot" data-target="service"></a>
-  <a href="#career" class="side-scroll-dot" data-target="career"></a>
-  <a href="#qualification" class="side-scroll-dot" data-target="qualification"></a>
-  <a href="#blog" class="side-scroll-dot" data-target="blog"></a>
-  <a href="#resources" class="side-scroll-dot" data-target="resources"></a>
-  <a href="#contact" class="side-scroll-dot" data-target="contact"></a>
+  <a href="#home" class="side-scroll-dot active" data-target="home" aria-label="跳到 首页"></a>
+  <a href="#about" class="side-scroll-dot" data-target="about" aria-label="跳到 关于我"></a>
+  <a href="#service" class="side-scroll-dot" data-target="service" aria-label="跳到 AI 训练主业"></a>
+  <a href="#career" class="side-scroll-dot" data-target="career" aria-label="跳到 职业履历"></a>
+  <a href="#qualification" class="side-scroll-dot" data-target="qualification" aria-label="跳到 资质特长"></a>
+  <a href="#blog" class="side-scroll-dot" data-target="blog" aria-label="跳到 知识专栏"></a>
+  <a href="#resources" class="side-scroll-dot" data-target="resources" aria-label="跳到 资源分享"></a>
+  <a href="#contact" class="side-scroll-dot" data-target="contact" aria-label="跳到 合作联系"></a>
 </nav>
 
 <div class="preloader" id="preloader">
@@ -1957,41 +2006,41 @@ h1,h2,h3,h4,h5,h6{
 
   <div class="quick-section">
     <div class="quick-grid reveal">
-      <div class="quick-card has-sweep" data-goto="#career">
+      <a href="#career" class="quick-card has-sweep" data-goto="#career" aria-label="跳到 个人履历">
         <div class="card-sweep"></div>
         <span class="quick-num">01</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         <span>个人履历</span>
         <i class="arrow">→ CAREER</i>
-      </div>
-      <div class="quick-card has-sweep" data-goto="#qualification">
+      </a>
+      <a href="#qualification" class="quick-card has-sweep" data-goto="#qualification" aria-label="跳到 专业技能">
         <div class="card-sweep"></div>
         <span class="quick-num">02</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>专业技能</span>
         <i class="arrow">→ SKILLS</i>
-      </div>
-      <div class="quick-card has-sweep" data-goto="#service">
+      </a>
+      <a href="#service" class="quick-card has-sweep" data-goto="#service" aria-label="跳到 实战案例">
         <div class="card-sweep"></div>
         <span class="quick-num">03</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
         <span>实战案例</span>
         <i class="arrow">→ CASES</i>
-      </div>
-      <div class="quick-card has-sweep" data-goto="#resources">
+      </a>
+      <a href="#resources" class="quick-card has-sweep" data-goto="#resources" aria-label="跳到 资源干货">
         <div class="card-sweep"></div>
         <span class="quick-num">04</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
         <span>资源干货</span>
         <i class="arrow">→ RESOURCES</i>
-      </div>
-      <div class="quick-card has-sweep" data-goto="#contact">
+      </a>
+      <a href="#contact" class="quick-card has-sweep" data-goto="#contact" aria-label="跳到 商务洽谈">
         <div class="card-sweep"></div>
         <span class="quick-num">05</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
         <span>商务洽谈</span>
         <i class="arrow">→ CONTACT</i>
-      </div>
+      </a>
     </div>
   </div>
 
@@ -2479,7 +2528,8 @@ h1,h2,h3,h4,h5,h6{
 
   // ========== Quick card goto ==========
   document.querySelectorAll('[data-goto]').forEach(card => {
-    card.addEventListener('click', () => {
+    card.addEventListener('click', e => {
+      e.preventDefault();
       const target = card.getAttribute('data-goto');
       document.querySelector(target)?.scrollIntoView({behavior:'smooth'});
     });
