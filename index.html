@@ -651,6 +651,10 @@ h1,h2,h3,h4,h5,h6{
     font-style:italic;font-weight:300;
     font-variation-settings:"opsz" 144,"SOFT" 100;
     white-space:nowrap;
+    /* Italic 衬线在负 letter-spacing 下右半笔画（"师"等）会被挤掉，
+       这里把 h1 继承下来的 -.035em 重置为 0，避免字符重叠 */
+    letter-spacing:0;
+    padding-right:.04em;
     background:linear-gradient(135deg, var(--c-accent) 0%, var(--c-accent-2) 50%, var(--c-accent-3) 100%);
     background-size:200% 200%;
     -webkit-background-clip:text;
