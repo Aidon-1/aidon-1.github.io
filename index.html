@@ -770,15 +770,16 @@ h1,h2,h3,h4,h5,h6{
     background:linear-gradient(135deg,var(--highlight),transparent 50%);
     pointer-events:none;
   }
-  /* 流水线数据流光 */
+  /* 流水线数据流光（首屏播 2 次后停，避免一直像 loading） */
   .geom-card::after{
     content:"";position:absolute;inset:0;border-radius:var(--radius);
     background:linear-gradient(90deg, transparent 0%, rgba(91,149,240,0) 30%, rgba(122,162,247,0.45) 50%, rgba(91,149,240,0) 70%, transparent 100%);
     background-size:300% 100%;
     background-repeat:no-repeat;
+    background-position:-100% 0;
     pointer-events:none;
     mix-blend-mode:screen;
-    animation:dataFlow 3.5s linear infinite;
+    animation:dataFlow 3.5s linear 2;
     z-index:2;
   }
   .geom-card-2::after{animation-duration:4.2s;animation-delay:-1.2s}
@@ -789,16 +790,16 @@ h1,h2,h3,h4,h5,h6{
   }
   .geom-card-1{
     top:0;right:0;width:240px;height:120px;
-    animation:floaty 6s ease-in-out infinite;
+    animation:floaty 6s ease-in-out 1;
   }
   .geom-card-2{
     bottom:30px;left:0;width:200px;height:170px;
-    animation:floaty 7s ease-in-out infinite reverse;
+    animation:floaty 7s ease-in-out 1 reverse;
     animation-delay:-2s;
   }
   .geom-card-3{
     top:140px;left:30px;width:160px;height:80px;
-    animation:floaty 8s ease-in-out infinite;
+    animation:floaty 8s ease-in-out 1;
     animation-delay:-4s;
   }
   @keyframes floaty{
