@@ -2660,8 +2660,8 @@ h1,h2,h3,h4,h5,h6{
       return;
     }
 
-    // 进度策略：最少 1.2s 显示 + DOMContentLoaded 触发完成，真实加载快就早结束
-    const minDuration = 1200;
+    // 进度策略：最少 0.9s 显示 + DOMContentLoaded 触发完成，真实加载快就早结束
+    const minDuration = 900;
     const startTime = performance.now();
     let loaded = false;
     let minElapsed = false;
