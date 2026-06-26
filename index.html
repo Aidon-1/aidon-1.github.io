@@ -1746,7 +1746,7 @@ h1,h2,h3,h4,h5,h6{
     background:var(--c-bg);
     display:flex;align-items:center;justify-content:center;
     clip-path:circle(150% at 50% 50%);
-    transition:clip-path .55s var(--ease) .05s;
+    transition:clip-path .28s var(--ease) 0s;
   }
   .preloader.hidden{
     clip-path:circle(0% at 50% 50%);
@@ -1786,7 +1786,7 @@ h1,h2,h3,h4,h5,h6{
   .preloader-bar-fill{
     position:absolute;left:0;top:0;height:100%;width:0;
     background:linear-gradient(90deg,var(--c-accent),var(--c-accent-2));
-    transition:width .15s linear;
+    transition:width .1s linear;
   }
   .preloader-pct{
     font-size:10px;letter-spacing:.22em;color:var(--c-muted);
@@ -2645,19 +2645,19 @@ h1,h2,h3,h4,h5,h6{
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(reducedMotion){
       preloader.classList.add('hidden');
-      setTimeout(() => preloader.remove(), 700);
+      setTimeout(() => preloader.remove(), 400);
       return;
     }
 
-    // 进度策略：最少 0.6s 显示 + window.load 触发完成，真实加载快就早结束
-    const minDuration = 350;
+    // 进度策略：最少 0.2s 显示 + window.load 触发完成，真实加载快就早结束
+    const minDuration = 200;
     const startTime = performance.now();
     let loaded = false;
     let minElapsed = false;
     function finish(){
       if(loaded && minElapsed){
         preloader.classList.add('hidden');
-        setTimeout(() => preloader.remove(), 250);
+        setTimeout(() => preloader.remove(), 150);
       }
     }
     window.addEventListener('load', () => {
