@@ -42,10 +42,13 @@
   - JSON-LD Person 结构化数据
 
 ### P1 · 内容深化（全 4 项 ✅）
-- **P1.5 Contact form 真实化** —— 4 字段（姓名/邮箱/话题/留言）走 Web3Forms API（access_key 占位 `YOUR_WEB3FORMS_ACCESS_KEY`，未配置时回退到 mailto 提示）
-  - 状态三态：loading spinner / success / error
-  - 前端必填 + 邮箱格式二次校验（mobile safari 兜底）
-  - 表单暗色主题匹配 contact-info 卡，accent focus ring
+- **P1.5 Contact form → mailto 重构**（commit `76f086d`）——
+  - **原因**：Web3Forms 注册需要 Google 账号 + 手机号验证，用户谷歌账号验证不了
+  - **方案**：保留表单 UI（用户熟悉看着专业），submit 改成 mailto 调起用户邮件客户端
+  - **JS 流程**：监听 submit → 校验 4 字段 + 邮箱格式 → 拼 mailto URL → setStatus(success) 显示提示 → setTimeout 500ms 后跳转
+  - **预填格式**：subject = `[个人站] {topic} — {name}`，body = 多行（称呼/邮箱/话题/留言/签名）
+  - **优势**：永不挂、不会进垃圾箱、移动端友好、零成本、零后端、零注册
+  - **fallback**：hint 区域保留 `<a href="mailto:390508183@qq.com">直接给我发邮件</a>`，设备无邮件 app 也能用
 - **P1.6 service-card sweep** —— 早就做完，6 个 service-card 全部 `has-sweep` + `.card-sweep`
 - **P1.7 Blog 加 2 篇深度文**（代写，9 篇总数）：
   - 08 CASE STUDY: 项目复盘：4 周帮电商店铺搭出 AI 客服模型
@@ -101,8 +104,8 @@
 4. **A/B test CTA 文案**（P1.8 后续）—— 看「了解训练服务」CTR vs 「看看我能帮上什么」
 
 ### 维护性 TODO
-- Web3Forms access_key 待用户去 web3forms.com 注册填入（现在是占位）
-- Web3Forms access_key 拿到后改 `index.html` 第 ~2391 行占位字符串
+- ~~Web3Forms access_key 待用户去 web3forms.com 注册填入~~ ❌ 已撤销，改用 mailto 零后端方案（用户谷歌账号验证不了）
+- 表单已 commit `76f086d`，部署版可直接使用
 
 ## 用户偏好
 
