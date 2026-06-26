@@ -1150,12 +1150,16 @@ h1,h2,h3,h4,h5,h6{
     font-family:var(--font-mono);font-size:10.5px;letter-spacing:.22em;color:var(--c-muted);
 
   }
-  .card-meta a{
+  .card-meta a, .card-meta .open-btn{
     color:var(--c-accent);font-weight:500;
     display:inline-flex;align-items:center;gap:6px;
+    cursor:pointer;transition:opacity .25s var(--ease);
   }
-  .card-meta a svg{width:12px;height:12px;transition:transform .3s var(--ease)}
-  .card-meta a:hover svg{transform:translateX(4px)}
+  .card-meta a svg, .card-meta .open-btn svg{width:12px;height:12px;transition:transform .3s var(--ease)}
+  .card-meta a:hover svg, .card:hover .open-btn svg{transform:translateX(4px)}
+  .card{cursor:pointer;transition:transform .35s var(--ease),border-color .35s var(--ease)}
+  .card:hover{border-color:var(--c-accent)}
+  .card:focus-visible{outline:2px solid var(--c-accent);outline-offset:4px}
 
   /* ========== Contact ========== */
   .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
@@ -1738,6 +1742,192 @@ h1,h2,h3,h4,h5,h6{
     animation:charBounce .5s var(--ease);
   }
 
+  /* ========== Article / Resource Modal ========== */
+  .art-modal{
+    position:fixed;inset:0;z-index:99990;
+    display:none;align-items:flex-start;justify-content:center;
+    padding:48px 24px 24px;overflow-y:auto;
+    background:rgba(8,10,18,.78);
+    backdrop-filter:blur(14px) saturate(140%);
+    -webkit-backdrop-filter:blur(14px) saturate(140%);
+    opacity:0;transition:opacity .35s var(--ease);
+  }
+  .art-modal.is-open{display:flex;opacity:1}
+  .art-modal[data-theme="light"]{background:rgba(244,245,250,.82)}
+  .art-modal-card{
+    position:relative;width:100%;max-width:860px;
+    background:var(--c-card);border:1px solid var(--c-line);
+    border-radius:16px;box-shadow:0 30px 80px rgba(0,0,0,.45);
+    overflow:hidden;
+    transform:translateY(24px) scale(.98);
+    transition:transform .45s var(--ease);
+  }
+  .art-modal.is-open .art-modal-card{transform:translateY(0) scale(1)}
+  .art-modal-bar{
+    position:sticky;top:0;z-index:2;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    padding:18px 28px;
+    background:linear-gradient(180deg,var(--c-card) 70%,rgba(0,0,0,0));
+    border-bottom:1px solid var(--c-line);
+  }
+  .art-modal-bar .crumb{
+    display:flex;align-items:center;gap:10px;
+    font-size:10.5px;letter-spacing:.22em;color:var(--c-muted);
+    text-transform:uppercase;
+  }
+  .art-modal-bar .crumb .crumb-dot{width:4px;height:4px;border-radius:50%;background:var(--c-accent)}
+  .art-modal-close{
+    width:36px;height:36px;border-radius:50%;
+    background:var(--c-line-2);border:1px solid var(--c-line);
+    color:var(--c-text-soft);cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:transform .3s var(--ease),background .3s var(--ease),color .3s var(--ease);
+  }
+  .art-modal-close:hover{transform:rotate(90deg);background:var(--c-accent);color:#fff;border-color:var(--c-accent)}
+  .art-modal-close svg{width:14px;height:14px}
+  .art-modal-body{padding:18px 44px 56px;line-height:1.95;color:var(--c-text-soft);font-size:14.5px}
+  .art-modal-body h2{
+    font-family:var(--font-serif);font-weight:600;font-style:italic;
+    font-size:clamp(26px,3vw,36px);color:var(--c-text);
+    line-height:1.25;letter-spacing:-.01em;margin:6px 0 18px;
+  }
+  .art-modal-body .meta{
+    display:flex;flex-wrap:wrap;gap:14px 22px;
+    font-size:11px;letter-spacing:.18em;color:var(--c-muted);
+    text-transform:uppercase;margin-bottom:32px;padding-bottom:24px;
+    border-bottom:1px solid var(--c-line);
+  }
+  .art-modal-body .meta b{color:var(--c-accent);font-weight:500}
+  .art-modal-body p{margin:0 0 18px;font-weight:300}
+  .art-modal-body p strong{color:var(--c-text);font-weight:500}
+  .art-modal-body h3{
+    font-family:var(--font-serif);font-style:italic;font-weight:600;
+    font-size:18px;color:var(--c-accent);margin:42px 0 14px;
+    padding-left:14px;border-left:2px solid var(--c-accent);
+  }
+  .art-modal-body ul,.art-modal-body ol{margin:0 0 22px;padding-left:22px}
+  .art-modal-body li{margin-bottom:8px}
+  .art-modal-body blockquote{
+    margin:24px 0;padding:18px 22px;
+    border-left:3px solid var(--c-accent);
+    background:var(--c-line-2);border-radius:0 8px 8px 0;
+    font-style:italic;color:var(--c-text);
+  }
+  .art-modal-body code{
+    font-family:ui-monospace,SF Mono,Menlo,Consolas,monospace;
+    font-size:12.5px;padding:2px 7px;border-radius:4px;
+    background:var(--c-line-2);color:var(--c-accent);
+    border:1px solid var(--c-line);
+  }
+  .art-modal-body pre{
+    background:var(--c-bg-2);border:1px solid var(--c-line);border-radius:10px;
+    padding:18px 20px;overflow-x:auto;margin:18px 0 24px;
+    font-size:12.5px;line-height:1.7;color:var(--c-text);
+  }
+  .art-modal-body pre code{
+    background:none;border:none;padding:0;color:inherit;font-size:inherit;
+  }
+  .art-modal-body .art-table{
+    width:100%;border-collapse:collapse;margin:22px 0;font-size:13px;
+  }
+  .art-modal-body .art-table th,.art-modal-body .art-table td{
+    padding:12px 14px;text-align:left;border:1px solid var(--c-line);
+  }
+  .art-modal-body .art-table th{
+    background:var(--c-line-2);color:var(--c-text);font-weight:500;
+    font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  }
+  .art-modal-body .art-table td{color:var(--c-text-soft)}
+  .art-modal-body .art-callout{
+    display:flex;gap:14px;align-items:flex-start;
+    padding:18px 22px;margin:22px 0;border-radius:10px;
+    background:linear-gradient(135deg,var(--c-line-2),transparent);
+    border:1px solid var(--c-line);
+  }
+  .art-modal-body .art-callout .ico{
+    flex-shrink:0;width:28px;height:28px;border-radius:50%;
+    background:var(--c-accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:600;
+  }
+  .art-modal-body .art-callout .txt{flex:1;font-size:13.5px}
+  .art-modal-body .prompt-card{
+    border:1px solid var(--c-line);border-radius:10px;
+    padding:18px 22px;margin:14px 0;background:var(--c-bg-2);
+    position:relative;
+  }
+  .art-modal-body .prompt-card .ptitle{
+    font-family:var(--font-serif);font-style:italic;font-weight:600;
+    color:var(--c-accent);font-size:15px;margin-bottom:10px;
+  }
+  .art-modal-body .prompt-card pre{margin:8px 0 12px;background:var(--c-bg);font-size:12px}
+  .art-modal-body .prompt-card .copy-btn{
+    position:absolute;top:14px;right:14px;
+    padding:5px 12px;font-size:10.5px;letter-spacing:.18em;
+    background:var(--c-line);border:1px solid var(--c-line);
+    color:var(--c-text-soft);border-radius:4px;cursor:pointer;
+    transition:all .25s var(--ease);
+  }
+  .art-modal-body .prompt-card .copy-btn:hover{background:var(--c-accent);color:#fff;border-color:var(--c-accent)}
+  .art-modal-body .prompt-card .copy-btn.is-done{background:#22c55e;color:#fff;border-color:#22c55e}
+  .art-modal-body .checklist{list-style:none;padding:0;margin:14px 0}
+  .art-modal-body .checklist li{
+    padding:8px 0 8px 28px;position:relative;border-bottom:1px dashed var(--c-line);
+  }
+  .art-modal-body .checklist li::before{
+    content:"";position:absolute;left:4px;top:14px;
+    width:14px;height:14px;border-radius:4px;border:1.5px solid var(--c-accent);
+  }
+  .art-modal-body .checklist li::after{
+    content:"";position:absolute;left:8px;top:18px;
+    width:6px;height:6px;border-right:2px solid var(--c-accent);
+    border-bottom:2px solid var(--c-accent);transform:rotate(45deg);
+  }
+  .art-modal-body .flow{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+    gap:10px;margin:18px 0;
+  }
+  .art-modal-body .flow .step{
+    padding:14px 14px;border:1px solid var(--c-line);border-radius:8px;
+    background:var(--c-line-2);text-align:center;
+  }
+  .art-modal-body .flow .step .n{
+    font-family:var(--font-serif);font-style:italic;font-size:22px;
+    color:var(--c-accent);font-weight:600;line-height:1;margin-bottom:6px;
+  }
+  .art-modal-body .flow .step .l{font-size:12px;color:var(--c-text-soft);letter-spacing:.05em}
+  .art-modal-body .kpi-grid{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:12px;margin:18px 0;
+  }
+  .art-modal-body .kpi{
+    padding:18px;border:1px solid var(--c-line);border-radius:8px;
+    background:var(--c-bg-2);
+  }
+  .art-modal-body .kpi .v{
+    font-family:var(--font-serif);font-style:italic;
+    font-size:30px;font-weight:600;color:var(--c-accent);line-height:1;
+  }
+  .art-modal-body .kpi .l{font-size:11px;letter-spacing:.18em;color:var(--c-muted);margin-top:6px;text-transform:uppercase}
+  .art-modal-body .divider{
+    height:1px;background:var(--c-line);margin:36px 0;
+  }
+  .art-modal-body .end-mark{
+    text-align:center;margin-top:42px;color:var(--c-accent);
+    font-family:var(--font-serif);font-style:italic;font-size:14px;
+    letter-spacing:.4em;
+  }
+  .art-modal-body .end-mark::before,.art-modal-body .end-mark::after{
+    content:"—";margin:0 12px;color:var(--c-muted);
+  }
+  body.no-scroll{overflow:hidden}
+  @media(max-width:768px){
+    .art-modal{padding:0}
+    .art-modal-card{border-radius:0;min-height:100vh;max-width:100%}
+    .art-modal-bar{padding:14px 18px}
+    .art-modal-body{padding:16px 22px 64px;font-size:14px}
+  }
+
   /* ========== Theme switch circular mask transition ========== */
   .theme-mask{
     position:fixed;border-radius:50%;pointer-events:none;z-index:99998;
@@ -2211,59 +2401,59 @@ h1,h2,h3,h4,h5,h6{
   </div>
 
   <div class="card-grid">
-    <div class="card reveal">
+    <div class="card reveal" data-open="art-blog-01" tabindex="0" role="button" aria-label="阅读全文：转行实录">
       <div class="card-top"><span class="card-tag">CAREER STORY</span><span class="card-num">01</span></div>
       <h3>转行实录：从多行业辗转，正式成为 AI 训练师的心路历程</h3>
       <p>从公考、电商到自媒体，每一次转身都不是逃离，而是把经历沉淀成可迁移的能力，最终在 AI 训练赛道找到自己的位置。</p>
-      <div class="card-meta"><span>阅读 · 8 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 8 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d1">
+    <div class="card reveal reveal-d1" data-open="art-blog-02" tabindex="0" role="button" aria-label="阅读全文：入行指南">
       <div class="card-top"><span class="card-tag">GETTING STARTED</span><span class="card-num">02</span></div>
       <h3>入行指南：零基础 AI 训练师入门路线、岗位选择与避坑经验</h3>
       <p>系统拆解 AI 训练师的岗位类型、能力模型、必备工具栈与常见误区，给新人一条清晰的入行路径。</p>
-      <div class="card-meta"><span>阅读 · 12 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 12 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d2">
+    <div class="card reveal reveal-d2" data-open="art-blog-03" tabindex="0" role="button" aria-label="阅读全文：思维干货">
       <div class="card-top"><span class="card-tag">MINDSET</span><span class="card-num">03</span></div>
       <h3>思维干货：用投资学理性思维，提升 AI 训练工作效率</h3>
       <p>把"成本收益、风险控制、数据复盘"的投资逻辑迁移到 AI 训练日常，用理性思维代替盲目试错。</p>
-      <div class="card-meta"><span>阅读 · 7 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 7 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal">
+    <div class="card reveal" data-open="art-blog-04" tabindex="0" role="button" aria-label="阅读全文：运营心得">
       <div class="card-top"><span class="card-tag">OPERATIONS</span><span class="card-num">04</span></div>
       <h3>运营心得：电商 + 自媒体经验，赋能商业 AI 快速落地</h3>
       <p>商业场景里的真实经验，是 AI 训练师最稀缺的资产。把流量、转化、内容力迁移进模型调教，效果立竿见影。</p>
-      <div class="card-meta"><span>阅读 · 9 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 9 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d1">
+    <div class="card reveal reveal-d1" data-open="art-blog-05" tabindex="0" role="button" aria-label="阅读全文：成长随笔">
       <div class="card-top"><span class="card-tag">GROWTH</span><span class="card-num">05</span></div>
       <h3>成长随笔：两年公考备考，带给职场人的长期价值</h3>
       <p>公考两年教会我的不是套路，而是结构化思考、抗压耐挫和长期主义——这些底色会跟着一辈子。</p>
-      <div class="card-meta"><span>阅读 · 6 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 6 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d2">
+    <div class="card reveal reveal-d2" data-open="art-blog-06" tabindex="0" role="button" aria-label="阅读全文：生活感悟">
       <div class="card-top"><span class="card-tag">LIFE</span><span class="card-num">06</span></div>
       <h3>生活感悟：篮球执裁教会我的做事原则与人生态度</h3>
       <p>裁判哨下的公平公正、临场判断与情绪管理，其实和做 AI 训练一模一样：守规则、读现场、做对的事。</p>
-      <div class="card-meta"><span>阅读 · 5 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 5 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal">
+    <div class="card reveal" data-open="art-blog-07" tabindex="0" role="button" aria-label="阅读全文：行业观察">
       <div class="card-top"><span class="card-tag">INDUSTRY</span><span class="card-num">07</span></div>
       <h3>行业观察：AI 训练行业现状、就业前景与未来发展方向</h3>
       <p>从数据标注到提示词工程再到 Agent 协作，AI 训练行业三年内的变化比想象中快得多，提前看清趋势才能不掉队。</p>
-      <div class="card-meta"><span>阅读 · 11 MIN</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 11 MIN</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d1">
+    <div class="card reveal reveal-d1" data-open="art-blog-08" tabindex="0" role="button" aria-label="阅读全文：项目复盘">
       <div class="card-top"><span class="card-tag">CASE STUDY</span><span class="card-num">08</span></div>
       <h3>项目复盘：4 周帮一家电商店铺搭出 AI 客服模型（含数据 / 流程 / 验收）</h3>
       <p>从需求拆解 → 数据采集与清洗（1200 条真实对话）→ 提示词工程 → 人工反馈迭代 → 店铺内实测。完整公开我接的第一单电商 AI 客服定制训练。</p>
-      <div class="card-meta"><span>阅读 · 14 MIN · 含流程图</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 14 MIN · 含流程图</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d2">
+    <div class="card reveal reveal-d2" data-open="art-blog-09" tabindex="0" role="button" aria-label="阅读全文：思维方法">
       <div class="card-top"><span class="card-tag">FRAMEWORK</span><span class="card-num">09</span></div>
       <h3>思维方法：把 AI 训练当投资组合来管理 —— 风险 / 收益 / 止损的 3 个类比</h3>
       <p>本科投资学不是白读的。模型就是组合，数据是仓位，反馈是止盈线 —— 把我从金融学借来的三个核心框架，迁移进 AI 训练日常工作。</p>
-      <div class="card-meta"><span>阅读 · 9 MIN · 含表格</span><a href="#blog">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>阅读 · 9 MIN · 含表格</span><span class="open-btn">READ <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
   </div>
 </section>
@@ -2277,41 +2467,41 @@ h1,h2,h3,h4,h5,h6{
   </div>
 
   <div class="card-grid">
-    <div class="card reveal">
+    <div class="card reveal" data-open="art-res-01" tabindex="0" role="button" aria-label="查看资源：AI 训练入门教程">
       <div class="card-top"><span class="card-tag">AI · TUTORIAL</span><span class="card-num">01</span></div>
       <h3>AI 训练入门教程 + 主流标注工具实操资料</h3>
       <p>从基础概念到主流标注平台（如 Label Studio / Prodi 等）的实操指南，适合零基础起步。</p>
-      <div class="card-meta"><span>PDF · TUTORIAL</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>PDF · TUTORIAL</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d1">
+    <div class="card reveal reveal-d1" data-open="art-res-02" tabindex="0" role="button" aria-label="查看资源：提示词合集">
       <div class="card-top"><span class="card-tag">PROMPT PACK</span><span class="card-num">02</span></div>
       <h3>办公 / 创作 / 电商通用优质提示词合集</h3>
       <p>覆盖日常办公、内容创作、电商营销三大场景的高质量提示词模板，开箱即用。</p>
-      <div class="card-meta"><span>DOC · PROMPTS</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>DOC · PROMPTS</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d2">
+    <div class="card reveal reveal-d2" data-open="art-res-03" tabindex="0" role="button" aria-label="查看资源：公考笔记">
       <div class="card-top"><span class="card-tag">CIVIL SERVICE</span><span class="card-num">03</span></div>
       <h3>公考备考学习笔记与申论写作素材</h3>
       <p>两年公考沉淀的结构化笔记、行测技巧与申论素材库，给同样在路上的你一份参考。</p>
-      <div class="card-meta"><span>PDF · NOTES</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>PDF · NOTES</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal">
+    <div class="card reveal" data-open="art-res-04" tabindex="0" role="button" aria-label="查看资源：电商运营">
       <div class="card-top"><span class="card-tag">E-COMMERCE</span><span class="card-num">04</span></div>
       <h3>电商新手运营基础干货</h3>
       <p>从选品、流量到转化，整理一套适合新手入门的电商运营基础框架与实操清单。</p>
-      <div class="card-meta"><span>DOC · GUIDE</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>DOC · GUIDE</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d1">
+    <div class="card reveal reveal-d1" data-open="art-res-05" tabindex="0" role="button" aria-label="查看资源：自媒体文案模板">
       <div class="card-top"><span class="card-tag">CONTENT</span><span class="card-num">05</span></div>
       <h3>自媒体短视频文案创作模板</h3>
       <p>爆款开头、节奏卡点、转化话术——把自媒体一年的内容经验沉淀成可复用模板。</p>
-      <div class="card-meta"><span>TEMPLATE · COPY</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>TEMPLATE · COPY</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
-    <div class="card reveal reveal-d2">
+    <div class="card reveal reveal-d2" data-open="art-res-06" tabindex="0" role="button" aria-label="查看资源：篮球规则">
       <div class="card-top"><span class="card-tag">BASKETBALL</span><span class="card-num">06</span></div>
       <h3>篮球基础裁判规则科普资料</h3>
       <p>业余爱好者也能看懂的篮球裁判基础规则与手势图解，做一个懂球的观赛者。</p>
-      <div class="card-meta"><span>PDF · RULES</span><a href="#resources">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a></div>
+      <div class="card-meta"><span>PDF · RULES</span><span class="open-btn">VIEW <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span></div>
     </div>
   </div>
 </section>
@@ -2991,5 +3181,280 @@ h1,h2,h3,h4,h5,h6{
     document.querySelectorAll('[data-count]').forEach(el => doneObserver.observe(el));
   })();
 </script>
+
+<!-- ========== Article / Resource Modal ========== -->
+<div class="art-modal" id="artModal" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="art-modal-card">
+    <div class="art-modal-bar">
+      <div class="crumb"><span class="crumb-dot"></span><span id="artCrumb">KNOWLEDGE</span></div>
+      <button class="art-modal-close" id="artClose" type="button" aria-label="关闭文章">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="art-modal-body" id="artBody"></div>
+  </div>
+</div>
+
+<script id="artData" type="application/json">{
+  "art-blog-01": {
+    "crumb": "KNOWLEDGE · 01 · 转行实录",
+    "title": "转行实录：从多行业辗转，正式成为 AI 训练师的心路历程",
+    "meta": [
+      "阅读 · 8 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>很多人问我：「投资学出身，怎么就跑去做了 AI 训练师？」 其实不是\"跑去\"，是走了四年路，刚好走到了这里。</p>\n\n<h3>第一段 · 公考两年</h3>\n<p>本科投资学，2022 年毕业那年直接备战公务员。准备两年，行测申论写满一摞摞 A4 纸，最后没上岸。<strong>但这两年的价值远超一纸录用通知</strong>：它教会我 <code>结构化思考</code>、<code>长周期自我管理</code>、<code>在挫败里保持节奏</code>。</p>\n<p>这两点后来在 AI 训练里救了我无数次——调一个 prompt 调一周没效果，没关系，继续拆结构、复盘、迭代。</p>\n\n<h3>第二段 · 电商一年</h3>\n<p>2024 年转去做抖音小店和拼多多店铺。选品、上架、客服、投流、售后全流程跑了一遍，<strong>最深的体会是：商业世界没有标准答案，只有数据反馈</strong>。</p>\n<p>同一个商品换个标题点击率能差 3 倍。这跟训练 AI 是一回事——同一个 prompt 微调几个词，效果可能天差地别。<em>把电商里的\"AB 测试\"思维搬进模型调教，是我的第一波红利。</em></p>\n\n<h3>第三段 · 自媒体一年</h3>\n<p>2025 年初入局游戏自媒体，做了一年短视频。剪辑、文案、投流、运营、变现路径全摸过一遍。<strong>最值钱的不是涨了多少粉，而是把\"内容创作\"这件抽象事变成了肌肉记忆</strong>。</p>\n<p>AI 训练的本质也是内容创作——用 prompt 指挥模型产出符合用户预期的内容。会写、会拆、会迭代的人，永远稀缺。</p>\n\n<h3>第四段 · AI 训练落地</h3>\n<p>2026 年初正式开始接 AI 训练项目。第一个客户是电商店铺 AI 客服定制（完整复盘见 <strong>08 项目复盘</strong>），从那开始一发不可收拾。</p>\n<p>回头看，<strong>公考的耐心 + 电商的数据感 + 自媒体的内容力</strong>，三件事合在一起才让我在 AI 训练赛道站住脚。</p>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">!</div>\n  <div class=\"txt\"><strong>给同样在转行的你：</strong>不要把\"绕路\"当浪费。每段经历都是下个阶段的隐藏技能点，关键是迁移能力，不是表面匹配。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-02": {
+    "crumb": "KNOWLEDGE · 02 · 入行指南",
+    "title": "入行指南：零基础 AI 训练师入门路线、岗位选择与避坑经验",
+    "meta": [
+      "阅读 · 12 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>AI 训练师是 2024-2026 年最热的新职业之一，但<strong>\"AI 训练师\"这个词被严重泛化</strong>，不同公司定义完全不同。这篇帮你拆清楚。</p>\n\n<h3>一、AI 训练师的 4 大岗位类型</h3>\n<table class=\"art-table\">\n  <thead>\n    <tr><th>类型</th><th>核心工作</th><th>入门难度</th><th>薪资区间（一线）</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>数据标注师</td><td>给文本/图像/视频打标签、做质检</td><td>★☆☆</td><td>5-9K</td></tr>\n    <tr><td>提示词工程师</td><td>设计 prompt、做 few-shot、做 CoT 拆解</td><td>★★☆</td><td>10-20K</td></tr>\n    <tr><td>模型微调师</td><td>LoRA / SFT / RLHF，需要懂 Python 和数据</td><td>★★★</td><td>15-35K</td></tr>\n    <tr><td>AI 产品训练师</td><td>对接业务方，做需求拆解 + 数据 + 评测 + 上线</td><td>★★☆</td><td>12-30K</td></tr>\n  </tbody>\n</table>\n\n<h3>二、零基础 6 个月入行路线</h3>\n<div class=\"flow\">\n  <div class=\"step\"><div class=\"n\">1</div><div class=\"l\">月：<br>认识 LLM + Prompt 基础</div></div>\n  <div class=\"step\"><div class=\"n\">2</div><div class=\"l\">月：<br>工具实操 + 标注</div></div>\n  <div class=\"step\"><div class=\"n\">3</div><div class=\"l\">月：<br>Prompt 进阶</div></div>\n  <div class=\"step\"><div class=\"n\">4</div><div class=\"l\">月：<br>接实战外包</div></div>\n  <div class=\"step\"><div class=\"n\">5</div><div class=\"l\">月：<br>搭作品集</div></div>\n  <div class=\"step\"><div class=\"n\">6</div><div class=\"l\">月：<br>投简历/接单</div></div>\n</div>\n\n<h3>第 1 月：认识 LLM</h3>\n<ul>\n  <li>理解 Transformer、Token、Context Window 三个基本概念</li>\n  <li>玩透 ChatGPT / Claude / Gemini，写 50+ 个不同类型 prompt</li>\n  <li>读《这就是 ChatGPT》或者《Hands-On Large Language Models》前 4 章</li>\n</ul>\n\n<h3>第 2 月：工具实操</h3>\n<ul>\n  <li>装 <code>Label Studio</code> 跑通图像 + 文本标注全流程</li>\n  <li>玩 <code>Dify</code> 或 <code>Coze</code> 搭一个工作流</li>\n  <li>注册一个标注众包平台账号（龙猫数据 / 标贝科技），接几个真实项目感受节奏</li>\n</ul>\n\n<h3>第 3 月：Prompt 进阶</h3>\n<ul>\n  <li>学 CoT（Chain of Thought）、ReAct、Self-Consistency</li>\n  <li>做 10 个场景化 prompt 模板（客服 / 文案 / 编程 / 数据分析）</li>\n  <li>做 1 个评测集（30+ 条样本），跑 3 个模型对比效果</li>\n</ul>\n\n<h3>第 4 月：接实战外包</h3>\n<ul>\n  <li>去闲鱼 / 拼多多 / 小红书挂\"AI 训练服务\"</li>\n  <li>首单可以免费或半价，换实战 + 客户反馈</li>\n  <li>建议方向：电商客服 / 自媒体文案 / 知识库问答</li>\n</ul>\n\n<h3>第 5-6 月：搭作品集 + 求职</h3>\n<ul>\n  <li>做 3 个 case study（截图 / 数据 / 反馈）放个人网站</li>\n  <li>简历强调\"业务结果\"，不是\"我用了几次 ChatGPT\"</li>\n  <li>目标岗位：AI 产品训练师 / Prompt 工程师 / 数据策略</li>\n</ul>\n\n<h3>三、新人最容易踩的 5 个坑</h3>\n<ol>\n  <li><strong>只玩 prompt 不接业务</strong>——纸上谈兵，简历无亮点</li>\n  <li><strong>只看教程不动手</strong>——必须亲手跑通才算会</li>\n  <li><strong>追新不追深</strong>——GPT-5 出了就跳 Claude 4，不必</li>\n  <li><strong>不会写文档</strong>——训练流程 / 数据说明 / 评测报告是核心竞争力</li>\n  <li><strong>不建立个人作品集</strong>——所有人都能投简历，能拿 case 说话的人少</li>\n</ol>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">→</div>\n  <div class=\"txt\"><strong>一句话总结：</strong>AI 训练师不是\"会用 AI 的人\"，而是\"能让 AI 在某个真实场景里持续产出好结果的人\"。前者人人会，后者稀缺。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-03": {
+    "crumb": "KNOWLEDGE · 03 · 思维干货",
+    "title": "思维干货：用投资学理性思维，提升 AI 训练工作效率",
+    "meta": [
+      "阅读 · 7 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>本科投资学不是白读的。<strong>把金融市场的几个核心思维搬到 AI 训练日常，工作效率至少翻倍</strong>。</p>\n\n<h3>思维 1：成本收益（Cost-Benefit）</h3>\n<p>投资第一原则：<em>先算期望值，再决定要不要做</em>。AI 训练里也一样。</p>\n<p>客户给一个需求，先问三件事：</p>\n<ul>\n  <li>这个 prompt 调好之后能复用多少次？</li>\n  <li>效果提升 10% 值多少钱？</li>\n  <li>我投入 8 小时 vs 投入 2 小时，差多少？</li>\n</ul>\n<p>如果一个 prompt 用一次就废弃，那花一周打磨是亏本的。投资学里叫 <code>\"沉没成本陷阱\"</code>，训练里也一样——别为了\"调得更好\"无限投入，除非 ROI 算得过来。</p>\n\n<h3>思维 2：风险控制（Risk Management）</h3>\n<p>投资第二原则：<em>分散风险，不要 all-in</em>。AI 训练里叫 <strong>\"模型组合策略\"</strong>。</p>\n<ul>\n  <li>重要场景不依赖单一模型——主用 GPT-4o，但 Claude 3.5 + Gemini 2.0 同时跑一份做交叉验证</li>\n  <li>数据标注做\"双人 + 仲裁\"——防止单人标注偏差</li>\n  <li>prompt 加 <code>few-shot + chain-of-thought</code> 双保险——降低幻觉率</li>\n</ul>\n<p>不要把整个项目的输出质量押在一个 prompt 一句话上。<strong>冗余设计是工程思维的基本功</strong>。</p>\n\n<h3>思维 3：复盘迭代（Post-trade Review）</h3>\n<p>投资第三原则：<em>每笔交易都要复盘，找到 alpha 来源</em>。AI 训练里叫 <strong>\"评测驱动迭代\"</strong>。</p>\n<p>具体做法：</p>\n<ol>\n  <li>每个 prompt 版本记 changelog（改了哪句、为什么）</li>\n  <li>每轮迭代跑同一个评测集，对比得分</li>\n  <li>失败的样本单独建档，分析失败模式</li>\n  <li>月度总结：本月 best prompt 是什么？复用在哪？</li>\n</ol>\n<p>做过 3 个月你会发现：<strong>80% 的提升来自 20% 的微调</strong>。找到那 20%，把时间砸上去。</p>\n\n<h3>思维 4：止损线（Stop Loss）</h3>\n<p>投资第四原则：<em>亏到一定程度必须止损</em>。AI 训练里叫 <strong>\"卡方验收\"</strong>。</p>\n<p>跟客户对接时一定要约定验收标准：</p>\n<ul>\n  <li>客服场景：准确率 ≥ 95%，转人工率 ≤ 8%</li>\n  <li>文案场景：人工通过率 ≥ 80%</li>\n  <li>数据标注：一致性 ≥ 90%</li>\n</ul>\n<p>达不到就停下重做，不要\"差不多就行\"。<strong>交付质量是口碑的护城河</strong>。</p>\n\n<h3>思维 5：长期主义（Compound Interest）</h3>\n<p>投资最高原则：<em>复利是时间的函数</em>。AI 训练师的能力也是复利。</p>\n<ul>\n  <li>第 1 个月接一单：500 元</li>\n  <li>第 6 个月接一单：3000 元</li>\n  <li>第 12 个月接一单：8000 元</li>\n</ul>\n<p>差距来自案例积累、品牌信任、专业深度。<strong>每天进步 1%，一年后是 37 倍</strong>。这话俗，但真。</p>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">$</div>\n  <div class=\"txt\"><strong>一句话：</strong>投资学教会我的不是 K 线图，而是 <code>用概率思维决策、用工程思维执行、用复利思维积累</code>。这三件事放到任何行业都成立。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-04": {
+    "crumb": "KNOWLEDGE · 04 · 运营心得",
+    "title": "运营心得：电商 + 自媒体经验，赋能商业 AI 快速落地",
+    "meta": [
+      "阅读 · 9 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>商业 AI 项目能不能落地，<strong>不取决于 prompt 多巧妙，取决于对真实业务场景的理解</strong>。这一篇讲我从电商 + 自媒体跨界带来的 5 个核心心得。</p>\n\n<h3>心得 1：先懂业务，再调 prompt</h3>\n<p>电商场景最常见的客户需求是\"做一个 AI 客服\"。很多新人上来就调 prompt，结果做出来的客服话术专业漂亮，但<strong>客户根本不买账</strong>。</p>\n<p>真实情况：</p>\n<ul>\n  <li>客户最关心\"能不能解决售后纠纷\"，不是\"回复是否礼貌\"</li>\n  <li>复购引导 > 单纯解答问题</li>\n  <li>不同客单价对应不同话术风格</li>\n</ul>\n<p><strong>先花 2 小时跟客户聊业务，再写 prompt</strong>。这是电商教会我的第一课。</p>\n\n<h3>心得 2：转化漏斗思维</h3>\n<p>电商有经典的转化漏斗：曝光 → 点击 → 加购 → 下单 → 复购。AI 训练项目里也有一模一样的漏斗：</p>\n<div class=\"flow\">\n  <div class=\"step\"><div class=\"n\">需求</div><div class=\"l\">客户提出需求</div></div>\n  <div class=\"step\"><div class=\"n\">数据</div><div class=\"l\">采集样本</div></div>\n  <div class=\"step\"><div class=\"n\">prompt</div><div class=\"l\">设计初版</div></div>\n  <div class=\"step\"><div class=\"n\">评测</div><div class=\"l\">跑测试集</div></div>\n  <div class=\"step\"><div class=\"n\">上线</div><div class=\"l\">实测</div></div>\n  <div class=\"step\"><div class=\"n\">优化</div><div class=\"l\">持续迭代</div></div>\n</div>\n<p><strong>每个环节都要算转化率</strong>。比如 prompt 调 10 版只通过 3 版，转化率 30%，那就要回到需求拆解阶段找问题，而不是死磕 prompt 本身。</p>\n\n<h3>心得 3：内容是 AI 最好的训练素材</h3>\n<p>做了一年自媒体，最大的副产物不是粉丝，是<strong>几百条爆款短视频脚本</strong>。这些脚本天然就是优质的\"内容创作风格 prompt 训练样本\"。</p>\n<p>现在做 AI 内容生成项目，我会把客户过去的爆款文案喂给模型作为 <code>few-shot</code> 示例，效果远好于通用模板。</p>\n\n<h3>心得 4：节奏感比\"完美\"更重要</h3>\n<p>电商客服每天接待 200+ 咨询，要求 <strong>\"秒回\"</strong>。AI 训练也一样：</p>\n<ul>\n  <li>第 1 版 prompt 不要追求完美，先跑起来</li>\n  <li>用真实用户反馈驱动迭代，比闭门造车快 10 倍</li>\n  <li>每周至少一次\"小步快跑\"上线</li>\n</ul>\n<p>很多新人卡在\"我要做一个完美 prompt 再上线\"，结果拖三个月。<strong>真实业务里的 60 分 prompt，比实验室里的 95 分 prompt 有价值得多</strong>。</p>\n\n<h3>心得 5：私域沉淀是长期资产</h3>\n<p>电商做私域、做复购，AI 训练也一样。每个客户的服务过程要沉淀成案例：</p>\n<ul>\n  <li>原始需求文档</li>\n  <li>数据采集方法 + 样本数</li>\n  <li>prompt 迭代记录</li>\n  <li>客户反馈 + 上线数据</li>\n</ul>\n<p><strong>做完 10 个案例，你就是行业里 top 10% 的人</strong>。这是电商教会我的复利思维。</p>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>总结：</strong>商业 AI 不是技术问题，是<strong>业务理解 × 工程能力 × 节奏感</strong>三件事。运营出身的 AI 训练师，在业务理解和节奏感上有天然优势。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-05": {
+    "crumb": "KNOWLEDGE · 05 · 成长随笔",
+    "title": "成长随笔：两年公考备考，带给职场人的长期价值",
+    "meta": [
+      "阅读 · 6 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>两年公考，最后没上岸。<br>但如果让我重选，我还是会走一遍这条路。</p>\n\n<h3>它不是失败，是延迟回报</h3>\n<p>公考两年最值钱的不是笔试行测技巧，是 <strong>\"在看不到结果的路上持续走\"</strong> 这种能力。</p>\n<p>具体来说：</p>\n<ul>\n  <li>每天 8 小时雷打不动的自习，连续 700+ 天</li>\n  <li>每次模拟考分数波动 ±10 分，经历过\"努力没进步\"的绝望</li>\n  <li>身边人陆续上岸 / 工作 / 结婚，只有自己还在原地</li>\n</ul>\n<p>这两年的精神密度，<strong>比很多工作十年的人经历过的事都多</strong>。</p>\n\n<h3>它练出 3 个长期能力</h3>\n\n<h3>1. 结构化思考</h3>\n<p>申论的本质是 <code>\"读懂材料 + 提炼观点 + 逻辑展开\"</code>。这跟 AI 训练里的需求拆解、prompt 设计、评测体系完全一致。</p>\n<p>写申论要求每段话都要承接上一段、呼应总论点——这个训练让我写任何 prompt 都有清晰的层级。</p>\n\n<h3>2. 抗压耐挫</h3>\n<p>公考不是努力就有回报。笔试第一面试被刷、面试第一体检被刷、笔面综合差 0.5 分……这些 <strong>\"明明够努力却失败\"</strong> 的经历，<strong>彻底重塑了我的抗挫阈值</strong>。</p>\n<p>现在接 AI 项目，遇到调一周没效果的 prompt、心态完全不会崩——公考教会我 <em>\"过程对了，结果自然来\"</em>。</p>\n\n<h3>3. 长周期自律</h3>\n<p>公考备考期间我养成了几个习惯，一直保持到现在：</p>\n<ul>\n  <li>每天固定时间做固定事（现在是每天上午写 prompt、下午做评测）</li>\n  <li>周复盘、月总结、季度目标——三个节奏循环</li>\n  <li>不复盘的日子不睡觉</li>\n</ul>\n<p>这些习惯放在职场、做自媒体、做 AI 训练，<strong>底层都是同一套时间管理系统</strong>。</p>\n\n<h3>它让我重新定义\"成功\"</h3>\n<p>公考前我以为成功 = 上岸。<br>公考后我明白成功 = <strong>\"能持续做自己擅长且有价值的事\"</strong>。</p>\n<p>上岸后是另一种\"一眼望到头\"，而我现在走的 AI 训练路，<strong>每天都有新问题、新挑战、新成长</strong>。我更喜欢这种状态。</p>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">↗</div>\n  <div class=\"txt\"><strong>给同样在路上的你：</strong>如果你也在公考、考研、考编的战线上，<strong>请相信过程的复利</strong>。你积累的不仅是知识，更是 <code>耐力 / 结构 / 心态</code>。这些是换不来也买不到的。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-06": {
+    "crumb": "KNOWLEDGE · 06 · 生活感悟",
+    "title": "生活感悟：篮球执裁教会我的做事原则与人生态度",
+    "meta": [
+      "阅读 · 5 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>大三那年考了国家三级篮球裁判员证，吹过几十场业余比赛。<strong>那段经历给我的，远不止一张证书</strong>。</p>\n\n<h3>原则 1：哨下无情，规则面前人人平等</h3>\n<p>裁判的铁律是：<em>无论比分多少、球员情绪多激动，按规则判</em>。哪怕你刚被球员骂了，下一个球犯规还是要吹。</p>\n<p>这跟 AI 训练里的\"评测一致性\"是同一回事：</p>\n<ul>\n  <li>不能因为\"这版 prompt 是自己调的\"就放水</li>\n  <li>评测标准一旦定下来，所有样本一视同仁</li>\n  <li>客户再大、老板再急，不达标就是不达标</li>\n</ul>\n<p><strong>公平是专业的基本盘</strong>。</p>\n\n<h3>原则 2：临场判断，比死记规则更重要</h3>\n<p>规则手册几百页，真正比赛里 <strong>99% 的情况不会完全照着规则走</strong>。</p>\n<p>裁判练的不是背规则，是 <code>\"读现场 + 抓关键 + 快速决策\"</code>。优秀的裁判能在 0.5 秒内判断：</p>\n<ul>\n  <li>这是\"违体\"还是\"普通犯规\"？</li>\n  <li>该不该给技术犯规？</li>\n  <li>比赛节奏被打乱了要不要暂停？</li>\n</ul>\n<p>AI 训练也一样：<strong>模型不会按教程走</strong>，实际场景里充满模糊、冲突、意外。能不能在乱局里做对决策，是真本事。</p>\n\n<h3>原则 3：情绪管理是顶级能力</h3>\n<p>业余比赛里球员骂裁判是常态。被骂了还能保持冷静、专注下一球——这是顶级能力。</p>\n<p>AI 训练里也一样：</p>\n<ul>\n  <li>客户说\"你这版 prompt 一塌糊涂\"——不要立刻反驳，先听完</li>\n  <li>模型输出明显有 bug——不要甩锅，先复盘数据</li>\n  <li>项目延期、上线失败——不要甩锅队友，先复盘流程</li>\n</ul>\n<p><strong>能管理情绪的人，才能管好项目和团队</strong>。</p>\n\n<h3>原则 4：位置感决定视野</h3>\n<p>裁判最忌讳的是\"站错位\"。站错位 = 看不见 = 误判。</p>\n<p>AI 训练里也有\"位置感\"问题：</p>\n<ul>\n  <li>做标注的人要懂业务，不能只懂工具</li>\n  <li>做 prompt 的人要懂模型能力边界，不能只懂语法</li>\n  <li>做项目的人要懂客户 KPI，不能只懂交付物</li>\n</ul>\n<p><strong>站对位置、看对视角，才能做对决策</strong>。</p>\n\n<h3>原则 5：公平公正 → 长期口碑</h3>\n<p>业余篮球圈很小。一个裁判吹得公不公平，球员半年内就会传遍整个圈子。</p>\n<p>AI 训练行业也一样——圈子小，口碑传播快。<strong>一次不靠谱的合作，损失的是未来 5 个潜在客户</strong>。</p>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>一句话：</strong>裁判教会我的是 <code>公平 / 临场 / 情绪 / 位置 / 口碑</code>。这五件事放在任何行业都成立，是我做 AI 训练师最深的底气之一。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-07": {
+    "crumb": "KNOWLEDGE · 07 · 行业观察",
+    "title": "行业观察：AI 训练行业现状、就业前景与未来发展方向",
+    "meta": [
+      "阅读 · 11 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>2024-2026 年是 AI 训练行业的\"野蛮生长期\"。这一篇讲我观察到的 5 个核心趋势，给从业者 / 准从业者一份参考地图。</p>\n\n<h3>趋势 1：从\"数据标注\"到\"提示词工程\"再到\"Agent 编排\"</h3>\n<p>AI 训练的工作内容两年内换了三轮：</p>\n<table class=\"art-table\">\n  <thead><tr><th>时间</th><th>主流岗位</th><th>核心技能</th></tr></thead>\n  <tbody>\n    <tr><td>2023 以前</td><td>数据标注师</td><td>细心、耐心、领域知识</td></tr>\n    <tr><td>2024</td><td>Prompt 工程师</td><td>语言表达、CoT 推理</td></tr>\n    <tr><td>2025</td><td>RAG / 微调工程师</td><td>Python、数据处理</td></tr>\n    <tr><td>2026 起</td><td>Agent 编排师 / AI 产品训练师</td><td>业务理解 + 工具链 + 工程化</td></tr>\n  </tbody>\n</table>\n<p><strong>单一技能的天花板在快速下移</strong>。未来 3 年最稀缺的是 <code>\"懂业务 + 能用 AI 工具落地\"</code> 的复合人才。</p>\n\n<h3>趋势 2：行业薪资两极分化</h3>\n<p>同样叫\"AI 训练师\"，薪资差距 5 倍以上：</p>\n<ul>\n  <li>纯标注岗：5-9K（一线），天花板低</li>\n  <li>Prompt 工程师：10-20K，但内卷加剧</li>\n  <li>模型微调 / RLHF：15-35K，技术门槛高</li>\n  <li><strong>AI 产品训练师：12-30K，业务门槛高，复合价值</strong></li>\n</ul>\n<p>新人建议从 Prompt / 数据策略切入，<strong>不要只追\"算法工程师\"</strong>——那是另一条赛道，竞争更激烈。</p>\n\n<h3>趋势 3：垂类 AI 是真正金矿</h3>\n<p>通用大模型的红利被巨头吃完了。<strong>垂类 AI 训练才是普通从业者的机会</strong>：</p>\n<ul>\n  <li>法律 AI 训练师（懂法律 + prompt）</li>\n  <li>医疗 AI 训练师（懂医学 + 数据标注）</li>\n  <li>电商 AI 训练师（懂选品 + 客服话术）</li>\n  <li>教育 AI 训练师（懂教学法 + 内容生成）</li>\n</ul>\n<p><em>你有任何一个领域的 2 年经验，乘以 AI 训练技能，溢价 3-5 倍</em>。这是我自己的转型路径。</p>\n\n<h3>趋势 4：工具链在快速平民化</h3>\n<p>2024 年想跑 LoRA 微调要自己配环境，2026 年 <code>Dify / Coze / 阿里百炼</code> 已经做到零代码。</p>\n<p>这意味着：</p>\n<ul>\n  <li>纯技术岗的\"工具壁垒\"在消失</li>\n  <li><strong>业务理解和数据敏感度越来越值钱</strong></li>\n  <li>独立 AI 训练顾问 / 小工作室成为可能</li>\n</ul>\n<p>工具会越来越傻瓜，但 <code>\"知道要做什么、为什么做\"</code> 永远稀缺。</p>\n\n<h3>趋势 5：合规与安全成为硬门槛</h3>\n<p>2025 年开始，AI 训练数据合规、模型备案、内容审核进入强监管。<strong>从业者必须懂基本的合规红线</strong>：</p>\n<ul>\n  <li>数据脱敏：用户隐私字段必须 mask</li>\n  <li>生成内容审核：医疗 / 法律 / 金融建议必须有人工兜底</li>\n  <li>训练数据来源：版权、可商用范围要清晰</li>\n  <li>幻觉率：金融 / 医疗类必须降到 1% 以下</li>\n</ul>\n<p><strong>不懂合规的训练师，职业生涯会有突然归零的风险</strong>。</p>\n\n<h3>给从业者的 3 个判断</h3>\n<ol>\n  <li><strong>2026 年入行还来得及</strong>——行业还在成长期，标准未定型，先到先得</li>\n  <li><strong>不要追\"全能 AI 工程师\"</strong>——选一个垂类做深，比泛泛而学有价值</li>\n  <li><strong>案例比证书重要</strong>——3 个真实案例胜过 10 张课程证书</li>\n</ol>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">→</div>\n  <div class=\"txt\"><strong>行业判断：</strong>AI 训练师不会是\"昙花一现\"的岗位。未来 5 年它会像 <code>\"产品经理\"</code> 一样，成为互联网 / 实业公司的标配岗位。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-08": {
+    "crumb": "KNOWLEDGE · 08 · 项目复盘",
+    "title": "项目复盘：4 周帮一家电商店铺搭出 AI 客服模型（含数据 / 流程 / 验收）",
+    "meta": [
+      "阅读 · 14 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>这是我接的第一单商业 AI 训练项目。<strong>完整公开 4 周全流程</strong>，含数据量、prompt 演进、评测数据、上线效果、踩过的坑。</p>\n\n<h3>项目背景</h3>\n<ul>\n  <li>客户：某抖音小店（3C 数码类），日均咨询 200+ 条</li>\n  <li>痛点：3 个客服 24 小时轮班，每月人工成本 2.4 万；售后问题重复度高，客服情绪消耗大</li>\n  <li>目标：用 AI 客服承接 70% 咨询，人工只处理复杂售后</li>\n  <li>预算：1.8 万元（含数据采集 + 模型训练 + 上线调优）</li>\n</ul>\n\n<h3>第 1 周 · 需求拆解 + 数据采集</h3>\n<p>做了三件事：</p>\n<ol>\n  <li>跟客户 4 小时访谈，理清 5 类核心咨询场景</li>\n  <li>采集过去 90 天客服聊天记录 1,200 条</li>\n  <li>设计 30 条标注规范（含\"什么是好回复\"的判定标准）</li>\n</ol>\n\n<p>采集的数据分布：</p>\n<table class=\"art-table\">\n  <thead><tr><th>场景</th><th>占比</th><th>样本数</th></tr></thead>\n  <tbody>\n    <tr><td>物流查询</td><td>32%</td><td>384</td></tr>\n    <tr><td>商品咨询</td><td>28%</td><td>336</td></tr>\n    <tr><td>价格 / 优惠</td><td>18%</td><td>216</td></tr>\n    <tr><td>售后退换</td><td>15%</td><td>180</td></tr>\n    <tr><td>投诉 / 情绪</td><td>7%</td><td>84</td></tr>\n  </tbody>\n</table>\n\n<h3>第 2 周 · Prompt v1 + 评测集搭建</h3>\n<p>写了 5 个场景化 prompt，每个配 3 个 few-shot。建了 100 条评测集（覆盖所有场景）。</p>\n<p>v1 跑下来：</p>\n<div class=\"kpi-grid\">\n  <div class=\"kpi\"><div class=\"v\">68%</div><div class=\"l\">准确率</div></div>\n  <div class=\"kpi\"><div class=\"v\">42%</div><div class=\"l\">人工通过率</div></div>\n  <div class=\"kpi\"><div class=\"v\">23%</div><div class=\"l\">幻觉率</div></div>\n</div>\n\n<p>主要问题：模型经常\"自创优惠活动\"，编造物流时效。<strong>这就是典型的幻觉</strong>。</p>\n\n<h3>第 3 周 · Prompt v2-v4 迭代</h3>\n<p>核心改动：</p>\n<ul>\n  <li>加 <code>\"严格基于事实回答，不知道就说不知道\"</code> 强约束</li>\n  <li>物流类 prompt 改为结构化查询模板（避免自由发挥）</li>\n  <li>售后类 prompt 增加 3 个边界判断（必须转人工的场景）</li>\n</ul>\n\n<p>v3 评测结果：</p>\n<div class=\"kpi-grid\">\n  <div class=\"kpi\"><div class=\"v\">87%</div><div class=\"l\">准确率</div></div>\n  <div class=\"kpi\"><div class=\"v\">71%</div><div class=\"l\">人工通过率</div></div>\n  <div class=\"kpi\"><div class=\"v\">6%</div><div class=\"l\">幻觉率</div></div>\n</div>\n\n<h3>第 4 周 · 灰度上线 + 兜底机制</h3>\n<p>没有 100% 直接上线，做了 5 天灰度：</p>\n<ul>\n  <li>前 3 天 AI 客服 + 人工客服<strong>并联</strong>，AI 给出建议，人工确认后再发</li>\n  <li>第 4-5 天 AI 独立回复，<strong>但所有\"敏感词\"自动转人工</strong>（投诉、退款、差评）</li>\n  <li>第 6 天起 AI 全量，敏感词兜底持续保留</li>\n</ul>\n\n<p>上线 1 个月后实际数据：</p>\n<div class=\"kpi-grid\">\n  <div class=\"kpi\"><div class=\"v\">82%</div><div class=\"l\">AI 独立解决率</div></div>\n  <div class=\"kpi\"><div class=\"v\">11%</div><div class=\"l\">转人工率</div></div>\n  <div class=\"kpi\"><div class=\"v\">7%</div><div class=\"l\">兜底触发率</div></div>\n  <div class=\"kpi\"><div class=\"v\">+18%</div><div class=\"l\">客服满意度</div></div>\n</div>\n\n<p><strong>客户结果：</strong>每月节省人工成本约 1.4 万，客服只需 1 人值夜班即可承接剩余 18%。客户半年内续约 2 单。</p>\n\n<h3>踩过的 5 个坑</h3>\n<ol>\n  <li><strong>数据脱敏没做</strong>——第一批 1,200 条里有客户手机号 / 地址，训练前必须 mask</li>\n  <li><strong>评测集太\"完美\"</strong>——实际咨询里有大量口语化、错别字、模糊表达，模型没见过就翻车</li>\n  <li><strong>忽略了\"情绪类\"问题</strong>——投诉客户需要安抚+解决，模型只会解决不会安抚，要单独训练</li>\n  <li><strong>没设兜底机制</strong>——v1 上线后差点把\"客户骂人\"的对话回复成\"感谢您的反馈\"，紧急下线</li>\n  <li><strong>客户验收标准没量化</strong>——前期只说\"做得好一点\"，上线后争议大。后面所有项目都先定 KPI</li>\n</ol>\n\n<h3>项目沉淀</h3>\n<p>这一个项目让我立住了 5 条工作原则：</p>\n<ul>\n  <li>先拆需求，再写 prompt</li>\n  <li>评测集要\"脏\"——贴近真实用户</li>\n  <li>所有项目必须有量化验收标准</li>\n  <li>敏感场景必须有兜底</li>\n  <li>灰度上线比\"一次到位\"靠谱</li>\n</ul>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>一句话总结：</strong>AI 训练项目 = <code>业务拆解 + 数据采集 + prompt 迭代 + 评测闭环 + 灰度上线 + 兜底机制</code>。漏任何一环都会出问题。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-blog-09": {
+    "crumb": "KNOWLEDGE · 09 · 思维框架",
+    "title": "思维方法：把 AI 训练当投资组合来管理 —— 风险 / 收益 / 止损的 3 个类比",
+    "meta": [
+      "阅读 · 9 MIN",
+      "作者 · 彭乙东",
+      "2026 · 06"
+    ],
+    "body": "<p>本科投资学的核心不是 K 线图，是 <strong>三套决策框架</strong>。我用它管理 AI 训练项目，比纯工程思维效率高 3 倍。</p>\n\n<h3>类比 1：项目组合管理（Portfolio）</h3>\n<p>投资学第一课：<em>不要 all-in 一个标的，要做资产组合</em>。AI 训练项目也一样。</p>\n\n<table class=\"art-table\">\n  <thead><tr><th>投资概念</th><th>AI 训练对应</th><th>管理动作</th></tr></thead>\n  <tbody>\n    <tr><td>股票组合</td><td>Prompt 库</td><td>不同场景配不同 prompt，定期复盘效果</td></tr>\n    <tr><td>仓位控制</td><td>数据投入</td><td>重点场景 1000+ 条样本，长尾场景 100 条即可</td></tr>\n    <tr><td>相关性分析</td><td>模型选型</td><td>主模型 + 备选模型同时跑，避免单点故障</td></tr>\n    <tr><td>再平衡</td><td>月度 prompt 迭代</td><td>每月把\"劣质 prompt\"换掉，补新场景</td></tr>\n  </tbody>\n</table>\n\n<p><strong>一个成熟 AI 训练师的 Prompt 库应该有 30-50 个活跃 prompt</strong>，按场景 / 业务 / 客户分类管理。</p>\n\n<h3>类比 2：风险敞口（Risk Exposure）</h3>\n<p>投资学第二课：<em>每个持仓都有风险，关键是控制最大回撤</em>。</p>\n<p>AI 项目里的\"风险敞口\"对应：</p>\n<ul>\n  <li><strong>幻觉风险</strong>：模型编造事实 → 客户投诉</li>\n  <li><strong>合规风险</strong>：输出违规内容 → 公司被罚</li>\n  <li><strong>数据风险</strong>：训练数据含隐私 → 法律责任</li>\n  <li><strong>客户流失风险</strong>：上线效果差 → 不续约</li>\n</ul>\n<p>每个项目上线前必须做 <code>\"风险矩阵\"</code>：</p>\n<ol>\n  <li>列 5-10 个潜在风险点</li>\n  <li>每个打分（概率 × 影响）</li>\n  <li>前 3 名必须配兜底机制</li>\n</ol>\n\n<h3>类比 3：止损线（Stop Loss）</h3>\n<p>投资学第三课：<em>单笔亏损到一定程度必须止损</em>。</p>\n<p>AI 项目里\"止损\"对应：</p>\n\n<h3>① 时间止损</h3>\n<p>调一个 prompt 超过 8 小时还没明显效果，停下来重新拆解需求。<em>不要\"再坚持一下\"</em>。</p>\n\n<h3>② 质量止损</h3>\n<p>评测准确率低于 70%，不上线。<strong>低质量上线 = 品牌自杀</strong>。</p>\n\n<h3>③ 客户止损</h3>\n<p>客户需求频繁变更、验收标准漂移、AI 投入产出比不合理——及时止损。<em>不是所有单都值得接</em>。</p>\n\n<h3>三个核心决策表</h3>\n<table class=\"art-table\">\n  <thead><tr><th>场景</th><th>类比</th><th>决策原则</th></tr></thead>\n  <tbody>\n    <tr><td>项目选择</td><td>选股</td><td>只做能力圈内、有真实需求的客户</td></tr>\n    <tr><td>Prompt 迭代</td><td>加减仓</td><td>用评测数据驱动，不凭感觉</td></tr>\n    <tr><td>项目验收</td><td>止盈止损</td><td>量化标准，达标交付不达标返工</td></tr>\n    <tr><td>长期积累</td><td>复利投资</td><td>每个项目沉淀案例，反哺下一个</td></tr>\n  </tbody>\n</table>\n\n<h3>迁移到 AI 训练日常</h3>\n<p>我现在每周做一次\"组合复盘\"：</p>\n<ul>\n  <li>本周哪些 prompt 在被高频调用？→ 持续优化</li>\n  <li>哪些 prompt 上线后被废弃？→ 分析原因，沉淀经验</li>\n  <li>哪些客户场景值得做深度定制？→ 投入更多资源</li>\n  <li>哪些客户 / 项目 ROI 太低？→ 下季度不续约</li>\n</ul>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">$</div>\n  <div class=\"txt\"><strong>一句话：</strong>投资学的 <code>组合 / 风险 / 止损</code> 三件套，迁移到 AI 训练就是 <code>Prompt 库 / 风险矩阵 / 量化验收</code>。底层都是 <em>用概率思维决策、用工程思维执行</em>。</div>\n</div>\n\n<div class=\"end-mark\">FIN</div>"
+  },
+  "art-res-01": {
+    "crumb": "RESOURCE · 01 · AI 训练入门",
+    "title": "AI 训练入门教程 + 主流标注工具实操指南",
+    "meta": [
+      "PDF · TUTORIAL",
+      "免费 · 持续更新",
+      "2026 · 06"
+    ],
+    "body": "<p>这份资料是给 <strong>\"完全没接触过 AI 训练但想入行\"</strong> 的新人写的。从 0 到 1，包含 4 个核心模块。</p>\n\n<h3>一、AI 训练师到底是什么？</h3>\n<ul>\n  <li>岗位定义：让 AI 在某个具体场景下输出更好结果的人</li>\n  <li>能力三角：业务理解 + Prompt 工程 + 数据处理</li>\n  <li>常见误区：不是\"会用 ChatGPT 就行\"，需要懂评测、懂数据、懂交付</li>\n</ul>\n\n<h3>二、4 类主流标注工具对比</h3>\n<table class=\"art-table\">\n  <thead><tr><th>工具</th><th>适合场景</th><th>上手难度</th><th>是否开源</th></tr></thead>\n  <tbody>\n    <tr><td>Label Studio</td><td>图像 / 文本 / 音频通用标注</td><td>★★</td><td>是</td></tr>\n    <tr><td>Prodigy</td><td>NLP 高效标注（主动学习）</td><td>★★★</td><td>否（付费）</td></tr>\n    <tr><td>Doccano</td><td>文本分类 / NER / 情感分析</td><td>★★</td><td>是</td></tr>\n    <tr><td>CVAT</td><td>图像 / 视频目标检测、分割</td><td>★★</td><td>是</td></tr>\n  </tbody>\n</table>\n\n<h3>三、Label Studio 30 分钟跑通</h3>\n<p>推荐新手从 Label Studio 起步。具体步骤：</p>\n<ol>\n  <li>本地安装：<code>pip install label-studio</code></li>\n  <li>启动：<code>label-studio start</code></li>\n  <li>创建项目 → 选择文本分类模板</li>\n  <li>导入 50 条样本数据（CSV / JSON 均可）</li>\n  <li>配置标签体系（建议 5-10 个类）</li>\n  <li>开始标注 → 导出 JSON 格式</li>\n</ol>\n\n<h3>四、Prompt 入门模板（5 个）</h3>\n<p>新人必会的 5 类 prompt 模板：</p>\n\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">① 角色设定型</div>\n  <pre><code>你是一名资深的 [行业] 客服，擅长用 [风格] 的语气回复客户。请基于以下信息回答用户问题：\n\n[用户问题]\n\n要求：\n- 简洁（不超过 80 字）\n- 礼貌专业\n- 不确定就说不确定</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">② 步骤拆解型（CoT）</div>\n  <pre><code>请按以下步骤分析这个问题：\n\n1. 先识别问题核心\n2. 列出 3 个可能的解答方向\n3. 评估每个方向的可行性\n4. 给出最终推荐 + 理由\n\n问题：[XXX]</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">③ Few-shot 示例型</div>\n  <pre><code>参考以下示例的格式和风格回答：\n\n示例 1：\n输入：XXX\n输出：XXX\n\n示例 2：\n输入：XXX\n输出：XXX\n\n现在请回答：\n输入：XXX</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">④ 结构化输出型</div>\n  <pre><code>请按 JSON 格式输出：\n\n{\n  \"summary\": \"简要总结\",\n  \"key_points\": [\"要点1\", \"要点2\"],\n  \"confidence\": 0.85,\n  \"next_action\": \"建议下一步\"\n}\n\n输入内容：XXX</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">⑤ 多角色辩论型</div>\n  <pre><code>请扮演 3 个角色依次讨论这个话题：\n\n角色 A（支持方）：XXX\n角色 B（反对方）：XXX\n角色 C（中立裁决）：综合两边观点，给出最终建议\n\n话题：XXX</code></pre>\n</div>\n\n<h3>下一步行动清单</h3>\n<ul class=\"checklist\">\n  <li>今天：注册 ChatGPT / Claude，跑通 10 个 prompt</li>\n  <li>本周：装 Label Studio，标注 100 条样本</li>\n  <li>本月：用 Dify 搭一个工作流</li>\n  <li>下月：接第一个真实项目（小单即可）</li>\n</ul>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">→</div>\n  <div class=\"txt\"><strong>获取完整资料：</strong>这份资料是我整理的 PDF + 配套工具清单（50+ 工具链接）。需要的话加微信 <code>aidon277</code>，备注\"AI 训练资料\"，免费发你。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  },
+  "art-res-02": {
+    "crumb": "RESOURCE · 02 · 提示词合集",
+    "title": "办公 / 创作 / 电商通用优质提示词合集（可一键复制）",
+    "meta": [
+      "DOC · PROMPTS",
+      "免费 · 12 个模板",
+      "2026 · 06"
+    ],
+    "body": "<p>这是我 <strong>日常高频使用、经过实战验证</strong> 的 12 个 prompt 模板。<strong>点击卡片右上角\"COPY\"按钮即可一键复制</strong>。</p>\n\n<h3>📌 办公场景（4 个）</h3>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">① 周报生成器</div>\n  <pre><code>基于以下本周工作内容，生成一份结构化周报：\n\n本周完成事项：\n- [粘贴你做过的事，3-10 条]\n\n要求：\n1. 按\"业务成果 / 推进事项 / 待解决问题 / 下周计划\"四块结构\n2. 每条用数据量化（无数据用对比）\n3. 控制在 300 字内\n4. 语气专业但不官腔</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">② 会议纪要整理</div>\n  <pre><code>把以下会议录音转写文本整理成结构化纪要：\n\n[粘贴文本]\n\n输出格式：\n## 会议主题\n## 时间 / 参与人\n## 核心决议（3-5 条）\n## 待办事项（负责人 + 截止时间）\n## 遗留问题\n## 下次会议安排</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">③ 邮件润色器</div>\n  <pre><code>把以下邮件草稿润色得更专业、礼貌、简洁：\n\n[粘贴草稿]\n\n要求：\n- 保留原意\n- 称呼 + 正文 + 结尾签名 三段式\n- 控制在 150 字内\n- 语气根据收件人调整（领导 / 客户 / 平级）</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">④ PPT 大纲生成</div>\n  <pre><code>为以下主题生成 15 页 PPT 大纲：\n\n主题：[XXX]\n受众：[领导 / 客户 / 同事]\n目标：[说服 / 汇报 / 培训]\n时长：[30 分钟]\n\n每页输出：\n- 页码\n- 标题\n- 3 个要点\n- 1 句金句 / 数据 / 案例\n- 视觉建议（图表 / 图示 / 配图）</code></pre>\n</div>\n\n<h3>🎨 创作场景（4 个）</h3>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑤ 小红书爆款笔记</div>\n  <pre><code>为以下主题写 1 条小红书爆款笔记：\n\n主题：[XXX]\n目标人群：[XXX]\n核心卖点：[XXX]\n\n要求：\n- 标题 20 字内，带 emoji + 数字 + 痛点词\n- 开头 50 字内制造冲突或悬念\n- 正文分 3-5 段，每段一个干货点\n- 结尾互动引导（评论 / 收藏）\n- 配 5 个相关 hashtag</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑥ 短视频脚本</div>\n  <pre><code>为以下选题生成 60 秒短视频脚本：\n\n选题：[XXX]\n平台：[抖音 / 视频号]\n风格：[知识 / 搞笑 / 情感]\n\n输出格式：\n- 开头 3 秒（钩子）\n- 中间 50 秒（3 个递进点）\n- 结尾 7 秒（CTA）\n- 配乐 / 字幕 / 画面建议</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑦ 长文写作助手</div>\n  <pre><code>帮我写一篇 [字数] 字的文章：\n\n主题：[XXX]\n目标读者：[XXX]\n风格：[理性 / 感性 / 学术 / 通俗]\n结构：[总分总 / 并列 / 递进 / 对比]\n\n要求：\n- 开头 50 字内点题\n- 每段首句是观点句\n- 引用 2-3 个案例 / 数据\n- 结尾呼应开头，给行动建议</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑧ 朋友圈文案</div>\n  <pre><code>基于以下事件写 1 条朋友圈文案：\n\n事件：[XXX]\n情绪：[开心 / 感慨 / 思考 / 自嘲]\n\n要求：\n- 60 字内\n- 1 句共情 + 1 句洞察\n- 不刷屏、不炫耀、不油腻\n- 配 1 张图建议</code></pre>\n</div>\n\n<h3>🛒 电商场景（4 个）</h3>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑨ 商品标题优化</div>\n  <pre><code>为以下商品生成 5 个高点击率标题：\n\n商品：[品类]，[核心卖点]，[适用人群]\n价格区间：[XXX]\n竞品标题参考：[粘贴 3-5 个]\n\n要求：\n- 30 字内\n- 含 1 个核心词 + 1 个差异化词 + 1 个转化词\n- 符合平台规范（不堆砌关键词）\n- 标题分级（推荐 / 备选 / 长尾）</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑩ 客服话术</div>\n  <pre><code>为以下客服场景写 3 段回复话术：\n\n场景：[客户咨询 / 投诉 / 售后 / 议价]\n客户问题：[XXX]\n店铺调性：[亲切 / 专业 / 活泼]\n\n要求：\n- 80 字内\n- 先解决情绪再解决问题\n- 提供 2 个可执行选项\n- 转化导向（引导下单 / 加购 / 复购）</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑪ 详情页文案</div>\n  <pre><code>为以下商品写详情页文案：\n\n商品：[XXX]\n目标人群：[XXX]\n核心卖点：[3-5 个]\n价格：[XXX]\n\n输出结构：\n- 开头 50 字钩子（场景代入）\n- 3 段卖点（FAB 法则：特性 + 优势 + 利益）\n- 信任背书（销量 / 评价 / 资质）\n- FAQ（5 个高频问题）\n- 临门一脚 CTA</code></pre>\n</div>\n\n<div class=\"prompt-card\">\n  <button class=\"copy-btn\" data-copy>COPY</button>\n  <div class=\"ptitle\">⑫ 投放素材脚本</div>\n  <pre><code>为以下商品生成 10 条投放素材脚本（巨量引擎 / 千川）：\n\n商品：[XXX]\n目标：[点击 / 转化 / 加购]\n预算：[日预算]\n人群：[XXX]\n\n每条输出：\n- 标题（15 字内）\n- 开头 3 秒脚本\n- 卖点 3 个\n- CTA\n- 配图 / 视频建议\n- 预估转化率（基于历史数据）</code></pre>\n</div>\n\n<h3>使用建议</h3>\n<ul>\n  <li>模板是骨架，<strong>必须根据场景微调</strong>才能出好效果</li>\n  <li>复杂任务加 <code>\"请按步骤思考\"</code> 显著提升质量</li>\n  <li>输出不满意就追问 <code>\"请换 3 种风格重写\"</code></li>\n  <li>重要任务跑 2-3 个模型对比，择优使用</li>\n</ul>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>获取更多：</strong>完整版有 <strong>40+ 个模板</strong>（含法律 / 医疗 / 教育 / 金融垂类），需要的话加微信 <code>aidon277</code>，备注\"提示词合集\"。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  },
+  "art-res-03": {
+    "crumb": "RESOURCE · 03 · 公考笔记",
+    "title": "公考备考学习笔记 + 申论写作素材库",
+    "meta": [
+      "PDF · NOTES",
+      "免费 · 持续更新",
+      "2026 · 06"
+    ],
+    "body": "<p>两年公考沉淀下来的笔记。<strong>不卖课、不卖资料，只分享我整理的结构化笔记</strong>。</p>\n\n<h3>一、行测五大模块核心方法</h3>\n\n<h3>① 常识判断</h3>\n<ul>\n  <li>不专门刷题，靠日常积累（人民日报评论、学习强国）</li>\n  <li>考前 1 个月集中背高频考点（科技 / 法律 / 时政）</li>\n  <li>目标 30 秒 / 题，会就选，不会就跳</li>\n</ul>\n\n<h3>② 言语理解</h3>\n<ul>\n  <li>核心方法：<strong>找关联词 + 找对应关系</strong></li>\n  <li>成语题靠语感 + 高频 200 词积累</li>\n  <li>逻辑填空：先看语境，再看搭配，最后看词义</li>\n</ul>\n\n<h3>③ 判断推理</h3>\n<ul>\n  <li>图形推理：记 20+ 种高频规律（数量 / 位置 / 样式）</li>\n  <li>定义判断：抓主体 + 抓关键限定词</li>\n  <li>类比推理：造句找关系（近义 / 反义 / 包含 / 工具）</li>\n  <li>逻辑判断：掌握 5 大题型（加强 / 削弱 / 解释 / 评价 / 推结论）</li>\n</ul>\n\n<h3>④ 资料分析</h3>\n<ul>\n  <li><strong>这是性价比最高的模块</strong>——投入时间少，提分快</li>\n  <li>必背 10 个高频公式（增长率 / 增长量 / 比重变化等）</li>\n  <li>熟练使用估算法、首数法、特殊值法</li>\n  <li>目标 7 分钟 / 篇（20 题），正确率 90%+</li>\n</ul>\n\n<h3>⑤ 数量关系</h3>\n<ul>\n  <li>战略性放弃部分难题，主攻工程 / 行程 / 利润 / 排列组合</li>\n  <li>掌握代入排除法、整除特性、特值代入三大技巧</li>\n  <li>目标 50% 正确率即可</li>\n</ul>\n\n<h3>二、申论五大题型答题框架</h3>\n\n<h3>① 归纳概括</h3>\n<ol>\n  <li>审题：找作答对象 + 范围 + 字数</li>\n  <li>找点：按材料逻辑（自然段 / 关键词）提炼</li>\n  <li>加工：合并同类项 + 去同存异</li>\n  <li>书写：总分结构 + 关键词前置</li>\n</ol>\n\n<h3>② 提出对策</h3>\n<ol>\n  <li>问题 + 原因分析（从材料来）</li>\n  <li>对策推导（问题反推 / 借鉴经验 / 推导派生）</li>\n  <li>分条书写，每条对策要\"可落地\"</li>\n</ol>\n\n<h3>③ 综合分析</h3>\n<ol>\n  <li>解释型：解释含义 + 多角度分析 + 总结</li>\n  <li>评价型：亮观点 + 论证 + 总结</li>\n  <li>比较型：找相同 / 找差异 / 找原因</li>\n</ol>\n\n<h3>④ 贯彻执行（应用文）</h3>\n<ul>\n  <li>格式是基础（标题 + 称谓 + 正文 + 落款 + 日期）</li>\n  <li>正文逻辑：背景 + 目的 / 问题 + 对策 / 内容 + 结尾号召</li>\n  <li>高频文种：讲话稿 / 倡议书 / 宣传稿 / 工作总结 / 调查报告</li>\n</ul>\n\n<h3>⑤ 文章论述（大作文）</h3>\n<ol>\n  <li>立意：从题干 + 材料提炼中心论点</li>\n  <li>结构：5 段式 / 6 段式（开头 + 3-4 个分论点 + 结尾）</li>\n  <li>分论点：从材料提炼 + 自己知识储备</li>\n  <li>论证：例证 + 理证 + 政证（结合素材库）</li>\n  <li>结尾：呼应开头 + 升华主题</li>\n</ol>\n\n<h3>三、申论素材库（按主题分类）</h3>\n<table class=\"art-table\">\n  <thead><tr><th>主题</th><th>可用素材</th><th>适用题型</th></tr></thead>\n  <tbody>\n    <tr><td>基层治理</td><td>枫桥经验、网格化管理、群众路线</td><td>大作文 / 综合分析</td></tr>\n    <tr><td>科技创新</td><td>新质生产力、卡脖子技术、自主创新</td><td>大作文 / 提出对策</td></tr>\n    <tr><td>文化传承</td><td>两个结合、传统活化、文旅融合</td><td>大作文 / 贯彻执行</td></tr>\n    <tr><td>生态文明</td><td>两山论、双碳、长江保护</td><td>大作文 / 综合分析</td></tr>\n    <tr><td>青年成长</td><td>中国梦、时代新人、扎根基层</td><td>大作文 / 贯彻执行</td></tr>\n    <tr><td>乡村振兴</td><td>产业兴旺、人才回流、数字乡村</td><td>提出对策 / 大作文</td></tr>\n    <tr><td>营商环境</td><td>放管服、政务服务、市场活力</td><td>提出对策 / 大作文</td></tr>\n  </tbody>\n</table>\n\n<h3>四、我的复习时间表（参考）</h3>\n<div class=\"flow\">\n  <div class=\"step\"><div class=\"n\">6:30</div><div class=\"l\">晨读<br>时政 + 素材</div></div>\n  <div class=\"step\"><div class=\"n\">9-12</div><div class=\"l\">行测<br>分模块刷题</div></div>\n  <div class=\"step\"><div class=\"n\">14-17</div><div class=\"l\">申论<br>精做 1 篇</div></div>\n  <div class=\"step\"><div class=\"n\">19-22</div><div class=\"l\">复盘<br>+ 错题整理</div></div>\n</div>\n\n<h3>五、过来人的 5 个真心建议</h3>\n<ol>\n  <li><strong>行测靠刷题，申论靠精做</strong>——行测刷量，申论每篇精做 3 遍</li>\n  <li><strong>不要只做模拟题</strong>——真题至少刷 3 遍</li>\n  <li><strong>模考必须按真实考试</strong>——涂卡、时间、流程全真</li>\n  <li><strong>面试比笔试更重要</strong>——笔试后立刻准备面试</li>\n  <li><strong>考不上是常态</strong>——保持节奏，不要自我怀疑</li>\n</ol>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>完整笔记：</strong>这份笔记共 86 页，含完整方法论 + 历年真题精讲 + 50 篇大作文范文。需要的话加微信 <code>aidon277</code>，备注\"公考笔记\"。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  },
+  "art-res-04": {
+    "crumb": "RESOURCE · 04 · 电商运营",
+    "title": "电商新手运营基础干货（选品 / 流量 / 转化）",
+    "meta": [
+      "DOC · GUIDE",
+      "免费 · 实操清单",
+      "2026 · 06"
+    ],
+    "body": "<p>电商运营一年总结的实操清单。<strong>适合新手起步，所有内容亲测有效</strong>。</p>\n\n<h3>一、选品的 5 个核心原则</h3>\n\n<h3>① 看市场容量</h3>\n<ul>\n  <li>工具：蝉妈妈（抖音）、生意参谋（淘宝）、多多进宝（拼多多）</li>\n  <li>指标：月搜索量 ≥ 10w、月销售额 ≥ 100w</li>\n  <li>避坑：太热门（红海）、太冷门（无需求）</li>\n</ul>\n\n<h3>② 看竞争强度</h3>\n<ul>\n  <li>头部商家市占率 < 30%（不要太集中）</li>\n  <li>top 100 商品的销量分布相对分散</li>\n  <li>价格带不要完全重合头部</li>\n</ul>\n\n<h3>③ 看利润率</h3>\n<ul>\n  <li>客单价 50-200 元的品类最容易起步</li>\n  <li>毛利率 < 30% 的不要做（覆盖不了运营成本）</li>\n  <li>复购率高的品类优先（零食 / 美妆 / 日用）</li>\n</ul>\n\n<h3>④ 看供应链</h3>\n<ul>\n  <li>1688 找货，实地看工厂更靠谱</li>\n  <li>起订量不要太大（首批 100-500 件测试）</li>\n  <li>发货时效 < 48 小时是硬指标</li>\n</ul>\n\n<h3>⑤ 看合规风险</h3>\n<ul>\n  <li>食品 / 化妆品 / 医疗器械 都需要资质</li>\n  <li>品牌词 / 商标词 不要随便用</li>\n  <li>平台禁售清单先查清楚</li>\n</ul>\n\n<h3>二、流量获取的 3 大渠道</h3>\n\n<table class=\"art-table\">\n  <thead><tr><th>渠道</th><th>特点</th><th>适合阶段</th><th>成本</th></tr></thead>\n  <tbody>\n    <tr><td>自然搜索</td><td>免费、慢、长尾</td><td>冷启动期</td><td>0</td></tr>\n    <tr><td>达人合作</td><td>快、可控、依赖达人</td><td>起量期</td><td>中</td></tr>\n    <tr><td>付费投流</td><td>最快、最贵、需数据积累</td><td>放大期</td><td>高</td></tr>\n  </tbody>\n</table>\n\n<h3>三、转化率优化的 7 个细节</h3>\n<ol>\n  <li><strong>主图</strong>：3 秒抓眼球，第 1 张图决定 60% 点击率</li>\n  <li><strong>标题</strong>：含核心词 + 差异化词 + 转化词</li>\n  <li><strong>详情页</strong>：前 3 屏决定 70% 转化，前 50 字必须钩子</li>\n  <li><strong>价格</strong>：用价格锚点（划线价 / 满减 / 优惠券）</li>\n  <li><strong>评价</strong>：前 100 条评价必须维护（特别是带图）</li>\n  <li><strong>客服</strong>：30 秒响应率是底线，催单话术必须练</li>\n  <li><strong>SKU 设计</strong>：引流款 + 利润款 + 形象款三件套</li>\n</ol>\n\n<h3>四、客服的 4 大核心话术</h3>\n\n<h3>① 破冰话术</h3>\n<pre><code>亲，欢迎光临！我是 [店铺名] 客服 [名字] ~\n请问您看中的是哪款？有什么需要我帮您介绍的吗？</code></pre>\n\n<h3>② 催单话术</h3>\n<pre><code>亲，这款今天下单的话，可以享受 [优惠 / 赠品]。\n库存只剩 [X] 件了，您看要不要先下单锁定？</code></pre>\n\n<h3>③ 售后话术</h3>\n<pre><code>亲，给您带来困扰真的非常抱歉！我马上为您处理。\n请您提供一下订单号 / 图片，我这边优先帮您申请 [解决方案]。</code></pre>\n\n<h3>④ 复购话术</h3>\n<pre><code>亲，上次您购买的 [商品] 用着怎么样？\n我们最近上了一款 [新品]，跟您之前那款是搭配的，要不要看看？</code></pre>\n\n<h3>五、复盘模板（每周必做）</h3>\n<ul>\n  <li>本周 GMV / 订单数 / 客单价（同比 / 环比）</li>\n  <li>流量来源占比（自然 / 达人 / 付费）</li>\n  <li>转化率（按渠道拆分）</li>\n  <li>退货率 / 差评率 / 投诉率</li>\n  <li>下周重点：优化 3 件事</li>\n</ul>\n\n<h3>六、新手最常踩的 5 个坑</h3>\n<ol>\n  <li><strong>选品凭感觉</strong>——必须数据驱动</li>\n  <li><strong>投流不看 ROI</strong>——投产比 < 2 立刻止损</li>\n  <li><strong>忽视客服</strong>——客服是转化的最后一公里</li>\n  <li><strong>评价不管</strong>——差评毁一切</li>\n  <li><strong>不备货 / 备货太多</strong>——首单 100 件测款，再放大</li>\n</ol>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">→</div>\n  <div class=\"txt\"><strong>完整资料：</strong>含 50+ 选品清单（2026 年潜力品类）、20 套客服话术、10 套主图模板。加微信 <code>aidon277</code>，备注\"电商资料\"。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  },
+  "art-res-05": {
+    "crumb": "RESOURCE · 05 · 自媒体文案",
+    "title": "自媒体短视频文案创作模板（爆款开头 / 节奏 / 转化）",
+    "meta": [
+      "TEMPLATE · COPY",
+      "免费 · 15 套模板",
+      "2026 · 06"
+    ],
+    "body": "<p>做了一年游戏自媒体 + 现在帮客户做 AI 文案，<strong>沉淀了 15 套验证过的短视频文案模板</strong>。</p>\n\n<h3>一、爆款开头的 7 种钩子</h3>\n\n<table class=\"art-table\">\n  <thead><tr><th>钩子类型</th><th>示例</th><th>适用场景</th></tr></thead>\n  <tbody>\n    <tr><td>数字悬念</td><td>\"我用 30 天试了 5 个方法，第 3 个让我意外……\"</td><td>经验 / 测评</td></tr>\n    <tr><td>反常识</td><td>\"千万别买 iPhone 17，原因只有一个\"</td><td>种草 / 数码</td></tr>\n    <tr><td>利益前置</td><td>\"学会这招，你的视频完播率能到 80%\"</td><td>教程 / 干货</td></tr>\n    <tr><td>痛点提问</td><td>\"为什么你的视频总是不火？问题出在这 3 步\"</td><td>教学 / 拆解</td></tr>\n    <tr><td>身份共鸣</td><td>\"打工人都懂的那种崩溃，看完别哭\"</td><td>情感 / 剧情</td></tr>\n    <tr><td>冲突反转</td><td>\"我以为他会拒绝，没想到……\"</td><td>剧情 / 测评</td></tr>\n    <tr><td>权威背书</td><td>\"作为 10 年 [行业] 老人，我劝你……\"</td><td>知识 / 测评</td></tr>\n  </tbody>\n</table>\n\n<h3>二、3 段式节奏模板</h3>\n\n<h3>① 知识干货型（60 秒）</h3>\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">结构</div>\n  <pre><code>[0-3s] 钩子（数字 / 反常识）\n[3-10s] 为什么重要（痛点 / 收益）\n[10-25s] 核心方法 1（步骤 + 案例）\n[25-40s] 核心方法 2（步骤 + 案例）\n[40-50s] 核心方法 3（步骤 + 案例）\n[50-60s] 总结 + CTA</code></pre>\n</div>\n\n<h3>② 种草带货型（45 秒）</h3>\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">结构</div>\n  <pre><code>[0-3s] 痛点场景（\"你是不是也有 XXX 困扰\"）\n[3-15s] 产品出现（\"直到我发现了它\"）\n[15-35s] 核心卖点（3 个 FAB）\n[35-42s] 价格锚点 + 紧迫感\n[42-45s] CTA（\"点击购物车 / 拍 1 / 拍 2\"）</code></pre>\n</div>\n\n<h3>③ 情感剧情型（90 秒）</h3>\n<div class=\"prompt-card\">\n  <div class=\"ptitle\">结构</div>\n  <pre><code>[0-5s] 场景建立（人物 + 处境）\n[5-30s] 冲突 / 困境展开\n[30-60s] 转折 / 解决方案\n[60-80s] 高潮 / 情感爆发\n[80-90s] 收尾 + 价值升华</code></pre>\n</div>\n\n<h3>三、5 类转化 CTA 话术</h3>\n\n<h3>① 直播间引流型</h3>\n<pre><code>点击头像进直播间，今天 [福利 / 抽奖 / 秒杀]\n前 100 名下单的朋友还能领 [赠品]</code></pre>\n\n<h3>② 主页橱窗型</h3>\n<pre><code>同款链接在主页橱窗，喜欢的话直接拍\n拍 1 / 拍 2 / 拍 3 都给大家准备好了</code></pre>\n\n<h3>③ 评论区互动型</h3>\n<pre><code>评论区告诉我你的 [问题 / 经历]\n我会抽 [X] 条回复</code></pre>\n\n<h3>④ 关注引导型</h3>\n<pre><code>觉得有用的话点个关注\n下期我们讲 [下一个相关话题]</code></pre>\n\n<h3>⑤ 私域引流型</h3>\n<pre><code>想要完整版 / 资料包 / 工具的朋友\n评论区扣 [关键词]，我发你</code></pre>\n\n<h3>四、提升完播率的 4 个关键</h3>\n<ol>\n  <li><strong>前 3 秒必出钩子</strong>——开头无冲突 = 一半用户划走</li>\n  <li><strong>节奏感强</strong>——每 5-10 秒一个信息点或画面变化</li>\n  <li><strong>字幕必加</strong>——60% 用户静音刷视频</li>\n  <li><strong>情绪驱动</strong>——喜怒哀乐 + 悬念比纯信息更留人</li>\n</ol>\n\n<h3>五、爆款选题的 3 个来源</h3>\n<ul>\n  <li>评论区 / 弹幕：用户问什么 = 用户想看什么</li>\n  <li>同行爆款：找最近 7 天爆款拆解结构</li>\n  <li>平台热点：蹭热度要\"快 + 准 + 差异化\"</li>\n</ul>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>完整资料：</strong>15 套模板完整版 + 50 个爆款案例拆解 + 选题库。加微信 <code>aidon277</code>，备注\"文案模板\"。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  },
+  "art-res-06": {
+    "crumb": "RESOURCE · 06 · 篮球规则",
+    "title": "篮球基础裁判规则科普（业余爱好者也能看懂）",
+    "meta": [
+      "PDF · RULES",
+      "免费 · 入门图解",
+      "2026 · 06"
+    ],
+    "body": "<p>考了国家三级篮球裁判员证，吹过 50+ 场业余比赛。<strong>这份资料把规则讲成人话</strong>，业余爱好者也能看懂。</p>\n\n<h3>一、比赛基本结构</h3>\n<ul>\n  <li>全场 4 节 × 12 分钟（NBA / FIBA 标准）</li>\n  <li>业余比赛常用 4 节 × 10 分钟</li>\n  <li>中场休息 10-15 分钟</li>\n  <li>每节每队可暂停 2-3 次</li>\n</ul>\n\n<h3>二、犯规的 5 大类型</h3>\n\n<table class=\"art-table\">\n  <thead><tr><th>犯规类型</th><th>判定标准</th><th>罚则</th></tr></thead>\n  <tbody>\n    <tr><td>普通犯规</td><td>身体接触影响对手动作</td><td>罚球 / 边线球</td></tr>\n    <tr><td>进攻犯规</td><td>持球撞人 / 推人</td><td>对方球权</td></tr>\n    <tr><td>防守犯规</td><td>非法阻挡 / 拉人</td><td>罚球 / 边线球</td></tr>\n    <tr><td>违体犯规</td><td>非篮球动作的恶意接触</td><td>2 罚 1 掷</td></tr>\n    <tr><td>技术犯规</td><td>辱骂 / 不服从裁判</td><td>1 罚 1 掷</td></tr>\n  </tbody>\n</table>\n\n<h3>三、违例（不是犯规，但也是违例）</h3>\n<ul>\n  <li><strong>走步</strong>：持球移动时轴心脚移动</li>\n  <li><strong>二运</strong>：运球后双手触球再运</li>\n  <li><strong>回场</strong>：进攻方球回本方半场</li>\n  <li><strong>3 秒违例</strong>：进攻球员在限制区停留超 3 秒</li>\n  <li><strong>8 秒违例</strong>：进攻方 8 秒内未过半场</li>\n  <li><strong>24 秒违例</strong>：进攻方 24 秒内未投篮</li>\n</ul>\n\n<h3>四、6 大基础手势（业余最常见）</h3>\n\n<h3>① 走步 / 二运</h3>\n<pre><code>双手握拳，在胸前画小圈\n（表示违例停止比赛）</code></pre>\n\n<h3>② 普通犯规</h3>\n<pre><code>单手握拳，向下挥动 + 指向犯规方球衣号码</code></pre>\n\n<h3>③ 三秒违例</h3>\n<pre><code>伸出 3 根手指，指向限制区</code></pre>\n\n<h3>④ 罚球</h3>\n<pre><code>双手竖起大拇指，指向罚球线</code></pre>\n\n<h3>⑤ 比赛开始 / 跳球</h3>\n<pre><code>双手上抛动作（模拟跳球）</code></pre>\n\n<h3>⑥ 暂停</h3>\n<pre><code>双手呈\"T\"字（食指横 + 中指竖）</code></pre>\n\n<h3>五、业余比赛最容易争议的 5 个瞬间</h3>\n\n<h3>① 球出界</h3>\n<ul>\n  <li>看球最后接触谁的身体（含手 / 脚 / 头发）</li>\n  <li>压线 = 没出界</li>\n  <li>裁判视线不好 = 找最近的副裁判 / 记录台确认</li>\n</ul>\n\n<h3>② 干扰球</h3>\n<ul>\n  <li>进攻方：球在篮圈水平面以下 = 不能碰筐</li>\n  <li>防守方：球在篮圈水平面以上 = 不能碰球</li>\n</ul>\n\n<h3>③ 进攻犯规 / 防守犯规</h3>\n<ul>\n  <li>关键看\"谁先站定\"——先站定的有路权</li>\n  <li>圆柱体原则：垂直起跳不犯规</li>\n  <li>挡拆的合法位置：双脚在身前</li>\n</ul>\n\n<h3>④ 罚球违例</h3>\n<ul>\n  <li>罚球队员：球离手前不能踩线</li>\n  <li>非罚球队员：罚球离手前不能进限制区</li>\n</ul>\n\n<h3>⑤ 球鞋 / 装备</h3>\n<ul>\n  <li>球鞋颜色不限（业余）</li>\n  <li>不能戴首饰（避免受伤）</li>\n  <li>指甲必须剪短</li>\n</ul>\n\n<h3>六、看球必懂的 10 个术语</h3>\n<table class=\"art-table\">\n  <tbody>\n    <tr><td>快攻</td><td>抢到篮板后快速推进</td></tr>\n    <tr><td>挡拆</td><td>一个挡一个拆的配合</td></tr>\n    <tr><td>突破</td><td>持球摆脱防守人</td></tr>\n    <tr><td>分球</td><td>突破后传给空位队友</td></tr>\n    <tr><td>盖帽</td><td>把对手投篮打掉</td></tr>\n    <tr><td>篮板</td><td>投丢后的争抢球</td></tr>\n    <tr><td>助攻</td><td>传球直接帮助队友得分</td></tr>\n    <tr><td>抢断</td><td>从对手手中断球</td></tr>\n    <tr><td>走步</td><td>违例（不是犯规）</td></tr>\n    <tr><td>撞人</td><td>进攻犯规</td></tr>\n  </tbody>\n</table>\n\n<h3>七、给业余爱好者的 3 个观赛建议</h3>\n<ol>\n  <li><strong>先懂规则再看战术</strong>——知道为啥吹犯规比\"谁赢谁输\"有意思</li>\n  <li><strong>关注无球跑动</strong>——篮球 80% 的精彩在没球的时候</li>\n  <li><strong>理解裁判的难处</strong>——业余比赛裁判很难，能上场的都是真爱</li>\n</ol>\n\n<div class=\"art-callout\">\n  <div class=\"ico\">★</div>\n  <div class=\"txt\"><strong>完整资料：</strong>含 30 个手势图解 + 20 个实战案例 + 规则变动解读。加微信 <code>aidon277</code>，备注\"篮球规则\"。</div>\n</div>\n\n<div class=\"end-mark\">RES</div>"
+  }
+}</script>
+
+<script>
+(function(){
+  const modal = document.getElementById('artModal');
+  if(!modal) return;
+  const body = document.getElementById('artBody');
+  const crumb = document.getElementById('artCrumb');
+  const closeBtn = document.getElementById('artClose');
+  let lastFocus = null;
+
+  // parse article data
+  let ART = {};
+  try {
+    const raw = document.getElementById('artData').textContent;
+    ART = JSON.parse(raw);
+  } catch(e) {
+    console.error('[art-modal] data parse failed', e);
+    return;
+  }
+
+  function openArt(id){
+    const a = ART[id];
+    if(!a) return;
+    crumb.textContent = a.crumb || '';
+    body.innerHTML =
+      '<h2>' + a.title + '</h2>' +
+      '<div class="meta">' + a.meta.map(function(m){return '<span>' + m + '</span>';}).join('') + '</div>' +
+      a.body;
+    // sync theme attr for light/dark
+    const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+    modal.setAttribute('data-theme', theme);
+    lastFocus = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('no-scroll');
+    modal.scrollTop = 0;
+    // bind copy buttons
+    body.querySelectorAll('[data-copy]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        const card = btn.closest('.prompt-card');
+        const pre = card && card.querySelector('pre');
+        if(!pre) return;
+        const txt = pre.textContent;
+        if(navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(txt).then(function(){
+            const orig = btn.textContent;
+            btn.textContent = '✓ COPIED';
+            btn.classList.add('is-done');
+            setTimeout(function(){ btn.textContent = orig; btn.classList.remove('is-done'); }, 1800);
+          }).catch(function(){ fallbackCopy(txt, btn); });
+        } else {
+          fallbackCopy(txt, btn);
+        }
+      });
+    });
+    // focus close for keyboard
+    setTimeout(function(){ closeBtn.focus(); }, 50);
+  }
+
+  function fallbackCopy(text, btn){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); btn.textContent = '✓ COPIED'; btn.classList.add('is-done'); setTimeout(function(){btn.textContent='COPY';btn.classList.remove('is-done');},1800); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  function closeArt(){
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('no-scroll');
+    if(lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+
+  // bind all cards with data-open
+  document.querySelectorAll('[data-open]').forEach(function(card){
+    card.addEventListener('click', function(e){
+      // ignore if user clicked inside an inner <a> (none in current cards but safe)
+      const id = card.getAttribute('data-open');
+      openArt(id);
+    });
+    card.addEventListener('keydown', function(e){
+      if(e.key === 'Enter' || e.key === ' '){
+        e.preventDefault();
+        const id = card.getAttribute('data-open');
+        openArt(id);
+      }
+    });
+  });
+
+  closeBtn.addEventListener('click', closeArt);
+  modal.addEventListener('click', function(e){
+    if(e.target === modal) closeArt();
+  });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && modal.classList.contains('is-open')) closeArt();
+  });
+
+  // keep theme in sync when theme switcher toggles
+  const themeObs = new MutationObserver(function(){
+    const t = document.documentElement.getAttribute('data-theme') || 'dark';
+    if(modal.classList.contains('is-open')) modal.setAttribute('data-theme', t);
+  });
+  themeObs.observe(document.documentElement, {attributes:true, attributeFilter:['data-theme']});
+})();
+</script>
+
 </body>
 </html>
