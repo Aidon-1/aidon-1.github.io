@@ -1354,6 +1354,74 @@ h1,h2,h3,h4,h5,h6{
     .nav-menu.open{transform:translateY(0)}
     .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm);font-size:14px}
     .nav-toggle{display:flex}
+    /* === Mobile 背景重设计（不动 desktop 0 改动）===
+       痛点：mobile 上 body 6 层 background 太淡看不出层次 + banner-orb 被 banner-inner (z-index:1) 完全盖住 + 顶部没高光带
+       方案：6 处 mobile 专属重写 + 1 处新增 + 1 处隐藏 */
+    body{
+      background-color:#0B0D12;
+      background-image:
+        /* 1. 顶部 hero 强光带（banner 区域顶部一道蓝紫光，强化 hero 视觉） */
+        linear-gradient(to bottom,
+          rgba(91,149,240,0.18) 0%,
+          rgba(91,149,240,0.08) 20%,
+          rgba(91,149,240,0.02) 45%,
+          transparent 65%),
+        /* 2. noise 颗粒（保留 desktop 纸质感，mobile 略淡避免干扰文字） */
+        url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>"),
+        /* 3. dot grid 32px 细网格（mobile 加亮，呼应 desktop 设计语言） */
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.045) 1px, transparent 1.5px),
+        /* 4. 顶部中央 ambient（强化 hero 区域，比 desktop 居中） */
+        radial-gradient(ellipse 500px 350px at 50% 0%, rgba(122,162,247,0.20), transparent 60%),
+        /* 5. 右下深蓝极光（呼应 desktop 92% 92%） */
+        radial-gradient(ellipse 450px 600px at 100% 95%, rgba(60,108,196,0.12), transparent 60%),
+        /* 6. 中央 subtle 光晕（呼应 desktop 50% 50%） */
+        radial-gradient(ellipse 500px 400px at 50% 55%, rgba(255,255,255,0.035), transparent 70%);
+      background-size:
+        100% 65vh,
+        240px 240px,
+        32px 32px,
+        auto,auto,auto;
+      background-repeat:no-repeat,repeat,repeat,no-repeat,no-repeat,no-repeat;
+      background-attachment:scroll,fixed,scroll,scroll,scroll,scroll;
+    }
+    /* body::before 极光 blob：mobile 缩小 + 颜色饱和度提 */
+    body::before{
+      background:
+        radial-gradient(circle 350px at 18% 22%, rgba(91,149,240,0.22), transparent 60%),
+        radial-gradient(circle 320px at 85% 78%, rgba(122,162,247,0.18), transparent 60%);
+      filter:blur(25px);
+      animation:bgFloat 28s ease-in-out infinite alternate;
+    }
+    /* body::after vignette：mobile 加强压暗（顶部 0.25→0.35 强化 nav 质感，底部 0.18→0.22 强化 footer） */
+    body::after{
+      background:
+        linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, transparent 15%, transparent 85%, rgba(0,0,0,0.22) 100%);
+    }
+    /* banner::before 网格：mobile 加密 80px→60px，mask 居中偏上（呼应 h1 位置） */
+    .banner::before{
+      background-size:60px 60px;
+      mask-image:radial-gradient(ellipse 90% 75% at 50% 32%,#000 0%,transparent 80%);
+      -webkit-mask-image:radial-gradient(ellipse 90% 75% at 50% 32%,#000 0%,transparent 80%);
+    }
+    /* banner::after：mobile 专属 hero 高光带（desktop 完全没用 ::after，安全） */
+    .banner::after{
+      content:"";position:absolute;left:0;right:0;top:0;height:65%;
+      background:
+        radial-gradient(ellipse 85% 100% at 50% 0%, rgba(91,149,240,0.14), transparent 60%),
+        radial-gradient(ellipse 60% 100% at 50% 8%, rgba(122,162,247,0.08), transparent 70%);
+      pointer-events:none;z-index:0;
+    }
+    /* banner-orb 巨型光球：mobile 重设位置 + 缩小 + 颜色加强（之前 600px top:48% left:62% 被 banner-inner 文字 + visual 盖住，移到顶部中央变 hero 高光） */
+    .banner-orb{top:24% !important;left:50% !important;width:400px !important;height:400px !important}
+    .banner-orb-core{
+      background:
+        radial-gradient(circle at 35% 30%, rgba(122,162,247,0.85), rgba(91,149,240,0.35) 30%, rgba(91,149,240,0.10) 55%, transparent 75%),
+        radial-gradient(circle at 70% 70%, rgba(167,139,250,0.55), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,0.12), transparent 40%) !important;
+      filter:blur(22px) !important;
+    }
+    /* banner-bgword：mobile 隐藏（300px/140px 描边字在 mobile 视觉太重，干扰 h1） */
+    .banner-bgword{display:none}
     .banner-inner{grid-template-columns:1fr;gap:60px;position:relative;overflow:visible}
     .banner-bgword{font-size:140px;right:-5%}
     /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
