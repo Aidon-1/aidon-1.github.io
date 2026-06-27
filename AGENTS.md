@@ -115,9 +115,11 @@
 - **P3.5 电路板 gradient 精简**：16 layer → 12 layer
 
 ### 浏览器链路
-- mavis browser bridge（Edge 真实）已 connected
-- 强制约定：所有浏览器相关操作走 mavis browser tool → 真实 Edge
-- **禁调 Playwright/Puppeteer 等 headless Chromium**
+- **默认浏览器：Google Chrome**（用户偏好 2026-06-27 切换，替代原 Edge 约定）
+- 验证流程：agent 写完代码 → push → 用户本机 Chrome 强刷 `?v=N` 验 → 不再做中间截图
+- mavis browser tool 底层绑 Edge（无法切 Chrome），不再主动用
+- **禁调 Playwright/Puppeteer 等任何 headless automation**（违反"真实 Chrome"原则）
+- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI）
 - 约定已写入 `~/.mavis/memory/user.md`（type: workflow-rule）
 
 ---
@@ -229,6 +231,8 @@
 
 - 极简轻奢科技商务风 / 深色高级感
 - 终端命令不熟，适合"我帮他跑"的模式
-- **默认浏览器：Microsoft Edge**（不要 Chrome/Chromium，包括 Playwright 这类 headless automation）
-- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI，不算 Edge 偏好违反）
+- **默认浏览器：Google Chrome**（2026-06-27 切换，原 Edge 偏好作废）
+- 用户偏好 Chrome 觉得效率高（user 原话："用谷歌要比用微软效率高"）
+- 流程变化：agent 写完代码后让用户在 Chrome 里自己强刷验证，不再用 mavis browser 做中间截图
+- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI）
 - 见 `~/.mavis/memory/user.md`
