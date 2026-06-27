@@ -226,11 +226,77 @@
 
 ---
 
+## 📌 2026-06-27 mobile 端深度改造 — 阶段性存档（user 出门暂停）
+
+### 已上线 commits（origin/main 全部同步）
+- `90b3be2` fix(mobile): 浮卡改对角线错落分布（参照 desktop）解决堆叠重叠
+- `a1fecfd` feat(mobile): 删掉旋转虚线圆环（user 决定不要这个装饰）
+- `372c73e` feat(mobile): 圆环改为圈住'训练'二字（已被 a1fecfd 删）
+- `42dc4ef` fix(mobile): 圆环位置改 h1 文字右上角画框（已被 a1fecfd 删）
+- `3851398` feat(mobile): 整页背景重新设计 + 6 层 mobile 专属高级感
+
+### 当前 mobile 状态
+- **背景**（3851398）：✅ body 6 层 mobile 背景 + banner::after hero 高光带 + banner-orb 重定位到 top:24% left:50% 400px + banner-bgword 隐藏
+- **浮卡**（90b3be2）：✅ 参照 desktop 对角线错落分布，缩 30%
+  - card-1 (MODEL 右上): top:0 right:0 130×80
+  - card-2 (DATASET 左下): bottom:0 left:0 115×110
+  - card-3 (PROMPT 左中): top:155 left:0 90×55
+  - 齿轮: 28×28 紧贴 card-1 右上外
+  - 几何验证 0 重叠（间隔 75/60/190px in 380px visual 容器）
+- **圆环**：✅ 已删除（user 决定）
+- **desktop**：0 改动（line 791-804 浮卡 + 187-205 body 6 层 background + 493-499 banner-orb + 484-491 banner-bgword 全部保留）
+
+### ⚠️ User 反馈 "还是会重叠"（2026-06-27 18:45）
+- deployed HTML 100% 部署成功（curl 真实 GitHub Pages 验证 3 次取样全部含 130×80 / 115×110 / 90×55）
+- 几何计算 0 重叠（理论）
+- **user 浏览器拿到的可能是 fastly 老节点 cache**（GFW 屏蔽 GitHub Pages CDN 间歇）
+- **user 不想再每次都自己硬刷看**
+
+### 🔧 User 决策（2026-06-27 18:45）：改用 Chrome 浏览器
+- 浏览器偏好 Edge → **Google Chrome**（终态）
+- 原因：Chrome DevTools mobile emulation 比 Edge 完整 6-12 月领先
+- **mobile 真机测试必须 Chrome 跑**，不再让 user 自己硬刷
+
+### 📋 User 回来后执行清单
+1. **user 在 Chrome 启用 mavis extension（1 次 setup）**：
+   - Chrome 已在跑（已用 `--load-extension` 加载到 Chrome 目录）
+   - 地址栏输入 `chrome://extensions`
+   - 右上角"开发者模式"打开
+   - 找到 "Mavis Browser Bridge" → 点"启用"
+   - mavis broker 自动接管 Chrome（~3 秒）
+2. **agent 切 mavis browser 到 Chrome**：
+   - 验证 `mavis browser tool get_active_tab` 返回 Chrome tab
+   - 验证 UA 不再含 `Edg/`
+3. **Chrome DevTools iPhone 14 Pro emulation（390×844 viewport）**：
+   - 跑真机 mobile 浮卡截图
+   - 跑 `getBoundingClientRect` 实际渲染坐标
+   - **如果还重叠** → 立即改 CSS（用 Chrome 真机看到的数据）
+   - **如果不重叠** → user 之前是 GFW cache 滞后，已修好
+4. **archive completed**: 浮卡验证通过后 commit AGENTS.md 记录最终结果
+
+### 已知工具/环境问题（不阻塞）
+- GFW 间歇屏蔽 GitHub Pages CDN：curl 经常 HTTP 000，但 mavis browser + curl 重试能拿到
+- mavis browser screenshot 工具有 bug（不响应 navigate，返回无关旧图）— 已知，AGENTS.md 已记
+- mavis browser 无 evaluate / 无 viewport resize（用 Chrome DevTools 协议补充）
+- mavis broker 卡在旧 Edge tab claim 释放不掉（daemon 不能 CLI restart）— Chrome extension 启用后自动接管
+
+### 跨项目记忆（已写 agent memory）
+- 浏览器偏好：Google Chrome（user 明确终态，不要再回滚到 Edge）
+- mobile 真机测试必须 Chrome 跑（不再让 user 自己看）
+- mavis browser screenshot 工具不可靠（多次验证 bug）
+- 之前的 GFW / CDN / cache 经验教训
+
+### Next session 第一步
+读这个文件 → 确认 user 已启用 Chrome mavis extension → 跑 Chrome 真机 mobile 浮卡测试
+
+---
+
 ## 👤 用户偏好
 
 - 极简轻奢科技商务风 / 深色高级感
 - 终端命令不熟，适合"我帮他跑"的模式
-- **默认浏览器：Microsoft Edge**（2026-06-27 当天短暂切 Chrome 又回滚，user 原话："用微软不要用谷歌"）
-- 浏览器操作走 mavis browser tool → 真实 Edge
-- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI，不算 Edge 偏好违反）
-- 见 `~/.mavis/memory/user.md`
+- **默认浏览器：Google Chrome**（2026-06-27 18:45 改回 Chrome 终态 — user 反馈 Chrome DevTools mobile emulation 比 Edge 完整，做 mobile 真机测试更靠谱；之前 Edge 是过渡态）
+- 浏览器操作走 mavis browser tool → 真实 Chrome
+- **mobile 真机测试必须 Chrome 跑**（用 Chrome DevTools mobile emulation / 真实 Chrome mobile viewport，不再让 user 自己看）
+- Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI）
+- 见 `~/.mavis/memory/user.md` / `~/.mavis/agents/mavis/memory/MEMORY.md`
