@@ -1356,25 +1356,31 @@ h1,h2,h3,h4,h5,h6{
     .nav-toggle{display:flex}
     .banner-inner{grid-template-columns:1fr;gap:60px}
     .banner-bgword{font-size:140px;right:-5%}
-    .banner-visual{height:300px;order:-1;overflow:hidden}
-    /* Simplify geom visual on mobile — hide stacked cards, show simplified mark */
-    .geom-frame{display:none}
-    .banner-mobile-icon{display:block}
-    .banner-visual::before{
-      content:"";position:absolute;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      width:160px;height:160px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%,#2A2F40,var(--c-surface) 70%);
-      box-shadow:0 0 60px rgba(91,149,240,.25),inset 0 0 0 1px var(--c-line-strong);
+    .banner-visual{height:340px;order:-1;overflow:visible}
+    /* 浮卡：mobile 全部聚到右上紧凑垂直堆叠（MODEL→PROMPT→DATASET） */
+    .geom-frame{position:relative;width:100%;height:100%}
+    .geom-card{box-sizing:border-box;animation:none !important}
+    .geom-card-1{
+      top:8px !important;right:0 !important;left:auto !important;bottom:auto !important;
+      width:60% !important;min-height:78px;padding:10px;
     }
-    .banner-visual::after{
-      content:"";position:absolute;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      width:160px;height:160px;border-radius:50%;
-      border:1px dashed rgba(91,149,240,.3);
-      animation:spin 30s linear infinite;
+    .geom-card-3{
+      top:96px !important;right:0 !important;left:auto !important;bottom:auto !important;
+      width:50% !important;min-height:40px;padding:8px;
     }
-    @keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+    .geom-card-2{
+      top:144px !important;right:0 !important;left:auto !important;bottom:auto !important;
+      width:66% !important;min-height:80px;padding:10px;
+    }
+    /* 齿轮：左上小点缀 */
+    .geom-orb{
+      position:absolute;top:8px;left:-12px;right:auto;bottom:auto;transform:none;
+      width:42px;height:42px;display:flex;
+    }
+    .geom-orb svg{width:18px;height:18px}
+    /* mobile 删掉 desktop 视觉专属的'实心圆 + logo' */
+    .banner-mobile-icon{display:none}
+    .banner-visual::before,.banner-visual::after{display:none}
     .banner-meta{gap:24px}
     .banner-meta-item{color:var(--c-text-soft);letter-spacing:.18em}
     .banner-meta-item strong{font-size:22px}
@@ -1421,7 +1427,10 @@ h1,h2,h3,h4,h5,h6{
     .tl-title{font-size:24px}
     .banner-meta{flex-direction:column;gap:18px}
     .banner-meta-item strong{font-size:26px}
-    .banner-visual{height:260px}
+    .banner-visual{height:320px}
+    .geom-card-1{min-height:72px}
+    .geom-card-2{min-height:74px}
+    .geom-card-3{min-height:38px}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
