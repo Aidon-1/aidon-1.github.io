@@ -72,7 +72,6 @@
     --c-surface:#161922;
     --c-surface-2:#1C2030;
     --c-surface-hover:#1F2434;
-    --c-card:#13161E; /* modal 卡片层：比 bg 略亮但比 surface 暗，模拟"浮起一层" */
 
     --c-ink:#FFFFFF;
     --c-primary:#FFFFFF;
@@ -142,7 +141,6 @@
     --c-surface:#FFFFFF;
     --c-surface-2:#FAFBFC;
     --c-surface-hover:#F0F1F4;
-    --c-card:#FFFFFF;
 
     --c-ink:#0F1117;
     --c-primary:#0F1117;
@@ -741,14 +739,6 @@ h1,h2,h3,h4,h5,h6{
     letter-spacing:-.015em;margin-bottom:6px;
     font-variation-settings:"opsz" 144,"SOFT" 60;
   }
-  /* Desktop 下 banner-meta 浮在 banner-visual 框内左下（与右上浮卡对角） */
-  .banner-visual .banner-meta{
-    position:absolute;left:0;bottom:0;
-    flex-direction:column;align-items:flex-start;gap:18px;
-    margin:0;padding:0;border-top:none;width:auto;
-    z-index:3;
-  }
-  .banner-visual .banner-meta-item strong{font-size:30px;margin-bottom:2px}
 
   /* Banner right visual — refined geometric */
   .banner-visual{
@@ -1345,15 +1335,10 @@ h1,h2,h3,h4,h5,h6{
     .nav-status{display:none}
   }
   @media (max-width:860px){
-    /* ========== General ========== */
-    :root{--gutter:20px}
-    html{scroll-behavior:auto}
-    .section{padding:70px var(--gutter)}
-    .side-scroll,.banner-cursor-glow,.scroll-hint,.nav-status,.cursor-dot,.cursor-ring{display:none}
-
-    /* ========== Nav（hamburger 下拉） ========== */
+    :root{--gutter:28px}
+    .section{padding:90px var(--gutter)}
+    .banner{padding:120px var(--gutter) 60px}
     .nav-inner{padding:0 var(--gutter);height:64px}
-    .nav-toggle{display:flex}
     .nav-menu{
       position:fixed;top:64px;left:0;right:0;
       background:var(--glass-bg-scrolled);
@@ -1368,85 +1353,42 @@ h1,h2,h3,h4,h5,h6{
     }
     .nav-menu.open{transform:translateY(0)}
     .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm);font-size:14px}
-
-    /* ========== Banner ========== */
-    .banner{padding:100px var(--gutter) 60px}
-    .banner-inner{grid-template-columns:1fr;gap:50px}
-    .banner-bgword{font-size:90px;right:-10%;opacity:.2}
-    .banner-eyebrow{font-size:11px}
-    .banner-text h1{font-size:38px;letter-spacing:-.02em;line-height:1.15}
-    .banner-text h1 .small{font-size:.45em;margin-top:12px}
-    .banner-text .sub{font-size:15.5px;line-height:1.8;margin-bottom:32px}
-    .banner-cta{gap:12px}
-    .btn{min-height:44px;padding:12px 20px;font-size:14px}
-    /* mobile 下 banner-meta 浮在 banner-visual 框内左下（与右上浮卡对角） */
-    .banner-visual .banner-meta{
-      position:absolute;left:8px;bottom:8px;z-index:5;
-      flex-direction:column;align-items:flex-start;gap:12px;
-      margin:0;padding:0;border-top:none;width:auto;
+    .nav-toggle{display:flex}
+    .banner-inner{grid-template-columns:1fr;gap:60px}
+    .banner-bgword{font-size:140px;right:-5%}
+    .banner-visual{height:300px;order:-1;overflow:hidden}
+    /* Simplify geom visual on mobile — hide stacked cards, show simplified mark */
+    .geom-frame{display:none}
+    .banner-mobile-icon{display:block}
+    .banner-visual::before{
+      content:"";position:absolute;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      width:160px;height:160px;border-radius:50%;
+      background:radial-gradient(circle at 30% 30%,#2A2F40,var(--c-surface) 70%);
+      box-shadow:0 0 60px rgba(91,149,240,.25),inset 0 0 0 1px var(--c-line-strong);
     }
-    .banner-visual .banner-meta-item{font-size:9px;letter-spacing:.18em}
-    .banner-visual .banner-meta-item strong{font-size:24px;margin-bottom:1px}
-
-    /* 浮卡：全部聚到右上（MODEL→PROMPT→DATASET 紧凑垂直堆叠），齿轮放左上小点缀 */
-    .banner-visual{position:relative;height:340px;width:100%;overflow:visible}
-    .geom-frame{position:relative;width:100%;height:100%}
-    .geom-card{box-sizing:border-box;animation:none !important}
-    .geom-card-1{
-      top:8px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:60% !important;min-height:78px;padding:10px;
+    .banner-visual::after{
+      content:"";position:absolute;
+      top:50%;left:50%;transform:translate(-50%,-50%);
+      width:160px;height:160px;border-radius:50%;
+      border:1px dashed rgba(91,149,240,.3);
+      animation:spin 30s linear infinite;
     }
-    .geom-card-3{
-      top:96px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:50% !important;min-height:40px;padding:8px;
-    }
-    .geom-card-2{
-      top:144px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:66% !important;min-height:80px;padding:10px;
-    }
-    /* 齿轮：左上小点缀（与左下数字遥相呼应） */
-    .geom-orb{
-      position:absolute;top:8px;left:-12px;right:auto;bottom:auto;transform:none;
-      width:42px;height:42px;display:flex;
-    }
-    .geom-orb svg{width:18px;height:18px}
-    /* 浮卡内部元素 mobile 字号 */
-    .geom-card .tag{font-size:9px;letter-spacing:.18em;margin-bottom:8px}
-    .geom-card .bar{height:3px;margin-bottom:6px}
-    .geom-card .row{margin-top:5px;gap:6px}
-    .geom-card .row .pip{width:14px;height:14px;border-radius:3px}
-    .geom-card .row .pip::after{width:4px;height:4px}
-    .geom-card .row span{font-size:10px}
-    .geom-card .dots{margin-top:8px;gap:5px}
-    .geom-card .dots i{width:5px;height:5px}
-
-    /* 大光圈 orb：放 mobile 顶部中央做背景装饰 */
-    .banner-orb{
-      top:60px;left:50%;transform:translate(-50%,0);
-      width:400px;height:400px;opacity:.5;filter:blur(20px);
-    }
-    /* 删掉 mobile 专属的"实心圆 + logo" */
-    .banner-mobile-icon{display:none}
-    .banner-visual::before,.banner-visual::after{display:none}
-
-    /* ========== Quick section（5 卡 → 2x2 + 1） ========== */
-    .quick-section{padding:0 var(--gutter) 60px}
-    .quick-grid{grid-template-columns:repeat(2,1fr);margin-top:40px}
-    .quick-card{padding:24px 20px;font-size:14px;min-height:88px}
-    .quick-card .arrow{font-size:11px}
+    @keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+    .banner-meta{gap:24px}
+    .banner-meta-item{color:var(--c-text-soft);letter-spacing:.18em}
+    .banner-meta-item strong{font-size:22px}
+    .quick-card .arrow{color:var(--c-text-soft);font-weight:500;letter-spacing:.2em}
+    .quick-grid{grid-template-columns:repeat(2,1fr)}
+    .quick-card{border-right:1px solid var(--c-line-2)}
     .quick-card:nth-child(2n){border-right:none}
     .quick-card:nth-child(-n+2){border-bottom:1px solid var(--c-line-2)}
-    .quick-card:nth-child(5){grid-column:1 / -1;border-bottom:none;border-right:none}
-
-    /* ========== About ========== */
-    .about-grid{grid-template-columns:1fr;gap:40px}
-    .about-visual{max-width:320px;margin:0 auto}
+    .about-grid{grid-template-columns:1fr;gap:50px}
+    .about-visual{max-width:340px}
     .about-mark{top:14px;left:14px;width:48px;height:48px}
     .about-mark svg{width:22px;height:22px}
     .about-name-tag{top:14px;right:14px;padding:6px 12px;font-size:14px}
     .about-caption{bottom:14px;left:14px;right:14px;font-size:9.5px;letter-spacing:.18em}
-
-    /* ========== Service ========== */
     .service-grid{grid-template-columns:1fr;gap:1px}
     .card-grid,.qual-grid{grid-template-columns:1fr}
     .achieve-list,.service-plan{grid-template-columns:1fr;gap:24px}
@@ -1454,40 +1396,33 @@ h1,h2,h3,h4,h5,h6{
     .plan-stage:not(:last-child){padding-right:0;border-right:none;padding-bottom:24px;border-bottom:1px solid var(--c-line)}
     .service-achieve{padding:36px 28px}
     .achieve-head{flex-direction:column;align-items:flex-start}
-
-    /* ========== Career（timeline 单列） ========== */
     .timeline{padding-left:36px}
     .tl-item::before{left:-36px;width:11px;height:11px}
     .tl-item::after{left:-31px}
-
-    /* ========== Contact ========== */
     .contact-grid{grid-template-columns:1fr;gap:20px}
     .contact-card,.contact-info{padding:36px 28px}
-
-    /* ========== Footer ========== */
     .footer{padding:60px var(--gutter) 36px}
     .footer-meta{flex-direction:column;font-size:10px}
   }
   @media (max-width:520px){
-    :root{--gutter:16px}
-    .section{padding:60px var(--gutter)}
-    .banner{padding:90px var(--gutter) 50px}
-    .banner-text h1{font-size:34px}
-    .banner-text .sub{font-size:15px}
-    .section-title{font-size:28px}
+    :root{--gutter:20px}
+    /* 触屏 hash scroll 用 instant（mobile smooth 动画被 DevTools emulation throttle 不到位 / 真机也容易卡帧） */
+    html{scroll-behavior:auto}
+    .section{padding:70px var(--gutter)}
+    .banner{padding:100px var(--gutter) 50px}
+    .banner-text h1{font-size:36px;letter-spacing:-.025em}
+    .banner-text .sub{font-size:15.5px}
+    .section-title{font-size:30px}
     .section-num{margin-bottom:14px}
     .quick-grid{grid-template-columns:1fr}
-    .quick-card{border-right:none;border-bottom:1px solid var(--c-line-2);min-height:0;padding:20px}
+    .quick-card{border-right:none;border-bottom:1px solid var(--c-line-2)}
     .quick-card:last-child{border-bottom:none}
     .footer-slogan{font-size:20px}
-    .tl-title{font-size:22px}
-    .banner-visual .banner-meta{gap:10px;bottom:6px;left:6px}
-    .banner-visual .banner-meta-item strong{font-size:20px}
-    .banner-visual{height:320px}
-    .banner-orb{width:300px;height:300px;top:40px}
-    .geom-card-1{min-height:72px}
-    .geom-card-2{min-height:74px}
-    .geom-card-3{min-height:38px}
+    .tl-title{font-size:24px}
+    .banner-meta{flex-direction:column;gap:18px}
+    .banner-meta-item strong{font-size:26px}
+    .banner-visual{height:260px}
+    /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
       padding-left:max(var(--gutter),env(safe-area-inset-left));
@@ -2228,6 +2163,11 @@ h1,h2,h3,h4,h5,h6{
         </a>
         <a href="#contact" class="btn btn-ghost">商务洽谈</a>
       </div>
+      <div class="banner-meta reveal reveal-d4">
+        <div class="banner-meta-item"><strong><span class="count-num" data-count="2">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">+</span></strong>YEARS · 公考沉淀</div>
+        <div class="banner-meta-item"><strong><span class="count-num" data-count="1">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">+</span></strong>YEAR · 商业实战</div>
+        <div class="banner-meta-item"><strong><span class="count-num" data-count="100">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">%</span></strong>FOCUS · AI 训练</div>
+      </div>
     </div>
 
     <div class="banner-visual reveal reveal-d2">
@@ -2255,11 +2195,6 @@ h1,h2,h3,h4,h5,h6{
             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
         </div>
-      </div>
-      <div class="banner-meta reveal reveal-d4">
-        <div class="banner-meta-item"><strong><span class="count-num" data-count="2">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">+</span></strong>YEARS · 公考沉淀</div>
-        <div class="banner-meta-item"><strong><span class="count-num" data-count="1">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">+</span></strong>YEAR · 商业实战</div>
-        <div class="banner-meta-item"><strong><span class="count-num" data-count="100">0</span><span style="font-style:italic;font-size:20px;color:var(--c-accent)">%</span></strong>FOCUS · AI 训练</div>
       </div>
       <svg class="banner-mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
         <path d="M12 2L2 7l10 5 10-5-10-5z"/>
