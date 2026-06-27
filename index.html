@@ -1472,14 +1472,16 @@ h1,h2,h3,h4,h5,h6{
     }
     .banner-meta-item{font-size:8px;letter-spacing:.16em}
     .banner-meta-item strong{font-size:20px;margin-bottom:0}
-    /* 虚线圆环：h1 文字右上角画框（圆环溢出 h1 右上角各 8px，dashed 不穿过任何文字 → 视觉清晰）。
-       位置选择：mobile h1 line 1-2 末尾右侧各 ~97px 空白 → 圆环紧贴 h1 右上角外是唯一不挡文字、不侵入其他元素的位置。 */
+    /* 虚线圆环：圈住 h1 "训练"二字 + "师"字露出（不全圈住 → 67% 圈住 / 33% 露）。
+       位置计算：mobile 860 h1 48px → "AI 训练师" line 2 起始 y≈49, "AI " 宽~50 → "训"字 x≈50-98, "练"字 98-146, "师"字 146-194。
+       圆环 100×100 放 line 2 "训练"二字正中心 → top:30 left:50 圈住 50-150 范围 = "训练"二字 + "师"字完全露出。
+       圆环 vertical 溢出 line 2 上下 ~25px → 顶部碰 line 1 "型" 末 25px (h1 line 1 占 240px 宽，"型" 字 x ~192-240 → 圆环顶 left 50 不会碰"型"字) / 底部碰 line 3 small 顶部 (h1 line 3 "— 以多元..." 占满 337 宽, 圆环底 y 130 → line 3 y 98 → 圆环底 130 覆盖 line 3 顶部 32px → 视觉 OK 圆环作为高亮标记) */
     .banner-text h1{position:relative;overflow:visible}
     .banner-text h1::before{
       content:"";position:absolute;
-      top:-8px;right:-8px;
-      width:80px;height:80px;border-radius:50%;
-      border:1.5px dashed rgba(122,178,255,.7);
+      top:30px;left:50px;
+      width:100px;height:100px;border-radius:50%;
+      border:1.5px dashed rgba(122,178,255,.75);
       filter:drop-shadow(0 0 10px rgba(122,178,255,.4));
       pointer-events:none;
       transform:rotate(0);
@@ -1537,8 +1539,8 @@ h1,h2,h3,h4,h5,h6{
     .geom-card-3{min-height:28px}
     .geom-orb{width:44px;height:44px}
     .geom-orb svg{width:18px;height:18px}
-    /* 小屏：虚线圆环跟着 h1 同步缩（h1 文字右上角画框位置，520 内 h1 字号 36px → 圆环缩 20% + 位置微调） */
-    .banner-text h1::before{width:64px;height:64px;top:-6px;right:-6px}
+    /* 小屏：虚线圆环跟着 h1 同步缩（圈住"训练"二字 + 露出"师"字位置同步，520 内 h1 36px → 圆环缩到 80×80 + 位置微调） */
+    .banner-text h1::before{width:80px;height:80px;top:22px;left:34px}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
