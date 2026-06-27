@@ -1359,28 +1359,37 @@ h1,h2,h3,h4,h5,h6{
     /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
     .banner-text{display:contents}
     .banner-visual{height:380px;overflow:visible}
-    /* 浮卡：聚右上（MODEL 顶部 → PROMPT 中右 → DATASET 中下，3 张浮卡全部堆叠在 visual 上半部分） */
+    /* 浮卡：聚右上（MODEL 顶部 → PROMPT 中右 → DATASET 中下，3 张浮卡全部堆叠在 visual 上半部分）—— 缩小约 25% 跟 mobile viewport 协调 */
     .geom-frame{position:relative;width:100%;height:100%}
     .geom-card{box-sizing:border-box;animation:none !important}
     .geom-card-1{
-      top:8px !important;right:24px !important;left:auto !important;bottom:auto !important;
-      width:62% !important;min-height:80px;padding:10px;
+      top:6px !important;right:18px !important;left:auto !important;bottom:auto !important;
+      width:48% !important;min-height:54px;padding:7px;
     }
     .geom-card-3{
-      top:84px !important;right:64px !important;left:auto !important;bottom:auto !important;
-      width:52% !important;min-height:60px;padding:8px;
+      top:64px !important;right:50px !important;left:auto !important;bottom:auto !important;
+      width:38% !important;min-height:38px;padding:5px;
     }
     .geom-card-2{
-      top:160px !important;right:24px !important;left:auto !important;bottom:auto !important;
-      width:64% !important;min-height:90px;padding:10px;
+      top:110px !important;right:18px !important;left:auto !important;bottom:auto !important;
+      width:50% !important;min-height:62px;padding:7px;
     }
+    /* 卡片内文字同步缩（mobile 字号小，浮卡内标签/数值跟着缩） */
+    .geom-card .tag{font-size:8px;margin-bottom:5px;letter-spacing:.18em}
+    .geom-card .row{gap:5px;margin-top:3px}
+    .geom-card .row .pip{width:12px;height:12px}
+    .geom-card .row .pip::after{width:4px;height:4px}
+    .geom-card .row span{font-size:9px}
+    .geom-card .bar{height:3px;margin-bottom:4px}
+    .geom-card .dots{margin-top:6px;gap:4px}
+    .geom-card .dots i{width:4px;height:4px}
     /* 齿轮：右上外凸（跟左下数字遥相呼应，对角线） */
     .geom-orb{
-      position:absolute;top:-14px !important;right:-14px !important;
+      position:absolute;top:-12px !important;right:-12px !important;
       bottom:auto !important;left:auto !important;transform:none;
-      width:48px;height:48px;display:flex;
+      width:38px;height:38px;display:flex;
     }
-    .geom-orb svg{width:20px;height:20px}
+    .geom-orb svg{width:16px;height:16px}
     /* 隐藏原 visual::before 虚线圆环（下面要把它搬到 h1 文字后面） */
     .banner-visual::before{display:none}
     /* mobile 删掉 desktop 视觉专属的'实心圆 + logo' */
@@ -1390,20 +1399,26 @@ h1,h2,h3,h4,h5,h6{
     /* 数字：浮在 visual 框内左下角（绝对定位相对 banner-inner 底部 = visual 底部） */
     .banner-meta{
       position:absolute;left:8px;bottom:8px;z-index:5;
-      flex-direction:column;align-items:flex-start;gap:12px;
+      flex-direction:column;align-items:flex-start;gap:10px;
       margin:0;padding:0;border-top:none;width:auto;
     }
-    .banner-meta-item{font-size:9px;letter-spacing:.18em}
-    .banner-meta-item strong{font-size:24px;margin-bottom:1px}
-    /* 虚线圆环：移到 h1 文字后面（作为 h1 背景装饰图层，z-index:-1 在 h1 stacking context 内） */
+    .banner-meta-item{font-size:8.5px;letter-spacing:.18em}
+    .banner-meta-item strong{font-size:22px;margin-bottom:1px}
+    /* 虚线圆环：移到 h1 文字后面（z-index:-1 在 h1 isolation stacking context 内 = h1 background 之下；h1 无 background → 圆环实际穿过 h1 内容背后） */
     .banner-text h1{position:relative;isolation:isolate;overflow:visible}
     .banner-text h1::before{
       content:"";position:absolute;
-      top:50%;right:-12%;transform:translate(0,-50%);
-      width:180px;height:180px;border-radius:50%;
-      border:1px dashed rgba(91,149,240,.22);
-      animation:spin 30s linear infinite;
+      top:50%;right:-18%;transform:translate(0,-50%) rotate(0);
+      width:200px;height:200px;border-radius:50%;
+      border:1.5px dashed rgba(122,178,255,.5);
+      filter:drop-shadow(0 0 8px rgba(122,178,255,.25));
       pointer-events:none;z-index:-1;
+      animation:ringSpin 30s linear infinite;
+    }
+    /* mobile 本地 keyframe（修 50943ac 的 bug：之前 animation:spin 引用未定义的 @keyframes spin，圆环静默失效） */
+    @keyframes ringSpin{
+      from{transform:translate(0,-50%) rotate(0)}
+      to{transform:translate(0,-50%) rotate(360deg)}
     }
     .quick-card .arrow{color:var(--c-text-soft);font-weight:500;letter-spacing:.2em}
     .quick-grid{grid-template-columns:repeat(2,1fr)}
@@ -1448,9 +1463,9 @@ h1,h2,h3,h4,h5,h6{
     .tl-title{font-size:24px}
     .banner-meta-item strong{font-size:26px}
     .banner-visual{height:360px}
-    .geom-card-1{min-height:74px}
-    .geom-card-2{min-height:78px}
-    .geom-card-3{min-height:54px}
+    .geom-card-1{min-height:48px}
+    .geom-card-2{min-height:56px}
+    .geom-card-3{min-height:34px}
     .geom-orb{width:44px;height:44px}
     .geom-orb svg{width:18px;height:18px}
     /* 小屏：虚线圆环跟着 h1 同步缩（h1 容器内的 ::before 圆环，已在 860 内设为 z-index:-1 在文字背后） */
