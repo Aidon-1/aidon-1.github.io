@@ -1427,20 +1427,25 @@ h1,h2,h3,h4,h5,h6{
     /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
     .banner-text{display:contents}
     .banner-visual{height:380px;overflow:visible}
-    /* 浮卡：聚右上（MODEL 顶部 → PROMPT 中右 → DATASET 中下，3 张浮卡全部堆叠在 visual 上半部分）—— 缩 30% 跟 mobile viewport 协调 */
+    /* 浮卡：参照 desktop 对角线错落分布（MODEL 右上 / DATASET 左下 / PROMPT 左中），缩 30% 跟 mobile viewport 协调
+       之前'聚右上堆叠'问题：3 张卡都 right 聚堆 + min-height 太短被内容撑大 → 严重重叠
+       新方案：跟 desktop 一样的对角线分布，3 张卡不重叠 + 留视觉呼吸 */
     .geom-frame{position:relative;width:100%;height:100%}
-    .geom-card{box-sizing:border-box;animation:none !important}
+    .geom-card{box-sizing:border-box;animation:none !important;overflow:hidden}
+    /* MODEL 右上 (对应 desktop card-1: top:0 right:0 240×120 → mobile 130×80) */
     .geom-card-1{
-      top:6px !important;right:18px !important;left:auto !important;bottom:auto !important;
-      width:42% !important;min-height:46px;padding:6px;
+      top:0 !important;right:0 !important;left:auto !important;bottom:auto !important;
+      width:130px !important;height:80px;padding:6px;
     }
-    .geom-card-3{
-      top:56px !important;right:46px !important;left:auto !important;bottom:auto !important;
-      width:34% !important;min-height:32px;padding:4px;
-    }
+    /* DATASET 左下 (对应 desktop card-2: bottom:30 left:0 200×170 → mobile bottom:0 left:0 115×110) */
     .geom-card-2{
-      top:96px !important;right:18px !important;left:auto !important;bottom:auto !important;
-      width:44% !important;min-height:54px;padding:6px;
+      bottom:0 !important;left:0 !important;top:auto !important;right:auto !important;
+      width:115px !important;height:110px;padding:6px;
+    }
+    /* PROMPT 左中 (对应 desktop card-3: top:140 left:30 160×80 → mobile top:155 left:0 90×55) */
+    .geom-card-3{
+      top:155px !important;left:0 !important;bottom:auto !important;right:auto !important;
+      width:90px !important;height:55px;padding:4px;
     }
     /* 卡片内文字同步缩（mobile 字号小，浮卡内标签/数值跟着缩） */
     .geom-card .tag{font-size:7.5px;margin-bottom:4px;letter-spacing:.16em}
@@ -1451,13 +1456,13 @@ h1,h2,h3,h4,h5,h6{
     .geom-card .bar{height:2px;margin-bottom:3px}
     .geom-card .dots{margin-top:5px;gap:3px}
     .geom-card .dots i{width:3px;height:3px}
-    /* 齿轮：右上外凸（跟左下数字遥相呼应，对角线） */
+    /* 齿轮：紧贴 card-1 (MODEL) 右上外凸（跟 desktop orb 一样放右侧外，但 mobile 改 top:-10 right:-10 紧贴 card-1 角） */
     .geom-orb{
       position:absolute;top:-10px !important;right:-10px !important;
       bottom:auto !important;left:auto !important;transform:none;
-      width:32px;height:32px;display:flex;
+      width:28px;height:28px;display:flex;
     }
-    .geom-orb svg{width:14px;height:14px}
+    .geom-orb svg{width:13px;height:13px}
     /* 隐藏原 visual::before 虚线圆环（下面要把它搬到 h1 文字后面） */
     .banner-visual::before{display:none}
     /* mobile 删掉 desktop 视觉专属的'实心圆 + logo' */
@@ -1517,11 +1522,9 @@ h1,h2,h3,h4,h5,h6{
     .tl-title{font-size:24px}
     .banner-meta-item strong{font-size:26px}
     .banner-visual{height:360px}
-    .geom-card-1{min-height:40px}
-    .geom-card-2{min-height:48px}
-    .geom-card-3{min-height:28px}
-    .geom-orb{width:44px;height:44px}
-    .geom-orb svg{width:18px;height:18px}
+    /* 浮卡 520 覆盖：现在用 fixed height（不再用 min-height），数值已写在 860 内的 !important，520 不用再改 height */
+    .geom-orb{width:36px;height:36px}
+    .geom-orb svg{width:16px;height:16px}
     /* 虚线圆环 520 覆盖：已删除（user 2026-06-27 决定 mobile 不再加圆环） */
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
