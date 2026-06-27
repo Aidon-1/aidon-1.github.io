@@ -1356,27 +1356,41 @@ h1,h2,h3,h4,h5,h6{
     .nav-menu.open{transform:translateY(0)}
     .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm);font-size:14px}
     .nav-toggle{display:flex}
-    .banner-inner{grid-template-columns:1fr;gap:60px}
-    .banner-bgword{font-size:140px;right:-5%}
-    .banner-visual{height:300px;order:-1;overflow:hidden}
-    /* Simplify geom visual on mobile — hide stacked cards, show simplified mark */
-    .geom-frame{display:none}
-    .banner-mobile-icon{display:block}
-    .banner-visual::before{
-      content:"";position:absolute;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      width:160px;height:160px;border-radius:50%;
-      background:radial-gradient(circle at 30% 30%,#2A2F40,var(--c-surface) 70%);
-      box-shadow:0 0 60px rgba(91,149,240,.25),inset 0 0 0 1px var(--c-line-strong);
+    .banner-inner{grid-template-columns:1fr;gap:40px}
+    .banner-bgword{font-size:80px;right:-5%;opacity:.3}
+    /* 移动端保留浮卡视觉，3 张卡横向 flex 排开（与 desktop 设计语言一致） */
+    .banner-visual{height:auto;order:-1;overflow:visible;padding:0;min-height:0}
+    .geom-frame{
+      display:flex;flex-direction:row;gap:8px;
+      width:100%;height:auto;
+      overflow-x:auto;-webkit-overflow-scrolling:touch;
+      padding:4px 2px 12px;
+      scrollbar-width:thin;
     }
-    .banner-visual::after{
-      content:"";position:absolute;
-      top:50%;left:50%;transform:translate(-50%,-50%);
-      width:160px;height:160px;border-radius:50%;
-      border:1px dashed rgba(91,149,240,.3);
-      animation:spin 30s linear infinite;
+    .geom-card{
+      position:static;flex:1 1 0;min-width:0;width:auto;height:auto;
+      padding:12px;border-radius:12px;
+      animation:none !important;
     }
-    @keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+    .geom-card::after{animation:none !important}
+    .geom-card .tag{font-size:8.5px;letter-spacing:.18em;margin-bottom:6px}
+    .geom-card .bar{height:3px;margin-bottom:5px}
+    .geom-card .row{margin-top:4px;gap:6px}
+    .geom-card .row .pip{width:14px;height:14px;border-radius:3px}
+    .geom-card .row .pip::after{width:4px;height:4px}
+    .geom-card .row span{font-size:10px}
+    .geom-card .dots{margin-top:6px;gap:4px}
+    .geom-card .dots i{width:4px;height:4px}
+    .geom-orb{display:none}
+    /* 删掉"实心圆 + logo"这套 mobile 专属简化版（视觉割裂） */
+    .banner-visual::before,.banner-visual::after{display:none}
+    .banner-mobile-icon{display:none}
+    /* 重新定位 banner-orb（光圈 ring）到 mobile 顶部中央 */
+    .banner-orb{
+      top:120px;left:50%;
+      width:360px;height:360px;
+      opacity:.7;
+    }
     .banner-meta{gap:24px}
     .banner-meta-item{color:var(--c-text-soft);letter-spacing:.18em}
     .banner-meta-item strong{font-size:22px}
@@ -1423,7 +1437,8 @@ h1,h2,h3,h4,h5,h6{
     .tl-title{font-size:24px}
     .banner-meta{flex-direction:column;gap:18px}
     .banner-meta-item strong{font-size:26px}
-    .banner-visual{height:260px}
+    .banner-visual{height:auto}
+    .banner-orb{width:280px;height:280px;top:140px}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
