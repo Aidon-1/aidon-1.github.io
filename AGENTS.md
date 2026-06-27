@@ -216,7 +216,7 @@
 - ~~Web3Forms access_key~~ ❌ 已撤销（commit `69d372e` 撤掉整张表单）
 - 当前 contact 区域只剩 3 项：PHONE / WECHAT / EMAIL
 - P0.2 需要用户提供微信二维码原图
-- P0.3 vCard 信息：彭乙东 + 138-XXXX-XXXX + 390508183@qq.com + aidon277（**需用户确认手机号**）
+- P0.3 vCard 信息：彭乙东 + 13670411826 + 390508183@qq.com + aidon277（**✅ 已与站点对齐，2026-06-27 mobile 测试时确认**）
 - P1.3 需用户决定是否公开服务定价
 - P1.4 需用户决定 Calendly vs 微信扫码预约
 - P1.2 需用户确认真实客户名单
