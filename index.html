@@ -1356,31 +1356,42 @@ h1,h2,h3,h4,h5,h6{
     .nav-toggle{display:flex}
     .banner-inner{grid-template-columns:1fr;gap:60px}
     .banner-bgword{font-size:140px;right:-5%}
-    .banner-visual{height:340px;order:-1;overflow:visible}
-    /* 浮卡：mobile 全部聚到右上紧凑垂直堆叠（MODEL→PROMPT→DATASET） */
+    .banner-visual{height:380px;order:-1;overflow:visible}
+    /* 浮卡：mobile 跟 desktop 视觉对得上 —— 右半边错落分布（MODEL右上→PROMPT中右→DATASET底部居中偏右），保留对角美感 */
     .geom-frame{position:relative;width:100%;height:100%}
     .geom-card{box-sizing:border-box;animation:none !important}
     .geom-card-1{
-      top:8px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:60% !important;min-height:78px;padding:10px;
+      top:28px !important;right:24px !important;left:auto !important;bottom:auto !important;
+      width:62% !important;min-height:80px;padding:10px;
     }
     .geom-card-3{
-      top:96px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:50% !important;min-height:40px;padding:8px;
+      top:124px !important;right:64px !important;left:auto !important;bottom:auto !important;
+      width:52% !important;min-height:60px;padding:8px;
     }
     .geom-card-2{
-      top:144px !important;right:0 !important;left:auto !important;bottom:auto !important;
-      width:66% !important;min-height:80px;padding:10px;
+      top:208px !important;right:24px !important;left:auto !important;bottom:auto !important;
+      width:64% !important;min-height:90px;padding:10px;
     }
-    /* 齿轮：左上小点缀 */
+    /* 齿轮：右下外凸，跟 desktop 视觉对角 */
     .geom-orb{
-      position:absolute;top:8px;left:-12px;right:auto;bottom:auto;transform:none;
-      width:42px;height:42px;display:flex;
+      position:absolute;bottom:-14px !important;right:-14px !important;
+      top:auto !important;left:auto !important;transform:none;
+      width:48px;height:48px;display:flex;
     }
-    .geom-orb svg{width:18px;height:18px}
+    .geom-orb svg{width:20px;height:20px}
+    /* mobile 留一点装饰圆环 —— 居中偏右的虚线,增加背景层次 */
+    .banner-visual::before{
+      content:"";position:absolute;
+      top:50%;right:14%;transform:translate(50%,-50%);
+      width:140px;height:140px;border-radius:50%;
+      border:1px dashed rgba(91,149,240,.22);
+      animation:spin 30s linear infinite;
+      pointer-events:none;
+    }
     /* mobile 删掉 desktop 视觉专属的'实心圆 + logo' */
     .banner-mobile-icon{display:none}
-    .banner-visual::before,.banner-visual::after{display:none}
+    /* 隐藏 desktop ::after 的实心 radial-gradient 圆环（mobile 用上面的 ::before 虚线圆环替代） */
+    .banner-visual::after{display:none}
     .banner-meta{gap:24px}
     .banner-meta-item{color:var(--c-text-soft);letter-spacing:.18em}
     .banner-meta-item strong{font-size:22px}
@@ -1427,10 +1438,14 @@ h1,h2,h3,h4,h5,h6{
     .tl-title{font-size:24px}
     .banner-meta{flex-direction:column;gap:18px}
     .banner-meta-item strong{font-size:26px}
-    .banner-visual{height:320px}
-    .geom-card-1{min-height:72px}
-    .geom-card-2{min-height:74px}
-    .geom-card-3{min-height:38px}
+    .banner-visual{height:360px}
+    .geom-card-1{min-height:74px}
+    .geom-card-2{min-height:78px}
+    .geom-card-3{min-height:54px}
+    .geom-orb{width:44px;height:44px}
+    .geom-orb svg{width:18px;height:18px}
+    /* 小屏装饰圆环缩小,避免挤压浮卡 */
+    .banner-visual::before{width:120px;height:120px;right:8%}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
