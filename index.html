@@ -1472,24 +1472,22 @@ h1,h2,h3,h4,h5,h6{
     }
     .banner-meta-item{font-size:8px;letter-spacing:.16em}
     .banner-meta-item strong{font-size:20px;margin-bottom:0}
-    /* 虚线圆环：放 h1 文字中心，normal stacking（不在文字之下，dashed 线'穿过'文字表面 → 视觉上像在文字背后）。
-       上一版用 z-index:-1 失败：文字 z-index:auto > -1，圆环被文字完全盖死看不见。 */
-    .banner-text h1{position:relative;isolation:isolate;overflow:visible}
+    /* 虚线圆环：h1 文字右上角画框（圆环溢出 h1 右上角各 8px，dashed 不穿过任何文字 → 视觉清晰）。
+       位置选择：mobile h1 line 1-2 末尾右侧各 ~97px 空白 → 圆环紧贴 h1 右上角外是唯一不挡文字、不侵入其他元素的位置。 */
+    .banner-text h1{position:relative;overflow:visible}
     .banner-text h1::before{
       content:"";position:absolute;
-      top:50%;left:50%;
-      width:240px;height:240px;border-radius:50%;
+      top:-8px;right:-8px;
+      width:80px;height:80px;border-radius:50%;
       border:1.5px dashed rgba(122,178,255,.7);
-      filter:drop-shadow(0 0 10px rgba(122,178,255,.35));
+      filter:drop-shadow(0 0 10px rgba(122,178,255,.4));
       pointer-events:none;
-      transform:translate(-50%,-50%) rotate(0);
+      transform:rotate(0);
       animation:ringSpin 30s linear infinite;
-      z-index:0;
     }
-    /* mobile 本地 keyframe（修 50943ac 的 bug：之前 animation:spin 引用未定义的 @keyframes spin，圆环静默失效） */
     @keyframes ringSpin{
-      from{transform:translate(-50%,-50%) rotate(0)}
-      to{transform:translate(-50%,-50%) rotate(360deg)}
+      from{transform:rotate(0)}
+      to{transform:rotate(360deg)}
     }
     .quick-card .arrow{color:var(--c-text-soft);font-weight:500;letter-spacing:.2em}
     .quick-grid{grid-template-columns:repeat(2,1fr)}
@@ -1539,8 +1537,8 @@ h1,h2,h3,h4,h5,h6{
     .geom-card-3{min-height:28px}
     .geom-orb{width:44px;height:44px}
     .geom-orb svg{width:18px;height:18px}
-    /* 小屏：虚线圆环跟着 h1 同步缩（h1 容器内的 ::before 圆环，已在 860 内设为 z-index:-1 在文字背后） */
-    .banner-text h1::before{width:140px;height:140px;right:-6%}
+    /* 小屏：虚线圆环跟着 h1 同步缩（h1 文字右上角画框位置，520 内 h1 字号 36px → 圆环缩 20% + 位置微调） */
+    .banner-text h1::before{width:64px;height:64px;top:-6px;right:-6px}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
