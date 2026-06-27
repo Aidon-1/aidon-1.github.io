@@ -1354,47 +1354,57 @@ h1,h2,h3,h4,h5,h6{
     .nav-menu.open{transform:translateY(0)}
     .nav-menu a{padding:14px 16px;border-radius:var(--radius-sm);font-size:14px}
     .nav-toggle{display:flex}
-    .banner-inner{grid-template-columns:1fr;gap:60px}
+    .banner-inner{grid-template-columns:1fr;gap:60px;position:relative;overflow:visible}
     .banner-bgword{font-size:140px;right:-5%}
+    /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
+    .banner-text{display:contents}
     .banner-visual{height:380px;overflow:visible}
-    /* 浮卡：mobile 跟 desktop 视觉对得上 —— 右半边错落分布（MODEL右上→PROMPT中右→DATASET底部居中偏右），保留对角美感 */
+    /* 浮卡：聚右上（MODEL 顶部 → PROMPT 中右 → DATASET 中下，3 张浮卡全部堆叠在 visual 上半部分） */
     .geom-frame{position:relative;width:100%;height:100%}
     .geom-card{box-sizing:border-box;animation:none !important}
     .geom-card-1{
-      top:28px !important;right:24px !important;left:auto !important;bottom:auto !important;
+      top:8px !important;right:24px !important;left:auto !important;bottom:auto !important;
       width:62% !important;min-height:80px;padding:10px;
     }
     .geom-card-3{
-      top:124px !important;right:64px !important;left:auto !important;bottom:auto !important;
+      top:84px !important;right:64px !important;left:auto !important;bottom:auto !important;
       width:52% !important;min-height:60px;padding:8px;
     }
     .geom-card-2{
-      top:208px !important;right:24px !important;left:auto !important;bottom:auto !important;
+      top:160px !important;right:24px !important;left:auto !important;bottom:auto !important;
       width:64% !important;min-height:90px;padding:10px;
     }
-    /* 齿轮：右下外凸，跟 desktop 视觉对角 */
+    /* 齿轮：右上外凸（跟左下数字遥相呼应，对角线） */
     .geom-orb{
-      position:absolute;bottom:-14px !important;right:-14px !important;
-      top:auto !important;left:auto !important;transform:none;
+      position:absolute;top:-14px !important;right:-14px !important;
+      bottom:auto !important;left:auto !important;transform:none;
       width:48px;height:48px;display:flex;
     }
     .geom-orb svg{width:20px;height:20px}
-    /* mobile 留一点装饰圆环 —— 居中偏右的虚线,增加背景层次 */
-    .banner-visual::before{
-      content:"";position:absolute;
-      top:50%;right:14%;transform:translate(50%,-50%);
-      width:140px;height:140px;border-radius:50%;
-      border:1px dashed rgba(91,149,240,.22);
-      animation:spin 30s linear infinite;
-      pointer-events:none;
-    }
+    /* 隐藏原 visual::before 虚线圆环（下面要把它搬到 h1 文字后面） */
+    .banner-visual::before{display:none}
     /* mobile 删掉 desktop 视觉专属的'实心圆 + logo' */
     .banner-mobile-icon{display:none}
-    /* 隐藏 desktop ::after 的实心 radial-gradient 圆环（mobile 用上面的 ::before 虚线圆环替代） */
+    /* 隐藏 desktop ::after 的实心 radial-gradient 圆环 */
     .banner-visual::after{display:none}
-    .banner-meta{gap:24px}
-    .banner-meta-item{color:var(--c-text-soft);letter-spacing:.18em}
-    .banner-meta-item strong{font-size:22px}
+    /* 数字：浮在 visual 框内左下角（绝对定位相对 banner-inner 底部 = visual 底部） */
+    .banner-meta{
+      position:absolute;left:8px;bottom:8px;z-index:5;
+      flex-direction:column;align-items:flex-start;gap:12px;
+      margin:0;padding:0;border-top:none;width:auto;
+    }
+    .banner-meta-item{font-size:9px;letter-spacing:.18em}
+    .banner-meta-item strong{font-size:24px;margin-bottom:1px}
+    /* 虚线圆环：移到 h1 文字后面（作为 h1 背景装饰图层，z-index:-1 在 h1 stacking context 内） */
+    .banner-text h1{position:relative;isolation:isolate;overflow:visible}
+    .banner-text h1::before{
+      content:"";position:absolute;
+      top:50%;right:-12%;transform:translate(0,-50%);
+      width:180px;height:180px;border-radius:50%;
+      border:1px dashed rgba(91,149,240,.22);
+      animation:spin 30s linear infinite;
+      pointer-events:none;z-index:-1;
+    }
     .quick-card .arrow{color:var(--c-text-soft);font-weight:500;letter-spacing:.2em}
     .quick-grid{grid-template-columns:repeat(2,1fr)}
     .quick-card{border-right:1px solid var(--c-line-2)}
@@ -1436,7 +1446,6 @@ h1,h2,h3,h4,h5,h6{
     .quick-card:last-child{border-bottom:none}
     .footer-slogan{font-size:20px}
     .tl-title{font-size:24px}
-    .banner-meta{flex-direction:column;gap:18px}
     .banner-meta-item strong{font-size:26px}
     .banner-visual{height:360px}
     .geom-card-1{min-height:74px}
@@ -1444,8 +1453,8 @@ h1,h2,h3,h4,h5,h6{
     .geom-card-3{min-height:54px}
     .geom-orb{width:44px;height:44px}
     .geom-orb svg{width:18px;height:18px}
-    /* 小屏装饰圆环缩小,避免挤压浮卡 */
-    .banner-visual::before{width:120px;height:120px;right:8%}
+    /* 小屏：虚线圆环跟着 h1 同步缩（h1 容器内的 ::before 圆环，已在 860 内设为 z-index:-1 在文字背后） */
+    .banner-text h1::before{width:140px;height:140px;right:-6%}
     /* nav-menu 在 520px 以下也要适配 safe area */
     .nav-menu{
       top:64px;max-height:calc(100dvh - 64px);
