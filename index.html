@@ -1404,12 +1404,38 @@ h1,h2,h3,h4,h5,h6{
       top:144px !important;right:0 !important;left:auto !important;bottom:auto !important;
       width:66% !important;min-height:80px;padding:10px;
     }
-    /* 齿轮：左上小点缀（与左下数字遥相呼应） */
+    /* 齿轮：缩到 28×28，移到 visual 中部偏左下空白处
+       ——做右上浮卡 ↘ 齿轮 ↙ 左下数字的视觉桥梁 */
     .geom-orb{
-      position:absolute;top:8px;left:-12px;right:auto;bottom:auto;transform:none;
-      width:42px;height:42px;display:flex;
+      position:absolute;
+      top:70%;left:28%;transform:translate(-50%,-50%);
+      width:28px;height:28px;display:flex;
+      box-shadow:0 4px 12px rgba(0,0,0,.4),inset 0 0 0 1px var(--c-line-strong),
+                 0 0 16px rgba(91,149,240,.2);
     }
-    .geom-orb svg{width:18px;height:18px}
+    .geom-orb svg{width:13px;height:13px}
+    /* 微弱连线：齿轮 → 右上浮卡（向右上 35° 斜线） */
+    .geom-orb::before{
+      content:"";position:absolute;
+      top:50%;left:calc(50% + 11px);
+      width:42px;height:1px;
+      background:linear-gradient(90deg,var(--c-accent-3) 0%,transparent 100%);
+      opacity:.35;
+      transform-origin:left center;
+      transform:rotate(-35deg);
+      pointer-events:none;
+    }
+    /* 微弱连线：齿轮 → 左下数字（向左下 35° 斜线） */
+    .geom-orb::after{
+      content:"";position:absolute;
+      top:50%;left:calc(50% - 11px);
+      width:32px;height:1px;
+      background:linear-gradient(270deg,var(--c-accent-3) 0%,transparent 100%);
+      opacity:.35;
+      transform-origin:right center;
+      transform:rotate(-35deg);
+      pointer-events:none;
+    }
     /* 浮卡内部元素 mobile 字号 */
     .geom-card .tag{font-size:9px;letter-spacing:.18em;margin-bottom:8px}
     .geom-card .bar{height:3px;margin-bottom:6px}
