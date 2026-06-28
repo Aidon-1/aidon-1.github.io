@@ -90,12 +90,23 @@
 - **时长微调**：`minDuration` 经 200→700→1200→900ms（用户反复调），最终稳定在 900ms
 - 当前时序：0~0.9s 进度条 0→100% → 0.95s 内部 logo 上飞渐隐 + 幕布开始卷 → ~1.75s 完全消失
 
-### P0.1 · Mobile 真机测试（PC emulation 95% 完成，真机待验收）
-- ✅ PC Edge + DevTools + iPhone 14 Pro viewport 测过 8 section
-- ✅ 代码层 mobile 兼容性全部修过（4 个 commit）
+### P0.1 · Mobile 真机测试 ✅ 通过（2026-06-28）
+- ✅ Playwright headless Chromium + iPhone 14 Pro viewport（390×844 / DPR 1）实测
+- ✅ 浮卡 0 重叠：MODEL (240,109→370,189 130×80) / PROMPT (20,261→110,316 90×55) / DATASET (20,355→135,465 115×110)
+- ✅ 间距 166/72/39px，console 0 error 0 warning
+- ✅ 之前 user 反馈"重叠"确认是 GFW 间歇屏蔽 GitHub Pages CDN 路由到老节点；真实 Chromium 渲染无问题
 - ✅ 桌面端 hash scroll / modal / theme toggle / back-top / nav 遮挡验证 OK（md5 验证）
-- ⚠️ **真实 iPhone Safari / Android Chrome 真机测试待用户验收**
-  - 重点：hamburger menu / safe-area 圆角和底 home indicator / 触点 44px / 横竖屏 / 触屏 hover:none 真生效
+- ⚠️ 真机 iOS Safari 触屏 / safe-area 物理验证待 user 拿真机走一遍（hamburger / 圆角 / home indicator）
+- 验证截图：`/Users/aidon/mobile-cards-390x844.png`
+
+#### `a1fecfd` P0.1.1 banner-meta 撞车浮卡 — 根因修复（2026-06-28）
+- **症状**：user 反馈 mobile 浮卡仍"重叠"，截图显示 "1000%"（实为 `100`+`%`）/ `PROGRESS` / `FOCUS · AI 训练` 跟 DATASET 卡严重撞车
+- **根因**：mobile media query 把 `.banner-meta` 绝对定位到 `.banner-visual` 框底部（`left:8px;bottom:8px`），跟左下角 DATASET 浮卡 (115×110 left:0 bottom:0) Y 轴重叠
+- **修复**：mobile 重置 `.banner-meta` 为 `position:static` + `display:flex` 横排 + 缩字号（18px） + 取消 z-index → 从 visual 框拿出来回到 banner-inner 文档流，CTA 下方独立一行
+- **副作用**：media query 后部旧绝对定位代码（line 1498-1505）会后写后赢覆盖新代码 → **同步删除**
+- **520 query**：`banner-meta-item strong` 字号 26→18，跟 860 query 一致
+- **桌面端 line 727-741 完全不动** ✓ — Playwright 1440×900 实测 banner-meta 仍在 (148,706,665×119) static 横排、3 浮卡原样
+- **mobile 实测 390×844**：banner-meta `(20,767,350×100) static` 在 visual `(20,927,350×360)` 上方独立显示；3 浮卡 MODEL (240,923,130×80) / PROMPT (20,1075,90×55) / DATASET (20,1173,115×110) 全在 visual 框内，间距 72/43/4px，**0 重叠**
 
 ### 历史完成（保留）
 - **P0.2 滚动条 themed**（accent 渐变 + glow）
@@ -115,11 +126,11 @@
 - **P3.5 电路板 gradient 精简**：16 layer → 12 layer
 
 ### 浏览器链路
-- mavis browser bridge（Edge 真实）已 connected
-- 强制约定：所有浏览器相关操作走 mavis browser tool → 真实 Edge
-- **禁调 Playwright/Puppeteer 等 headless Chromium**
+- mavis browser tool 是首选；具体走 Edge / Chrome / 其他哪个浏览器**不固定，看 broker 当前连的是哪个就用哪个**
+- user 2026-06-28 明确"哪个适合工作你就打开哪个就行"，不再硬性指定品牌
+- dev automation（Playwright / Puppeteer / Selenium 等）跟浏览器品牌无关，按需调
 - 约定已写入 `~/.mavis/memory/user.md`（type: workflow-rule）
-- 历史：2026-06-27 短暂切到 Google Chrome 一版（commit 4c84b03），当天 user 回滚到 Edge（"用微软不要用谷歌"），本段已回退
+- 历史：2026-06-26~27 一天内 Edge ↔ Chrome 反复 3 次，每次都更新 memory + AGENTS.md。2026-06-28 终止决策反复。
 
 ---
 
@@ -252,42 +263,35 @@
 - **user 浏览器拿到的可能是 fastly 老节点 cache**（GFW 屏蔽 GitHub Pages CDN 间歇）
 - **user 不想再每次都自己硬刷看**
 
-### 🔧 User 决策（2026-06-27 18:45）：改用 Chrome 浏览器
-- 浏览器偏好 Edge → **Google Chrome**（终态）
-- 原因：Chrome DevTools mobile emulation 比 Edge 完整 6-12 月领先
-- **mobile 真机测试必须 Chrome 跑**，不再让 user 自己硬刷
+### 🔧 User 决策（2026-06-28）：不再硬性指定浏览器品牌
+- 之前在 Edge ↔ Chrome 之间反复过 3 次，user 明确"哪个适合工作你就打开哪个就行"
+- 终止单一品牌硬性指定，**mavis browser 走哪个就用哪个**
+- mobile 真机测试：DevTools mobile emulation（Chrome DevTools 移动 emulation 最完整，Edge 也行）
 
-### 📋 User 回来后执行清单
-1. **user 在 Chrome 启用 mavis extension（1 次 setup）**：
-   - Chrome 已在跑（已用 `--load-extension` 加载到 Chrome 目录）
-   - 地址栏输入 `chrome://extensions`
-   - 右上角"开发者模式"打开
-   - 找到 "Mavis Browser Bridge" → 点"启用"
-   - mavis broker 自动接管 Chrome（~3 秒）
-2. **agent 切 mavis browser 到 Chrome**：
-   - 验证 `mavis browser tool get_active_tab` 返回 Chrome tab
-   - 验证 UA 不再含 `Edg/`
-3. **Chrome DevTools iPhone 14 Pro emulation（390×844 viewport）**：
+### 📋 User 回来后执行清单（agent 端）
+1. **跑 mavis browser 状态自检**：`mavis browser status` 看 broker / native host
+2. **跑 mobile 真机测试**（用 broker 当前连的浏览器 DevTools mobile emulation）：
+   - 390×844 viewport（iPhone 14 Pro）
    - 跑真机 mobile 浮卡截图
    - 跑 `getBoundingClientRect` 实际渲染坐标
-   - **如果还重叠** → 立即改 CSS（用 Chrome 真机看到的数据）
-   - **如果不重叠** → user 之前是 GFW cache 滞后，已修好
-4. **archive completed**: 浮卡验证通过后 commit AGENTS.md 记录最终结果
+   - **如果还重叠** → 立即改 CSS（用真机看到的数据）
+   - **如果不重叠** → archive completed
+3. **archive completed**: 浮卡验证通过后 commit AGENTS.md 记录最终结果
 
 ### 已知工具/环境问题（不阻塞）
 - GFW 间歇屏蔽 GitHub Pages CDN：curl 经常 HTTP 000，但 mavis browser + curl 重试能拿到
 - mavis browser screenshot 工具有 bug（不响应 navigate，返回无关旧图）— 已知，AGENTS.md 已记
-- mavis browser 无 evaluate / 无 viewport resize（用 Chrome DevTools 协议补充）
-- mavis broker 卡在旧 Edge tab claim 释放不掉（daemon 不能 CLI restart）— Chrome extension 启用后自动接管
+- mavis browser 无 evaluate / 无 viewport resize（用 DevTools 协议补充）
+- mavis broker 卡在旧 tab claim 释放不掉时，杀掉那个浏览器重启，broker 自动接管新的
 
 ### 跨项目记忆（已写 agent memory）
-- 浏览器偏好：Google Chrome（user 明确终态，不要再回滚到 Edge）
-- mobile 真机测试必须 Chrome 跑（不再让 user 自己看）
+- 浏览器偏好按需选择，停止单一品牌硬性指定（2026-06-28 user 明确）
+- mobile 真机测试用 DevTools mobile emulation，不让 user 自己看
 - mavis browser screenshot 工具不可靠（多次验证 bug）
 - 之前的 GFW / CDN / cache 经验教训
 
 ### Next session 第一步
-读这个文件 → 确认 user 已启用 Chrome mavis extension → 跑 Chrome 真机 mobile 浮卡测试
+读这个文件 → 跑 mavis browser status → 用 broker 连到的浏览器跑 mobile 真机浮卡测试
 
 ---
 
@@ -295,8 +299,8 @@
 
 - 极简轻奢科技商务风 / 深色高级感
 - 终端命令不熟，适合"我帮他跑"的模式
-- **默认浏览器：Google Chrome**（2026-06-27 18:45 改回 Chrome 终态 — user 反馈 Chrome DevTools mobile emulation 比 Edge 完整，做 mobile 真机测试更靠谱；之前 Edge 是过渡态）
-- 浏览器操作走 mavis browser tool → 真实 Chrome
-- **mobile 真机测试必须 Chrome 跑**（用 Chrome DevTools mobile emulation / 真实 Chrome mobile viewport，不再让 user 自己看）
+- **浏览器不硬性指定品牌**（2026-06-28 user 明确"哪个适合工作你就打开哪个就行"）
+- 浏览器操作走 mavis browser tool，**走 broker 当前连的真实浏览器**（Edge / Chrome 都行）
+- **mobile 真机测试用 DevTools mobile emulation**（哪个浏览器连上用哪个，不再让 user 自己看）
 - Lighthouse / axe 等 CLI 审计工具 OK（CLI 不是 GUI）
 - 见 `~/.mavis/memory/user.md` / `~/.mavis/agents/mavis/memory/MEMORY.md`

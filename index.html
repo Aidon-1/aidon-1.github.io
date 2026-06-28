@@ -1427,6 +1427,32 @@ h1,h2,h3,h4,h5,h6{
     /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
     .banner-text{display:contents}
     .banner-visual{height:380px;overflow:visible}
+    /* === banner-meta：mobile 重置为静态横排 + 缩字号 + 取消绝对定位（关键修复 2026-06-28）
+       之前 bug：.banner-meta 在 mobile 上被绝对定位到 visual 框底部（left:8px bottom:8px），
+       直接跟 banner-visual 内的 DATASET 浮卡 (115×110 左下) 撞车 → 出现"1000%" / "PROGRESS"
+       / "FOCUS · AI 训练" 跟 DATASET 卡内容（"文本标注/对话校准/风格调教"）严重重叠
+       修复：从 visual 框里拿出来 → 回到 banner-inner 文档流（display:contents 后是 banner-inner 直接子元素）→
+              横排小字号、紧贴 CTA 按钮下方一行，浮卡独占 visual 框干净布局
+       desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
+    .banner-meta{
+      position:static !important;left:auto !important;bottom:auto !important;z-index:auto !important;
+      display:flex !important;flex-direction:row !important;flex-wrap:wrap;align-items:center;
+      gap:10px 18px !important;width:100%;
+      margin-top:28px !important;padding-top:22px !important;
+      border-top:1px solid var(--c-line-2) !important;
+    }
+    .banner-meta-item{
+      display:flex;align-items:baseline;gap:5px;
+      font-size:9px;letter-spacing:.16em;
+    }
+    .banner-meta-item strong{
+      display:inline !important;font-size:18px !important;
+      letter-spacing:-.01em;margin-bottom:0 !important;
+    }
+    /* 缩小 inline 的 + / % 单位（desktop 是 20px italic，mobile 缩到 12px） */
+    .banner-meta-item strong span[style*="font-style:italic"]{
+      font-size:13px !important;
+    }
     /* 浮卡：参照 desktop 对角线错落分布（MODEL 右上 / DATASET 左下 / PROMPT 左中），缩 30% 跟 mobile viewport 协调
        之前'聚右上堆叠'问题：3 张卡都 right 聚堆 + min-height 太短被内容撑大 → 严重重叠
        新方案：跟 desktop 一样的对角线分布，3 张卡不重叠 + 留视觉呼吸 */
@@ -1469,14 +1495,6 @@ h1,h2,h3,h4,h5,h6{
     .banner-mobile-icon{display:none}
     /* 隐藏 desktop ::after 的实心 radial-gradient 圆环 */
     .banner-visual::after{display:none}
-    /* 数字：浮在 visual 框内左下角（绝对定位相对 banner-inner 底部 = visual 底部） */
-    .banner-meta{
-      position:absolute;left:8px;bottom:8px;z-index:5;
-      flex-direction:column;align-items:flex-start;gap:9px;
-      margin:0;padding:0;border-top:none;width:auto;
-    }
-    .banner-meta-item{font-size:8px;letter-spacing:.16em}
-    .banner-meta-item strong{font-size:20px;margin-bottom:0}
     /* 虚线圆环：已删除（user 2026-06-27 决定 mobile 不再加圆环装饰） */
 
     .quick-card .arrow{color:var(--c-text-soft);font-weight:500;letter-spacing:.2em}
@@ -1520,7 +1538,7 @@ h1,h2,h3,h4,h5,h6{
     .quick-card:last-child{border-bottom:none}
     .footer-slogan{font-size:20px}
     .tl-title{font-size:24px}
-    .banner-meta-item strong{font-size:26px}
+    .banner-meta-item strong{font-size:18px}
     .banner-visual{height:360px}
     /* 浮卡 520 覆盖：现在用 fixed height（不再用 min-height），数值已写在 860 内的 !important，520 不用再改 height */
     .geom-orb{width:36px;height:36px}
