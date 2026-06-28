@@ -1451,28 +1451,28 @@ h1,h2,h3,h4,h5,h6{
       width:115px !important;height:110px;padding:6px;
     }
     /* === banner-meta：顶对齐浮卡组顶部（数字大字顶 = visual 顶 = 浮卡组顶）
-       reveal 动画完成后实测：banner-visual 顶 y=711, banner-inner 底 y=1151, banner-meta 高度 138
-       要 metaTop=711 → metaBottom=849 → 相对 banner-inner 底 1151 距离 = 302
-       改 bottom:302px（不是 274/300）→ 数字大字顶 y=711 跟浮卡组顶 y=711 同一水平线起跑
-       数字大字占据 visual 框上半部左侧（y 711-849），浮卡组占据 visual 框右侧上半部（y 711-972）
+       reveal 动画完成后实测：banner-visual 顶 y=711, banner-inner 底 y=1151, banner-meta 高度 171
+       要 metaTop=711 → metaBottom=882 → 相对 banner-inner 底 1151 距离 = 269
+       改 bottom:269px → 数字大字顶 y=711 跟浮卡组顶 y=711 同一水平线起跑
+       数字大字占据 visual 框上半部左侧（y 711-882），浮卡组占据 visual 框右侧上半部（y 711-972）
        desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
     .banner-meta{
-      position:absolute !important;left:8px;bottom:302px;z-index:5;
+      position:absolute !important;left:8px;bottom:269px;z-index:5;
       display:flex !important;flex-direction:column !important;align-items:flex-start;
-      gap:8px !important;
+      gap:10px !important;
       margin:0 !important;padding:0 !important;border-top:none !important;width:auto !important;
     }
     .banner-meta-item{
-      display:flex;align-items:baseline;gap:5px;
-      font-size:9px;letter-spacing:.16em;
+      display:flex;align-items:baseline;gap:6px;
+      font-size:10px;letter-spacing:.18em;
     }
     .banner-meta-item strong{
-      display:inline-block !important;font-size:22px !important;
+      display:inline-block !important;font-size:28px !important;
       letter-spacing:-.015em;margin-bottom:0 !important;
     }
-    /* inline 的 + / % 单位（跟 desktop 一致 italic accent） */
+    /* inline 的 + / % 单位（跟 desktop 一致 italic accent，28px 大字同步放大约 19px） */
     .banner-meta-item strong span[style*="font-style:italic"]{
-      font-size:15px !important;
+      font-size:19px !important;
     }
     /* 卡片内文字同步缩（mobile 字号小，浮卡内标签/数值跟着缩） */
     .geom-card .tag{font-size:7.5px;margin-bottom:4px;letter-spacing:.16em}
