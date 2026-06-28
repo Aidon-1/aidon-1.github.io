@@ -1450,12 +1450,14 @@ h1,h2,h3,h4,h5,h6{
       top:151px !important;right:0 !important;bottom:auto !important;left:auto !important;
       width:115px !important;height:110px;padding:6px;
     }
-    /* === banner-meta：上移到 visual 框中下，垂直大字 italic（数字大字顶对齐浮卡组底，视觉上"左"与"右"在同一水平线）
-       之前 bottom:8px 贴底 → 数字大字在 visual 框下半部，跟浮卡组（visual 框上半部）隔 33px 缝
-       改 bottom:50px → 数字大字顶从 y 1033 提到 y 991，跟浮卡组底 y 1000 几乎齐平（差 9px）
+    /* === banner-meta：顶对齐浮卡组顶部（数字大字顶 = visual 顶 = 浮卡组顶）
+       reveal 动画完成后实测：banner-visual 顶 y=711, banner-inner 底 y=1151, banner-meta 高度 138
+       要 metaTop=711 → metaBottom=849 → 相对 banner-inner 底 1151 距离 = 302
+       改 bottom:302px（不是 274/300）→ 数字大字顶 y=711 跟浮卡组顶 y=711 同一水平线起跑
+       数字大字占据 visual 框上半部左侧（y 711-849），浮卡组占据 visual 框右侧上半部（y 711-972）
        desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
     .banner-meta{
-      position:absolute !important;left:8px;bottom:50px;z-index:5;
+      position:absolute !important;left:8px;bottom:302px;z-index:5;
       display:flex !important;flex-direction:column !important;align-items:flex-start;
       gap:8px !important;
       margin:0 !important;padding:0 !important;border-top:none !important;width:auto !important;
