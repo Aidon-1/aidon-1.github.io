@@ -1450,11 +1450,12 @@ h1,h2,h3,h4,h5,h6{
       top:151px !important;right:0 !important;bottom:auto !important;left:auto !important;
       width:115px !important;height:110px;padding:6px;
     }
-    /* === banner-meta：回到 visual 框内左下，垂直大字 italic（参照图二位置）
-       user 反馈"把你修改的数字和那字母回归到图二的位置" → 大字 32px italic 垂直排在浮卡组下方左下角
+    /* === banner-meta：上移到 visual 框中下，垂直大字 italic（数字大字顶对齐浮卡组底，视觉上"左"与"右"在同一水平线）
+       之前 bottom:8px 贴底 → 数字大字在 visual 框下半部，跟浮卡组（visual 框上半部）隔 33px 缝
+       改 bottom:50px → 数字大字顶从 y 1033 提到 y 991，跟浮卡组底 y 1000 几乎齐平（差 9px）
        desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
     .banner-meta{
-      position:absolute !important;left:8px;bottom:8px;z-index:5;
+      position:absolute !important;left:8px;bottom:50px;z-index:5;
       display:flex !important;flex-direction:column !important;align-items:flex-start;
       gap:8px !important;
       margin:0 !important;padding:0 !important;border-top:none !important;width:auto !important;
