@@ -1426,36 +1426,13 @@ h1,h2,h3,h4,h5,h6{
     .banner-bgword{font-size:140px;right:-5%}
     /* === mobile 对角线重组（不动 desktop HTML）：display:contents 让 banner-text 子元素穿透到 banner-inner，banner-meta 就能跟 banner-visual 共享绝对定位上下文 === */
     .banner-text{display:contents}
-    .banner-visual{height:380px;overflow:visible}
-    /* === banner-meta：mobile 重置为静态横排 + 缩字号 + 取消绝对定位（关键修复 2026-06-28）
-       之前 bug：.banner-meta 在 mobile 上被绝对定位到 visual 框底部（left:8px bottom:8px），
-       直接跟 banner-visual 内的 DATASET 浮卡 (115×110 左下) 撞车 → 出现"1000%" / "PROGRESS"
-       / "FOCUS · AI 训练" 跟 DATASET 卡内容（"文本标注/对话校准/风格调教"）严重重叠
-       修复：从 visual 框里拿出来 → 回到 banner-inner 文档流（display:contents 后是 banner-inner 直接子元素）→
-              横排小字号、紧贴 CTA 按钮下方一行，浮卡独占 visual 框干净布局
-       desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
-    .banner-meta{
-      position:static !important;left:auto !important;bottom:auto !important;z-index:auto !important;
-      display:flex !important;flex-direction:row !important;flex-wrap:wrap;align-items:center;
-      gap:10px 18px !important;width:100%;
-      margin-top:28px !important;padding-top:22px !important;
-      border-top:1px solid var(--c-line-2) !important;
-    }
-    .banner-meta-item{
-      display:flex;align-items:baseline;gap:5px;
-      font-size:9px;letter-spacing:.16em;
-    }
-    .banner-meta-item strong{
-      display:inline !important;font-size:18px !important;
-      letter-spacing:-.01em;margin-bottom:0 !important;
-    }
-    /* 缩小 inline 的 + / % 单位（desktop 是 20px italic，mobile 缩到 12px） */
-    .banner-meta-item strong span[style*="font-style:italic"]{
-      font-size:13px !important;
-    }
-    /* 浮卡：参照 desktop 对角线错落分布（MODEL 右上 / DATASET 左下 / PROMPT 左中），缩 30% 跟 mobile viewport 协调
-       之前'聚右上堆叠'问题：3 张卡都 right 聚堆 + min-height 太短被内容撑大 → 严重重叠
-       新方案：跟 desktop 一样的对角线分布，3 张卡不重叠 + 留视觉呼吸 */
+    .banner-visual{height:460px;overflow:visible}
+    /* === 浮卡位置（参照图二"右侧聚集"垂直堆叠布局，user 2026-06-28 要求）：
+       - MODEL 卡：右上（top:0 right:0）
+       - PROMPT 卡：紧贴 MODEL 下方右中（top:88px right:18px）— 间距 8px 不重叠
+       - DATASET 卡：紧贴 PROMPT 下方右下（top:151px right:0）— 间距 8px 不重叠
+       - 三张卡成组紧凑聚集在右侧，留左侧 + 底部空间给数字大字
+       === */
     .geom-frame{position:relative;width:100%;height:100%}
     .geom-card{box-sizing:border-box;animation:none !important;overflow:hidden}
     /* MODEL 右上 (对应 desktop card-1: top:0 right:0 240×120 → mobile 130×80) */
@@ -1463,15 +1440,36 @@ h1,h2,h3,h4,h5,h6{
       top:0 !important;right:0 !important;left:auto !important;bottom:auto !important;
       width:130px !important;height:80px;padding:6px;
     }
-    /* DATASET 左下 (对应 desktop card-2: bottom:30 left:0 200×170 → mobile bottom:0 left:0 115×110) */
+    /* PROMPT 右中偏上 (紧贴 MODEL 下方，间距 8px) */
+    .geom-card-3{
+      top:88px !important;right:18px !important;bottom:auto !important;left:auto !important;
+      width:90px !important;height:55px;padding:4px;
+    }
+    /* DATASET 右下 (紧贴 PROMPT 下方，间距 8px) */
     .geom-card-2{
-      bottom:0 !important;left:0 !important;top:auto !important;right:auto !important;
+      top:151px !important;right:0 !important;bottom:auto !important;left:auto !important;
       width:115px !important;height:110px;padding:6px;
     }
-    /* PROMPT 左中 (对应 desktop card-3: top:140 left:30 160×80 → mobile top:155 left:0 90×55) */
-    .geom-card-3{
-      top:155px !important;left:0 !important;bottom:auto !important;right:auto !important;
-      width:90px !important;height:55px;padding:4px;
+    /* === banner-meta：回到 visual 框内左下，垂直大字 italic（参照图二位置）
+       user 反馈"把你修改的数字和那字母回归到图二的位置" → 大字 32px italic 垂直排在浮卡组下方左下角
+       desktop 完全不动（line 727-741 的 .banner-meta flex 横排 32px 大字原样保留） */
+    .banner-meta{
+      position:absolute !important;left:8px;bottom:8px;z-index:5;
+      display:flex !important;flex-direction:column !important;align-items:flex-start;
+      gap:8px !important;
+      margin:0 !important;padding:0 !important;border-top:none !important;width:auto !important;
+    }
+    .banner-meta-item{
+      display:flex;align-items:baseline;gap:5px;
+      font-size:9px;letter-spacing:.16em;
+    }
+    .banner-meta-item strong{
+      display:inline-block !important;font-size:22px !important;
+      letter-spacing:-.015em;margin-bottom:0 !important;
+    }
+    /* inline 的 + / % 单位（跟 desktop 一致 italic accent） */
+    .banner-meta-item strong span[style*="font-style:italic"]{
+      font-size:15px !important;
     }
     /* 卡片内文字同步缩（mobile 字号小，浮卡内标签/数值跟着缩） */
     .geom-card .tag{font-size:7.5px;margin-bottom:4px;letter-spacing:.16em}
@@ -1538,8 +1536,8 @@ h1,h2,h3,h4,h5,h6{
     .quick-card:last-child{border-bottom:none}
     .footer-slogan{font-size:20px}
     .tl-title{font-size:24px}
-    .banner-meta-item strong{font-size:18px}
-    .banner-visual{height:360px}
+    .banner-meta-item strong{font-size:22px}
+    .banner-visual{height:440px}
     /* 浮卡 520 覆盖：现在用 fixed height（不再用 min-height），数值已写在 860 内的 !important，520 不用再改 height */
     .geom-orb{width:36px;height:36px}
     .geom-orb svg{width:16px;height:16px}
@@ -3069,6 +3067,8 @@ h1,h2,h3,h4,h5,h6{
     const geomCards = document.querySelectorAll('.geom-card');
     const geomFrame = document.querySelector('.geom-frame');
     if(!geomCards.length) return;
+    // mobile / 触屏设备完全跳过 — 不写 transform,让 CSS top/left 静态定位（user 2026-06-28 要求浮卡不重叠）
+    if(window.matchMedia('(pointer:coarse)').matches || window.innerWidth <= 860) return;
     // 关闭 CSS animation,改用 JS 控制 transform
     geomCards.forEach(c => {
       c.style.animation = 'none';
@@ -3089,7 +3089,7 @@ h1,h2,h3,h4,h5,h6{
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
-    if(geomFrame && !window.matchMedia('(pointer:coarse)').matches){
+    if(geomFrame){
       geomFrame.addEventListener('mousemove', (e) => {
         const r = geomFrame.getBoundingClientRect();
         const tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
